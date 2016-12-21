@@ -44,7 +44,7 @@ namespace MillGame.Models.Core.Actions
             {
                 // my opponent placed a stone
                 Contract.Assert(token.Length == 3);
-                byte color = byte.Parse(token[1]);
+                var color = sbyte.Parse(token[1]);
                 int pos = int.Parse(token[2]);
                 // create place action and play it
                 return new Placing(color, pos);
@@ -69,7 +69,7 @@ namespace MillGame.Models.Core.Actions
                 {
                     // my opponent placed a stone
                     Contract.Assert(token.Length == 5);
-                    byte color = Byte.Parse(token[2]);
+                    sbyte color = sbyte.Parse(token[2]);
                     int pos = int.Parse(token[3]);
                     // create place action
                     ActionPM a = new Placing(color, pos);

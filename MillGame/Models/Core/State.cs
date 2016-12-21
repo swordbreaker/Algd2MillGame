@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.Contracts;
+﻿using System;
+using System.Diagnostics.Contracts;
 using System.Text;
 using System.Windows;
 using MillGame.Models.Core.Actions;
@@ -480,7 +481,7 @@ namespace MillGame.Models.Core
             else
             {
                 // compute score
-
+                throw new NotImplementedException();
             }
         }
     }

@@ -156,5 +156,10 @@ namespace MillGame.Models
         {
             _values.CopyTo((T[])array, index);
         }
+
+        public void Remove(T value)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -35,9 +35,9 @@ namespace MillGame.Models.Core
     /**
 	 * The children of a MinNode will be ordered in decreasing score order
 	 */
-    public int CompareTo(Node<IAction> v)
+    public int CompareTo(INode<IAction> v)
     {
-        int score1 = Score(), score2 = ((GameNode)v).score();
+        int score1 = Score(), score2 = ((GameNode)v).Score();
 
         if (score1 == score2) return 0;
         else return (score1 > score2) ? -1 : 1;

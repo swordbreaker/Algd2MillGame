@@ -82,8 +82,8 @@ namespace MillGame.Models
             }
 
             SetStarter(b);
-            //m_compi.Run();
-            m_compi.Start();
+            m_compi.Run();
+            //m_compi.Start();
 
             if (b)
             {
@@ -185,7 +185,7 @@ namespace MillGame.Models
             {
                 // computer will open the game
                 m_gameTree.Create(TREEDEPTH, null);
-                if (VERBOSE) Debug.WriteLine("\tgame tree created; tree size: " + m_gameTree.size());
+                if (VERBOSE) Debug.WriteLine("\tgame tree created; tree size: " + m_gameTree.Size());
                 //m_gameTree.print();
             }
         }

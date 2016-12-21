@@ -35,9 +35,9 @@ namespace MillGame.Models
     /**
 	 * The children of a MaxNode will be ordered in increasing score order
 	 */
-    public int compareTo(Node<IAction> v)
+    public int CompareTo(INode<IAction> v)
     {
-        int score2 = ((GameNode)v).score();
+        int score2 = ((GameNode)v).Score();
 
         if (m_score == score2) return 0;
         else return (m_score < score2) ? -1 : 1;
@@ -46,7 +46,7 @@ namespace MillGame.Models
     /**
 	 * Get winner score
 	 */
-    public int getWinnerScore()
+    public int GetWinnerScore()
     {
         return State.BLACKWINS;
     }

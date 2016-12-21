@@ -1,0 +1,39 @@
+﻿<UserControl x:Class="MillGame.Views.MillBoard"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:MillGame.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="500" d:DesignWidth="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="80"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="80"/>
+        </Grid.ColumnDefinitions>
+        <!--Play Field-->
+        <Grid Grid.Column="1">
+            <Canvas>
+                <Canvas.Background>
+                    <ImageBrush ImageSource="/MillGame;component/Assets/Img/MillBoard.png" Stretch="Uniform"/>
+                </Canvas.Background>
+                <Ellipse Width="26" Height="26" Fill="#FFFFB69B" Canvas.Left="71" Canvas.Bottom="2" RenderTransformOrigin="0.5,0.5" 
+                         AllowDrop="True"/>
+                <Ellipse Width="26" Height="26" Fill="#FFFFB69B" Canvas.Left="306" Canvas.Bottom="2" RenderTransformOrigin="0.5,0.5"/>
+            </Canvas>
+        </Grid>
+        <!--Left Field-->
+        <Grid Grid.Column="0">
+            <Canvas>
+                <Ellipse Width="50" Height="50" Fill="Red" Canvas.Left="15" Canvas.Bottom="5"/>
+            </Canvas>
+        </Grid>
+        <!--Right Field-->
+        <Grid Grid.Column="2">
+            <Canvas>
+                <Ellipse Width="50" Height="50" Fill="Black" Canvas.Right="15" Canvas.Bottom="5"/>
+            </Canvas>
+        </Grid>
+    </Grid>
+</UserControl>

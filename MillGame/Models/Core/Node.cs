@@ -19,7 +19,6 @@ namespace MillGame.Models
      */
     public abstract class Node<T> : INode<T>, IComparable<Node<T>>, IEnumerable<Node<T>>
     {
-
         protected T m_data;                     // private data
         protected Node<T> m_parent;             // parent node
         protected PriorityQueue<Node<T>> m_children;    // children
