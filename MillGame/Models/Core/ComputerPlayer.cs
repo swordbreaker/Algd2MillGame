@@ -18,6 +18,8 @@ namespace MillGame.Models.Core
         private IController m_controller;
         private bool m_signal;
         private IController.Status m_status;
+        private object _lock = new object();
+        private Mutex _mutex = new Mutex();
 
         public ComputerPlayer(IController controller)
         {
@@ -28,22 +30,24 @@ namespace MillGame.Models.Core
         {
             m_status = IController.Status.FINISHED;
             m_signal = true;
+            _mutex.ReleaseMutex();
             //notify();
         }
 
         public void Play()
         {
             m_signal = true;
+            _mutex.ReleaseMutex();
             //notify();
         }
 
         public void Run()
         {
-            lock (this)
+            lock (_lock)
             {
                 do
                 {
-                    while (!m_signal) Thread.Sleep(10);
+                    while (!m_signal) _mutex.WaitOne();
                     m_signal = false;
                     if (m_status != IController.Status.FINISHED)
                     {

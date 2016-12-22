@@ -43,6 +43,7 @@ namespace MillGame.Models.Core.Actions
 
         public override string ToString()
         {
+            return string.Format("$0 ", 5);
             return string.Format("%02d-%02d:__", m_from, m_to);
             //return String.format("%02d-%02d:__", m_from, m_to);
         }
