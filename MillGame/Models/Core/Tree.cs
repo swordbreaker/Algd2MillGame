@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace MillGame.Models
 {
-    class Tree<T> : Core.ITree
+    public class Tree<T> : Core.ITree
     {
         /**
-             * @uml.property  name="m_root"
-             * @uml.associationEnd  
-             */
+        * @uml.property  name="m_root"
+        * @uml.associationEnd  
+        */
         protected Node<T> m_root;   // root node
         protected int m_size;       // number of nodes
 

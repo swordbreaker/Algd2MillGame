@@ -18,15 +18,8 @@ namespace MillGame.Models
      */
     public class GameTree : IGameTree
     {
-        public void Print()
-        {
-            throw new NotImplementedException();
-        }
-
-        public int Size()
-        {
-            throw new NotImplementedException();
-        }
+        Tree<IAction> m_gameTree;
+        GameNode m_currentNode;
 
         /**
         * Creates a new game tree: the first action is white, on the next level plays black.
@@ -35,7 +28,15 @@ namespace MillGame.Models
         */
         public void Create(int height, Placing pa)
         {
-            throw new NotImplementedException();
+            if(pa == null)
+            {
+                // First move made by computer
+                m_currentNode = new GameNode(ComputerPlayer());
+            } else
+            {
+                m_currentNode = new GameNode(pa);
+            }
+            m_gameTree = new Tree<IAction>(m_currentNode);
         }
 
         /**
@@ -62,6 +63,16 @@ namespace MillGame.Models
          * @return Best action or null
          */
         public Action ComputerPlayer()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Print()
+        {
+            throw new NotImplementedException();
+        }
+
+        public int Size()
         {
             throw new NotImplementedException();
         }

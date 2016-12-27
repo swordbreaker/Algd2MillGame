@@ -8,59 +8,19 @@ using MillGame.Models.Core.Actions;
 
 namespace MillGame.Models
 {
-    public class GameNode : Node<int>
+    public class GameNode : Node<IAction>
     {
         protected int m_score;
 
-        public GameNode(int data) : base(data)
+        public GameNode(IAction action) : base(action)
         {
         }
 
-        public GameNode(IAction a) : base(0)
-        {
-            
-        }
-
-        public GameNode(IAction a, int score) : base(score)
-        {
-            
-        }
-
-        public int Add(Node<IAction> v)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Remove()
-        {
-            throw new NotImplementedException();
-        }
-
-        public int Size()
-        {
-            throw new NotImplementedException();
-        }
-
-        public IAction Data()
-        {
-            throw new NotImplementedException();
-        }
-
-        public int Count()
-        {
-            throw new NotImplementedException();
-        }
-
-        public IEnumerator<Node<IAction>> Iterator()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override int CompareTo(Node<int> other)
-        {
-            throw new NotImplementedException();
-        }
-
+        /**
+	     * Create new node and add it to this as a child node.
+	     * @param a Action
+	     * @param score Score
+	     */
         public GameNode Add(IAction a, int score)
         {
             throw new NotImplementedException();
@@ -87,6 +47,11 @@ namespace MillGame.Models
         }
 
         public int Score()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override int CompareTo(Node<IAction> other)
         {
             throw new NotImplementedException();
         }
