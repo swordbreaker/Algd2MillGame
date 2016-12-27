@@ -69,15 +69,5 @@ namespace MillGame.Models
         {
             throw new NotImplementedException();
         }
-
-        public void Print()
-        {
-            throw new NotImplementedException();
-        }
-
-        public int Size()
-        {
-            throw new NotImplementedException();
-        }
     }
 }
