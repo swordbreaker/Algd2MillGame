@@ -21,7 +21,7 @@ namespace MillGame.Models
     {
         protected T m_data;                     // private data
         protected Node<T> m_parent;             // parent node
-        protected PriorityQueue<Node<T>> m_children;    // children
+        internal PriorityQueue<Node<T>> m_children;    // children
 
         /**
          * Create leaf with private data

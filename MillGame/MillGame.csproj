@@ -63,6 +63,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Models\Core\Tree.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Views\MillBoard.xaml.cs">
       <DependentUpon>MillBoard.xaml</DependentUpon>
@@ -146,6 +147,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Assets\Img\MillBoard.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Models\Core\Tree.java" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
