@@ -16,10 +16,12 @@ namespace MillGame.Models
      * @version 14.9.2010
      *
      */
-    public class GameTree : IGameTree
+    public class GameTree : Tree<IAction>, IGameTree
     {
-        Tree<IAction> m_gameTree;
-        GameNode m_currentNode;
+        private new GameNode m_root;
+        private GameNode m_currentNode;
+        private State m_baseState;
+        private int m_height;
 
         /**
         * Creates a new game tree: the first action is white, on the next level plays black.
@@ -36,7 +38,8 @@ namespace MillGame.Models
             {
                 m_currentNode = new GameNode(pa);
             }
-            m_gameTree = new Tree<IAction>(m_currentNode);
+            m_height = height;
+            m_root = m_currentNode;
         }
 
         /**
@@ -45,7 +48,7 @@ namespace MillGame.Models
 	     */
         public State CurrentState()
         {
-            throw new NotImplementedException();
+            return m_currentNode.ComputeState(m_baseState, m_root);
         }
 
         /**

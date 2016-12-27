@@ -36,6 +36,12 @@ namespace MillGame.Models
             throw new NotImplementedException();
         }
 
+        /**
+	     * Compute game state at this node
+	     * @param s Game state at given node v
+	     * @param v Game node v must be ancestor of this
+	     * @return Game state at this node
+	     */
         public State ComputeState(State s, GameNode v)
         {
             throw new NotImplementedException();
