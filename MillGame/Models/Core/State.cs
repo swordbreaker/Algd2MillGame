@@ -350,7 +350,7 @@ namespace MillGame.Models.Core
          * @param a Action
          */
 
-        public void update(Moving a)
+        public void Update(Moving a)
         {
             Contract.Assert(a != null, "action is null");
 
@@ -406,7 +406,7 @@ namespace MillGame.Models.Core
          * Take stone and update winner
          * @param a Action
          */
-        public void update(Taking a)
+        public void Update(Taking a)
         {
             Contract.Assert(a != null, "action is null");
 

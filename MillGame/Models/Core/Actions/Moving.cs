@@ -62,7 +62,7 @@ namespace MillGame.Models.Core.Actions
         public override void Update(State s)
         {
             Contract.Assert(s != null, "s is null");
-            s.update(this);
+            s.Update(this);
         }
 
         public override void Writeln(Stream os)

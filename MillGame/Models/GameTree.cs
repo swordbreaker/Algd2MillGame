@@ -13,6 +13,7 @@ namespace MillGame.Models
      * Black is a minimum player (minimizer); White is a maximum player (maximizer).
      * 
      * @author christoph.stamm
+     * @author Yanick Schraner
      * @version 14.9.2010
      *
      */
@@ -68,6 +69,11 @@ namespace MillGame.Models
         public Action ComputerPlayer()
         {
             throw new NotImplementedException();
+        }
+
+        private void BuildTree()
+        {
+
         }
     }
 }

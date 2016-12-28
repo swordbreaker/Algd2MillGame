@@ -80,13 +80,13 @@ namespace MillGame.Models.Core.Actions
             var moving = Action as Moving;
             if (moving != null)
             {
-                s.update(moving);
+                s.Update(moving);
             }
             else
             {
                 s.Update((Placing)Action);
             }
-            s.update(this);
+            s.Update(this);
         }
 
         public override void Writeln(Stream os)
