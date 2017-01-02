@@ -44,6 +44,7 @@ namespace MillGame.Models
             m_currentNode.Data().Update(m_currentState);
             m_height = height;
             m_root = m_currentNode;
+            m_root.Create(0, height, IController.BLACK, m_root, m_currentState);
         }
 
         /**
@@ -64,6 +65,7 @@ namespace MillGame.Models
             GameNode oldNode = m_currentNode;
             m_currentNode = m_currentNode.RemoveUnusedChilds(a);
             m_currentState = m_currentNode.ComputeState(m_currentState, oldNode);
+            m_currentNode.Create(0, m_height, m_currentNode.Data().Color(), m_currentNode, m_currentState);
         }
 
         /**
@@ -88,6 +90,7 @@ namespace MillGame.Models
                 GameNode oldNode = m_currentNode;
                 m_currentNode = m_currentNode.RemoveUnusedChilds(bestAction);
                 m_currentState = m_currentNode.ComputeState(m_currentState, oldNode);
+                m_currentNode.Create(0, m_height, m_currentNode.Data().Color(), m_currentNode, m_currentState);
             }
             return bestAction;
         }

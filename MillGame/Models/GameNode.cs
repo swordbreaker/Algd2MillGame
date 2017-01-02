@@ -24,6 +24,7 @@ namespace MillGame.Models
 
         /**
         * Create new nodes recursively.
+        * Approximate O(24*(height-curHeight))
         * @param curHeight current subtree height
         * @param height Subtree height
         * @param color Color of next actions
@@ -33,45 +34,83 @@ namespace MillGame.Models
         */
         public int Create(int curHeight, int height, sbyte color, GameNode root, State rootState)
         {
-            // TODO Find out how this method is going to be used..
             int numberOfCreatedNodes = 0;
-            if(curHeight != height)
+            if(curHeight != height && !rootState.Finished())
             {
                 if (color == IController.WHITE)
                 {
                     // White is minimizer
-                    if (rootState.PlacingPhase(color))
+                    // Todo -> Wher to select minimizer maximizer?
+                    if (rootState.PlacingPhase(color) || rootState.JumpingPhase(color))
                     {
-
+                        foreach(byte position in State.TRANSPOSED)
+                        {
+                            if(rootState.IsValidPlace(position, color))
+                            {
+                                GameNode childNode = root.Add(new Placing(color, position));
+                                State newState = rootState.clone();
+                                childNode.Data().Update(newState);
+                                numberOfCreatedNodes++;
+                                numberOfCreatedNodes += Create(curHeight++, height, State.OppositeColor(color), childNode, newState);
+                            }
+                        }
                     }
                     else if (rootState.MovingPhase(color))
                     {
-
-                    }
-                    else if (rootState.JumpingPhase(color))
-                    {
-
+                        for(int i = 0; i < State.TRANSPOSED.Length; i++)
+                        {
+                            foreach(byte to in State.MOVES[i])
+                            {
+                                if(rootState.IsValidMove(State.TRANSPOSED[i], to, color))
+                                {
+                                    GameNode childNode = root.Add(new Moving(color, State.TRANSPOSED[i], to));
+                                    State newState = rootState.clone();
+                                    childNode.Data().Update(newState);
+                                    numberOfCreatedNodes++;
+                                    numberOfCreatedNodes += Create(curHeight++, height, State.OppositeColor(color), childNode, newState);
+                                }
+                            }
+                        }
                     }
                 }
                 else
                 {
                     // Black is maximizer
-                    if (rootState.PlacingPhase(color))
+                    // Todo -> Wher to select minimizer maximizer?
+                    if (rootState.PlacingPhase(color) || rootState.JumpingPhase(color))
                     {
-
+                        foreach (byte position in State.TRANSPOSED)
+                        {
+                            if (rootState.IsValidPlace(position, color))
+                            {
+                                GameNode childNode = root.Add(new Placing(color, position));
+                                State newState = rootState.clone();
+                                childNode.Data().Update(newState);
+                                numberOfCreatedNodes++;
+                                numberOfCreatedNodes += Create(curHeight++, height, State.OppositeColor(color), childNode, newState);
+                            }
+                        }
                     }
                     else if (rootState.MovingPhase(color))
                     {
-
-                    }
-                    else if (rootState.JumpingPhase(color))
-                    {
-
+                        for (int i = 0; i < State.TRANSPOSED.Length; i++)
+                        {
+                            foreach (byte to in State.MOVES[i])
+                            {
+                                if (rootState.IsValidMove(State.TRANSPOSED[i], to, color))
+                                {
+                                    GameNode childNode = root.Add(new Moving(color, State.TRANSPOSED[i], to));
+                                    State newState = rootState.clone();
+                                    childNode.Data().Update(newState);
+                                    numberOfCreatedNodes++;
+                                    numberOfCreatedNodes += Create(curHeight++, height, State.OppositeColor(color), childNode, newState);
+                                }
+                            }
+                        }
                     }
                 }
             }
             return numberOfCreatedNodes;
-            throw new NotImplementedException();
         }
 
         /**
