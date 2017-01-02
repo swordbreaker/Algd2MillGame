@@ -58,7 +58,7 @@ namespace MillGame.Models
 	     */
         public void HumanPlayer(Action a)
         {
-            throw new NotImplementedException();
+            m_currentNode = m_currentNode.RemoveUnusedChilds(a);
         }
 
         /**
@@ -68,12 +68,18 @@ namespace MillGame.Models
          */
         public Action ComputerPlayer()
         {
-            throw new NotImplementedException();
-        }
-
-        private void BuildTree()
-        {
-
+            int maxScore = int.MinValue;
+            Action bestAction = null;
+            foreach(GameNode child in m_currentNode.m_children)
+            {
+                if (maxScore < child.Score())
+                {
+                    maxScore = child.Score();
+                    bestAction = child.Data();
+                }
+            }
+            if (bestAction != null) m_currentNode = m_currentNode.RemoveUnusedChilds(bestAction);
+            return bestAction;
         }
     }
 }

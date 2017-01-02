@@ -16,6 +16,11 @@ namespace MillGame.Models
         {
         }
 
+        public GameNode(Core.Actions.Action action, int score) : base(action)
+        {
+            m_score = score;
+        }
+
         /**
 	     * Create new node and add it to this as a child node.
 	     * @param a Action
@@ -23,15 +28,38 @@ namespace MillGame.Models
 	     */
         public GameNode Add(Core.Actions.Action a, int score)
         {
-            this.m_data = a;
-            this.m_score = score;
-            return this;
+            GameNode node = new GameNode(a, score);
+            node.m_parent = this;
+            m_children.Enqueue(node);
+            return node;
         }
 
         public GameNode Add(Core.Actions.Action a)
         {
-            this.m_data = a;
-            return this;
+            GameNode node = new GameNode(a);
+            node.m_parent = this;
+            m_children.Enqueue(node);
+            return node;
+        }
+
+        /*
+         * Removes now unused subtrees
+         * O(n)
+         */
+        public GameNode RemoveUnusedChilds(Core.Actions.Action a)
+        {
+            GameNode node = null;
+            foreach(GameNode child in m_children)
+            {
+                if (child.Data() != a)
+                {
+                    m_children.Remove(child);
+                } else
+                {
+                    node = child;
+                }
+            }
+            return node;
         }
 
         /**
@@ -45,6 +73,7 @@ namespace MillGame.Models
         */
         public int Create(int curHeight, int height, byte color, GameNode root, State rootState)
         {
+            // TODO Find out how this method is going to be used..
             int numberOfCreatedNodes = 0;
 
             return numberOfCreatedNodes;
