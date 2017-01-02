@@ -17,11 +17,11 @@ namespace MillGame.Models
      * @version 14.9.2010
      *
      */
-    public class GameTree : Tree<IAction>, IGameTree
+    public class GameTree : Tree<Action>, IGameTree
     {
         private new GameNode m_root;
         private GameNode m_currentNode;
-        private State m_baseState;
+        private State m_currentState;
         private int m_height;
 
         /**
@@ -31,7 +31,8 @@ namespace MillGame.Models
         */
         public void Create(int height, Placing pa)
         {
-            if(pa == null)
+            // TODO Create Tree
+            if (pa == null)
             {
                 // First move made by computer
                 m_currentNode = new GameNode(ComputerPlayer());
@@ -39,6 +40,8 @@ namespace MillGame.Models
             {
                 m_currentNode = new GameNode(pa);
             }
+            m_currentState = new State();
+            m_currentNode.Data().Update(m_currentState);
             m_height = height;
             m_root = m_currentNode;
         }
@@ -49,7 +52,7 @@ namespace MillGame.Models
 	     */
         public State CurrentState()
         {
-            return m_currentNode.ComputeState(m_baseState, m_root);
+            return m_currentState;
         }
 
         /**
@@ -58,7 +61,9 @@ namespace MillGame.Models
 	     */
         public void HumanPlayer(Action a)
         {
+            GameNode oldNode = m_currentNode;
             m_currentNode = m_currentNode.RemoveUnusedChilds(a);
+            m_currentState = m_currentNode.ComputeState(m_currentState, oldNode);
         }
 
         /**
@@ -78,7 +83,12 @@ namespace MillGame.Models
                     bestAction = child.Data();
                 }
             }
-            if (bestAction != null) m_currentNode = m_currentNode.RemoveUnusedChilds(bestAction);
+            if (bestAction != null)
+            {
+                GameNode oldNode = m_currentNode;
+                m_currentNode = m_currentNode.RemoveUnusedChilds(bestAction);
+                m_currentState = m_currentNode.ComputeState(m_currentState, oldNode);
+            }
             return bestAction;
         }
     }

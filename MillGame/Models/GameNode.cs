@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MillGame.Models.Core;
 using MillGame.Models.Core.Actions;
+using Action = MillGame.Models.Core.Actions.Action;
 
 namespace MillGame.Models
 {
@@ -22,20 +23,74 @@ namespace MillGame.Models
         }
 
         /**
+        * Create new nodes recursively.
+        * @param curHeight current subtree height
+        * @param height Subtree height
+        * @param color Color of next actions
+        * @param root Subtree root
+        * @param rootState Game state at root
+        * @return Number of created nodes
+        */
+        public int Create(int curHeight, int height, sbyte color, GameNode root, State rootState)
+        {
+            // TODO Find out how this method is going to be used..
+            int numberOfCreatedNodes = 0;
+            if(curHeight != height)
+            {
+                if (color == IController.WHITE)
+                {
+                    // White is minimizer
+                    if (rootState.PlacingPhase(color))
+                    {
+
+                    }
+                    else if (rootState.MovingPhase(color))
+                    {
+
+                    }
+                    else if (rootState.JumpingPhase(color))
+                    {
+
+                    }
+                }
+                else
+                {
+                    // Black is maximizer
+                    if (rootState.PlacingPhase(color))
+                    {
+
+                    }
+                    else if (rootState.MovingPhase(color))
+                    {
+
+                    }
+                    else if (rootState.JumpingPhase(color))
+                    {
+
+                    }
+                }
+            }
+            return numberOfCreatedNodes;
+            throw new NotImplementedException();
+        }
+
+        /**
 	     * Create new node and add it to this as a child node.
 	     * @param a Action
 	     * @param score Score
 	     */
-        public GameNode Add(Core.Actions.Action a, int score)
+        public GameNode Add(Action a, int score)
         {
+            // TODO Add minimizer or maximizer?
             GameNode node = new GameNode(a, score);
             node.m_parent = this;
             m_children.Enqueue(node);
             return node;
         }
 
-        public GameNode Add(Core.Actions.Action a)
+        public GameNode Add(Action a)
         {
+            // TODO Add minimizer or maximizer?
             GameNode node = new GameNode(a);
             node.m_parent = this;
             m_children.Enqueue(node);
@@ -46,7 +101,7 @@ namespace MillGame.Models
          * Removes now unused subtrees
          * O(n)
          */
-        public GameNode RemoveUnusedChilds(Core.Actions.Action a)
+        public GameNode RemoveUnusedChilds(Action a)
         {
             GameNode node = null;
             foreach(GameNode child in m_children)
@@ -63,48 +118,16 @@ namespace MillGame.Models
         }
 
         /**
-        * Create new nodes recursively.
-        * @param curHeight current subtree height
-        * @param height Subtree height
-        * @param color Color of next actions
-        * @param root Subtree root
-        * @param rootState Game state at root
-        * @return Number of created nodes
-        */
-        public int Create(int curHeight, int height, byte color, GameNode root, State rootState)
-        {
-            // TODO Find out how this method is going to be used..
-            int numberOfCreatedNodes = 0;
-
-            return numberOfCreatedNodes;
-            throw new NotImplementedException();
-        }
-
-        /**
 	     * Compute game state at this node
 	     * @param s Game state at given node v
-	     * @param v Game node v must be ancestor of this
+	     * @param v Game node v must be parent of this
 	     * @return Game state at this node
 	     */
         public State ComputeState(State s, GameNode v)
         {
             State computedState = s.clone();
-            GameNode nextNode = null;
-            while(nextNode != this)
-            {
-                nextNode = findNextNode(v);
-                nextNode.m_data.Update(computedState);
-            }
+            v.Data().Update(computedState);
             return computedState;
-        }
-
-        /**
-         * Computes the next node in the path from the given node to the this node
-         */
-        private GameNode findNextNode(GameNode currentNode)
-        {
-            // TODO Find next node in the path to the this node
-            throw new NotImplementedException();
         }
 
         public int GetWinnerScore()
@@ -112,6 +135,7 @@ namespace MillGame.Models
             // Yanick: Why is this method here? I don't see the use of it. The winner store is stored in the state which is only available in the GameTree!
             // Can I delete it? It's not in the class diagram but in the interface.. WTF
             // Or maybe just compute the winner score (none, black or white)? But then I have to some how get a initial state an ancestor node of this to calculate this value..
+            // Take from minimizer / maximizer?
             throw new NotImplementedException();
         }
 
@@ -125,7 +149,7 @@ namespace MillGame.Models
          * If this score < other score  then return < 0
          * If this score == other score  then return 0
          */
-        public override int CompareTo(Node<Core.Actions.Action> other)
+        public override int CompareTo(Node<Action> other)
         {
             GameNode gameNodeOther = (GameNode) other;
             return m_score - gameNodeOther.m_score;

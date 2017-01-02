@@ -19,7 +19,7 @@ namespace MillGame.Models.Core
 	 * Create node with action
 	 * @param a Action
 	 */
-    public MaxNode(IAction a) : base(a)
+    public MaxNode(Actions.Action a) : base(a)
     {
     }
 
@@ -28,14 +28,14 @@ namespace MillGame.Models.Core
 	 * @param a Action
 	 * @param score Score
 	 */
-    public MaxNode(IAction a, int score) : base(a, score)
+    public MaxNode(Actions.Action a, int score) : base(a, score)
     {
     }
 
     /**
 	 * The children of a MinNode will be ordered in decreasing score order
 	 */
-    public int CompareTo(INode<IAction> v)
+    public int CompareTo(INode<Action> v)
     {
         int score1 = Score(), score2 = ((GameNode)v).Score();
 
