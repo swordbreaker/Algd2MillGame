@@ -39,8 +39,7 @@ namespace MillGame.Models
         }
 
         /**
-         * Return node data
-         * @return Node data
+         * @return Resulting position
          */
         public int Add(Node<T> v)
         {
@@ -69,7 +68,7 @@ namespace MillGame.Models
 
         public T Data()
         {
-            throw new NotImplementedException();
+            return m_data;
         }
 
         /**

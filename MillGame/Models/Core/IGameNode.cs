@@ -14,19 +14,19 @@ namespace MillGame.Models
  * @version 24.11.2009
  *
  */
-    public interface IGameNode : INode<IAction> {
+    public interface IGameNode : INode<Core.Actions.Action> {
     /**
 	 * Create new node and add it to this as a child node.
 	 * @param a Action
 	 * @param score Score
 	 */
-    GameNode Add(IAction a, int score);
+    GameNode Add(Core.Actions.Action a, int score);
 
     /**
 	 * Create new node and add it to this as a child node.
 	 * @param a Action
 	 */
-    GameNode Add(IAction a);
+    GameNode Add(Core.Actions.Action a);
 
     /**
 	 * Create new nodes recursively.

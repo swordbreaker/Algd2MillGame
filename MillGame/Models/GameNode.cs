@@ -8,7 +8,7 @@ using MillGame.Models.Core.Actions;
 
 namespace MillGame.Models
 {
-    public class GameNode : Node<Core.Actions.Action>
+    public class GameNode : Node<Core.Actions.Action>, IGameNode
     {
         protected int m_score;
 
@@ -45,6 +45,9 @@ namespace MillGame.Models
         */
         public int Create(int curHeight, int height, byte color, GameNode root, State rootState)
         {
+            int numberOfCreatedNodes = 0;
+
+            return numberOfCreatedNodes;
             throw new NotImplementedException();
         }
 
@@ -88,10 +91,15 @@ namespace MillGame.Models
             return m_score;
         }
 
+        /**
+         * If this score > other score  then return > 0
+         * If this score < other score  then return < 0
+         * If this score == other score  then return 0
+         */
         public override int CompareTo(Node<Core.Actions.Action> other)
         {
-            // TODO: Find good compare mechanism to build the tree and to find a given element efficent in the tree
-            throw new NotImplementedException();
+            GameNode gameNodeOther = (GameNode) other;
+            return m_score - gameNodeOther.m_score;
         }
     }
 }
