@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:MillGame.Views"
              mc:Ignorable="d" 
-             d:DesignHeight="500" d:DesignWidth="800">
+             d:DesignHeight="540" d:DesignWidth="800">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="80"/>
@@ -14,26 +14,134 @@
         </Grid.ColumnDefinitions>
         <!--Play Field-->
         <Grid Grid.Column="1">
-            <Canvas>
+            <Canvas Margin="122,0">
                 <Canvas.Background>
                     <ImageBrush ImageSource="/MillGame;component/Assets/Img/MillBoard.png" Stretch="Uniform"/>
                 </Canvas.Background>
-                <Ellipse Width="26" Height="26" Fill="#FFFFB69B" Canvas.Left="71" Canvas.Bottom="2" RenderTransformOrigin="0.5,0.5" 
-                         AllowDrop="True"/>
-                <Ellipse Width="26" Height="26" Fill="#FFFFB69B" Canvas.Left="306" Canvas.Bottom="2" RenderTransformOrigin="0.5,0.5"/>
             </Canvas>
         </Grid>
         <!--Left Field-->
         <Grid Grid.Column="0">
-            <Canvas>
-                <Ellipse Width="50" Height="50" Fill="Red" Canvas.Left="15" Canvas.Bottom="5"/>
-            </Canvas>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="60" />
+                <RowDefinition Height="60" />
+                <RowDefinition Height="60" />
+                <RowDefinition Height="60" />
+                <RowDefinition Height="60" />
+                <RowDefinition Height="60" />
+                <RowDefinition Height="60" />
+                <RowDefinition Height="60" />
+                <RowDefinition Height="60" />
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <Canvas>
+                    <Ellipse Width="50" Height="50" Fill="Red" Canvas.Left="15" Canvas.Bottom="5"/>
+                </Canvas>
+            </Grid>
+            <Grid Grid.Row="1">
+                <Canvas>
+                    <Ellipse Width="50" Height="50" Fill="Red" Canvas.Left="15" Canvas.Bottom="5"/>
+                </Canvas>
+            </Grid>
+            <Grid Grid.Row="2">
+                <Canvas>
+                    <Ellipse Width="50" Height="50" Fill="Red" Canvas.Left="15" Canvas.Bottom="5"/>
+                </Canvas>
+            </Grid>
+            <Grid Grid.Row="3">
+                <Canvas>
+                    <Ellipse Width="50" Height="50" Fill="Red" Canvas.Left="15" Canvas.Bottom="5"/>
+                </Canvas>
+            </Grid>
+            <Grid Grid.Row="4">
+                <Canvas>
+                    <Ellipse Width="50" Height="50" Fill="Red" Canvas.Left="15" Canvas.Bottom="5"/>
+                </Canvas>
+            </Grid>
+            <Grid Grid.Row="5">
+                <Canvas>
+                    <Ellipse Width="50" Height="50" Fill="Red" Canvas.Left="15" Canvas.Bottom="5"/>
+                </Canvas>
+            </Grid>
+            <Grid Grid.Row="6">
+                <Canvas>
+                    <Ellipse Width="50" Height="50" Fill="Red" Canvas.Left="15" Canvas.Bottom="5"/>
+                </Canvas>
+            </Grid>
+            <Grid Grid.Row="7">
+                <Canvas>
+                    <Ellipse Width="50" Height="50" Fill="Red" Canvas.Left="15" Canvas.Bottom="5"/>
+                </Canvas>
+            </Grid>
+            <Grid Grid.Row="8">
+                <Canvas>
+                    <Ellipse Width="50" Height="50" Fill="Red" Canvas.Left="15" Canvas.Bottom="5"/>
+                </Canvas>
+            </Grid>
         </Grid>
         <!--Right Field-->
         <Grid Grid.Column="2">
-            <Canvas>
-                <Ellipse Width="50" Height="50" Fill="Black" Canvas.Right="15" Canvas.Bottom="5"/>
-            </Canvas>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="60" />
+                <RowDefinition Height="60" />
+                <RowDefinition Height="60" />
+                <RowDefinition Height="60" />
+                <RowDefinition Height="60" />
+                <RowDefinition Height="60" />
+                <RowDefinition Height="60" />
+                <RowDefinition Height="60" />
+                <RowDefinition Height="60" />
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <Canvas>
+                    <Ellipse Width="50" Height="50" Fill="Black" Canvas.Right="15" Canvas.Bottom="5"/>
+                </Canvas>
+            </Grid>
+            <Grid Grid.Row="1">
+                <Canvas>
+                    <Ellipse Width="50" Height="50" Fill="Black" Canvas.Right="15" Canvas.Bottom="5"/>
+                </Canvas>
+            </Grid>
+            <Grid Grid.Row="2">
+                <Canvas>
+                    <Ellipse Width="50" Height="50" Fill="Black" Canvas.Right="15" Canvas.Bottom="5"/>
+                </Canvas>
+            </Grid>
+            <Grid Grid.Row="3">
+                <Canvas>
+                    <Ellipse Width="50" Height="50" Fill="Black" Canvas.Right="15" Canvas.Bottom="5"/>
+                </Canvas>
+            </Grid>
+            <Grid Grid.Row="4">
+                <Canvas>
+                    <Ellipse Width="50" Height="50" Fill="Black" Canvas.Right="15" Canvas.Bottom="5"/>
+                </Canvas>
+            </Grid>
+            <Grid Grid.Row="5">
+                <Canvas>
+                    <Ellipse Width="50" Height="50" Fill="Black" Canvas.Right="15" Canvas.Bottom="5"/>
+                </Canvas>
+            </Grid>
+            <Grid Grid.Row="6">
+                <Canvas>
+                    <Ellipse Width="50" Height="50" Fill="Black" Canvas.Right="15" Canvas.Bottom="5"/>
+                </Canvas>
+            </Grid>
+            <Grid Grid.Row="7">
+                <Canvas>
+                    <Ellipse Width="50" Height="50" Fill="Black" Canvas.Right="15" Canvas.Bottom="5"/>
+                </Canvas>
+            </Grid>
+            <Grid Grid.Row="8">
+                <Canvas>
+                    <Ellipse Width="50" Height="50" Fill="Black" Canvas.Right="15" Canvas.Bottom="5"/>
+                </Canvas>
+            </Grid>
+            <Grid Grid.Row="9">
+                <Canvas>
+                    <Ellipse Width="50" Height="50" Fill="Black" Canvas.Right="15" Canvas.Bottom="5"/>
+                </Canvas>
+            </Grid>
         </Grid>
     </Grid>
 </UserControl>
