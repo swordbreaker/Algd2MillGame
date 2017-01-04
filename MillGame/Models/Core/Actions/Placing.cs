@@ -32,20 +32,20 @@ namespace MillGame.Models.Core.Actions
             return false;
         }
 
-        public static bool operator ==(Placing p1, Placing p2)
-        {
-            return p1.Equals(p2);
-        }
+        //public static bool operator ==(Placing p1, Placing p2)
+        //{
+        //    return p1 != null && p1.Equals(p2);
+        //}
 
-        public static bool operator !=(Placing p1, Placing p2)
-        {
-            return !(p1 == p2);
-        }
+        //public static bool operator !=(Placing p1, Placing p2)
+        //{
+        //    return !(p1 == p2);
+        //}
 
         public override string ToString()
         {
             //TODO Fix
-            return string.Format("__-%02d:__", m_to);
+            return $"__-{m_to,2}:__";
             //return String.format("__-%02d:__", m_to);
         }
 

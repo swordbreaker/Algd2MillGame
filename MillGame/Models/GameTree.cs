@@ -32,19 +32,22 @@ namespace MillGame.Models
         public void Create(int height, Placing pa)
         {
             // TODO Create Tree
+            sbyte color;
             if (pa == null)
             {
                 // First move made by computer
                 m_currentNode = new MaxNode(ComputerPlayer());
+                color = IController.WHITE;
             } else
             {
                 m_currentNode = new MaxNode(pa);
+                color = IController.BLACK;
             }
             m_currentState = new State();
             m_currentNode.Data().Update(m_currentState);
             m_height = height;
             m_root = m_currentNode;
-            m_root.Create(0, height, IController.BLACK, m_root, m_currentState);
+            m_root.Create(0, height, color, m_root, m_currentState);
         }
 
         /**
@@ -75,6 +78,8 @@ namespace MillGame.Models
          */
         public Action ComputerPlayer()
         {
+            //TODO what should the bot do at the first turn?
+            if(m_currentNode == null) return new Placing(0, 2);
             int maxScore = int.MinValue;
             Action bestAction = null;
             foreach(GameNode child in m_currentNode.m_children)

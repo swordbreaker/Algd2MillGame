@@ -54,7 +54,7 @@ namespace MillGame.Models
                             State newState = rootState.clone();
                             childNode.Data().Update(newState);
                             numberOfCreatedNodes++;
-                            numberOfCreatedNodes += Create(curHeight++, height, State.OppositeColor(color), childNode, newState);
+                            numberOfCreatedNodes += Create(curHeight + 1, height, State.OppositeColor(color), childNode, newState);
                         }
                     }
                 }
@@ -70,7 +70,7 @@ namespace MillGame.Models
                                 State newState = rootState.clone();
                                 childNode.Data().Update(newState);
                                 numberOfCreatedNodes++;
-                                numberOfCreatedNodes += Create(curHeight++, height, State.OppositeColor(color), childNode, newState);
+                                numberOfCreatedNodes += Create(curHeight + 1, height, State.OppositeColor(color), childNode, newState);
                             }
                         }
                     }
@@ -159,16 +159,36 @@ namespace MillGame.Models
         public GameNode RemoveUnusedChilds(Action a)
         {
             GameNode node = null;
-            foreach(GameNode child in m_children)
+
+            //for (int i = 0; i < m_children.Count; i++)
+            //{
+            //    var curr = m_children.Deque();
+            //    if (curr.Data() == a)
+            //    {
+            //        node = (GameNode)curr;
+            //    }
+            //}
+
+            foreach (GameNode child in m_children)
             {
-                if (child.Data() != a)
-                {
-                    m_children.Remove(child);
-                } else
+                if (child.Data().Equals(a))
                 {
                     node = child;
                 }
             }
+
+            m_children.Clear();
+            m_children.Enqueue(node);
+            //foreach (GameNode child in m_children)
+            //{
+            //    if (child.Data() != a)
+            //    {
+            //        m_children.Remove(child);
+            //    } else
+            //    {
+            //        node = child;
+            //    }
+            //}
             return node;
         }
 

@@ -1,15 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
 using MillGame.Models.Core;
 using MillGame.Models.Core.Actions;
-using Action = System.Action;
 
 namespace MillGame.Models
 {
@@ -82,7 +77,8 @@ namespace MillGame.Models
             }
 
             SetStarter(b);
-            m_compi.Run();
+            Task.Run(() => m_compi.Run());
+
             //m_compi.Start();
 
             if (b)
@@ -202,7 +198,7 @@ namespace MillGame.Models
         /**
          * Exit application.
          */
-        public void exit()
+        public void Exit()
         {
             if (m_serverGame) CloseConnection();
             App.Current.Shutdown();

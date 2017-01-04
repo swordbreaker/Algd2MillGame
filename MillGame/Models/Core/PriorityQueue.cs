@@ -157,9 +157,15 @@ namespace MillGame.Models
             _values.CopyTo((T[])array, index);
         }
 
+        public T this[int index] => _values[index];
+
         public void Remove(T value)
         {
-            throw new NotImplementedException();
+            if (!Contains(value)) throw new ArgumentOutOfRangeException(nameof(value), "not found in the Queue");
+            var itemId = _values.BinarySearch(value);
+            _values[itemId] = _values[Count - 1];
+            _values[Count - 1] = value;
+            SiftUp(itemId);
         }
     }
 }

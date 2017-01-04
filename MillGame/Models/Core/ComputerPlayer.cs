@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -19,7 +20,7 @@ namespace MillGame.Models.Core
         private bool m_signal;
         private IController.Status m_status;
         private object _lock = new object();
-        private Mutex _mutex = new Mutex();
+        private Semaphore _mutex = new Semaphore(0, 1);
 
         public ComputerPlayer(IController controller)
         {
@@ -28,16 +29,18 @@ namespace MillGame.Models.Core
 
         public void Finish()
         {
+            Debug.WriteLine("FINISH COMPUTER PLAYER");
             m_status = IController.Status.FINISHED;
             m_signal = true;
-            _mutex.ReleaseMutex();
+            _mutex.Release();
             //notify();
         }
 
         public void Play()
         {
+            Debug.WriteLine("PLAY COMPUTER PLAYER");
             m_signal = true;
-            _mutex.ReleaseMutex();
+            _mutex.Release();
             //notify();
         }
 
@@ -51,6 +54,7 @@ namespace MillGame.Models.Core
                     m_signal = false;
                     if (m_status != IController.Status.FINISHED)
                     {
+                        Debug.WriteLine("RUN COMPUTER PLAYER");
                         Thread.Sleep(500);
                         m_controller.Compute();
                         m_status = m_controller.GetStatus();
