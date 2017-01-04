@@ -14,11 +14,119 @@
         </Grid.ColumnDefinitions>
         <!--Play Field-->
         <Grid Grid.Column="1">
-            <Canvas Margin="122,0">
+            <Canvas Margin="71,0">
                 <Canvas.Background>
                     <ImageBrush ImageSource="/MillGame;component/Assets/Img/MillBoard.png" Stretch="Uniform"/>
                 </Canvas.Background>
             </Canvas>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="52"/> 
+                    <ColumnDefinition Width="60"/> <!-- Col 0 -->
+                    <ColumnDefinition Width="16"/>
+                    <ColumnDefinition Width="60"/> <!-- Col 1 -->
+                    <ColumnDefinition Width="16"/>
+                    <ColumnDefinition Width="60"/> <!-- Col 2 -->
+                    <ColumnDefinition Width="16"/>
+                    <ColumnDefinition Width="60"/> <!-- Col 3 -->
+                    <ColumnDefinition Width="16"/>
+                    <ColumnDefinition Width="60"/> <!-- Col 4 -->
+                    <ColumnDefinition Width="16"/>
+                    <ColumnDefinition Width="60"/> <!-- Col 5 -->
+                    <ColumnDefinition Width="16"/>
+                    <ColumnDefinition Width="60"/> <!-- Col 6-->
+                    <ColumnDefinition Width="52"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="6" />
+                    <RowDefinition Height="60"/> <!-- Row 0 -->
+                    <RowDefinition Height="16"/>
+                    <RowDefinition Height="60"/> <!-- Row 1 -->
+                    <RowDefinition Height="16"/>
+                    <RowDefinition Height="60"/> <!-- Row 2 -->
+                    <RowDefinition Height="16"/>
+                    <RowDefinition Height="60"/> <!-- Row 3 -->
+                    <RowDefinition Height="16"/> 
+                    <RowDefinition Height="60"/> <!-- Row 4 -->
+                    <RowDefinition Height="16"/>
+                    <RowDefinition Height="60"/> <!-- Row 5 -->
+                    <RowDefinition Height="16"/>
+                    <RowDefinition Height="60"/> <!-- Row 6 -->
+                    <RowDefinition Height="6" />
+                </Grid.RowDefinitions>
+                <Grid Grid.Column="1" Grid.Row="1" AllowDrop="True" x:Uid="0" >
+                    
+                </Grid>
+                <Grid Grid.Column="7" Grid.Row="1" AllowDrop="True" x:Uid="1">
+
+                </Grid>
+                <Grid Grid.Column="13" Grid.Row="1" AllowDrop="True" x:Uid="2">
+
+                </Grid>
+                <Grid Grid.Column="3" Grid.Row="3" AllowDrop="True" x:Uid="3">
+
+                </Grid>
+                <Grid Grid.Column="7" Grid.Row="3" AllowDrop="True" x:Uid="4">
+
+                </Grid>
+                <Grid Grid.Column="11" Grid.Row="3" AllowDrop="True" x:Uid="5">
+
+                </Grid>
+                <Grid Grid.Column="5" Grid.Row="5" AllowDrop="True" x:Uid="6">
+
+                </Grid>
+                <Grid Grid.Column="7" Grid.Row="5" AllowDrop="True" x:Uid="7">
+
+                </Grid>
+                <Grid Grid.Column="9" Grid.Row="5" AllowDrop="True" x:Uid="8">
+
+                </Grid>
+                <Grid Grid.Column="1" Grid.Row="7" AllowDrop="True" x:Uid="9">
+
+                </Grid>
+                <Grid Grid.Column="3" Grid.Row="7" AllowDrop="True" x:Uid="10">
+
+                </Grid>
+                <Grid Grid.Column="5" Grid.Row="7" AllowDrop="True" x:Uid="11">
+
+                </Grid>
+                <Grid Grid.Column="9" Grid.Row="7" AllowDrop="True" x:Uid="12">
+
+                </Grid>
+                <Grid Grid.Column="11" Grid.Row="7" AllowDrop="True" x:Uid="13">
+
+                </Grid>
+                <Grid Grid.Column="13" Grid.Row="7" AllowDrop="True" x:Uid="14">
+
+                </Grid>
+                <Grid Grid.Column="5" Grid.Row="9" AllowDrop="True" x:Uid="15">
+
+                </Grid>
+                <Grid Grid.Column="7" Grid.Row="9" AllowDrop="True" x:Uid="16">
+
+                </Grid>
+                <Grid Grid.Column="9" Grid.Row="9" AllowDrop="True" x:Uid="17">
+
+                </Grid>
+                <Grid Grid.Column="3" Grid.Row="11" AllowDrop="True" x:Uid="18">
+
+                </Grid>
+                <Grid Grid.Column="7" Grid.Row="11" AllowDrop="True" x:Uid="19">
+
+                </Grid>
+                <Grid Grid.Column="11" Grid.Row="11" AllowDrop="True" x:Uid="20">
+
+                </Grid>
+                <Grid Grid.Column="1" Grid.Row="13" AllowDrop="True" x:Uid="21">
+
+                </Grid>
+                <Grid Grid.Column="7" Grid.Row="13" AllowDrop="True" x:Uid="22">
+
+                </Grid>
+                <Grid Grid.Column="13" Grid.Row="13" AllowDrop="True" x:Uid="23">
+
+                </Grid>
+            </Grid>
         </Grid>
         <!--Left Field-->
         <Grid Grid.Column="0">
