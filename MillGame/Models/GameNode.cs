@@ -9,6 +9,13 @@ using Action = MillGame.Models.Core.Actions.Action;
 
 namespace MillGame.Models
 {
+ /**
+ * 
+ * @author christoph.stamm
+ * @author yanick.schraner
+ * @version 04.01.2017
+ *
+ */
     public class GameNode : Node<Core.Actions.Action>, IGameNode
     {
         protected int m_score;
@@ -35,82 +42,91 @@ namespace MillGame.Models
         public int Create(int curHeight, int height, sbyte color, GameNode root, State rootState)
         {
             int numberOfCreatedNodes = 0;
-            if(curHeight != height && !rootState.Finished())
+            if (curHeight != height && !rootState.Finished())
             {
-                if (color == IController.WHITE)
+                if (rootState.PlacingPhase(color) || rootState.JumpingPhase(color))
                 {
-                    // White is minimizer
-                    // Todo -> Wher to select minimizer maximizer?
-                    if (rootState.PlacingPhase(color) || rootState.JumpingPhase(color))
+                    foreach (byte position in State.TRANSPOSED)
                     {
-                        foreach(byte position in State.TRANSPOSED)
+                        if (rootState.IsValidPlace(position, color))
                         {
-                            if(rootState.IsValidPlace(position, color))
-                            {
-                                GameNode childNode = root.Add(new Placing(color, position));
-                                State newState = rootState.clone();
-                                childNode.Data().Update(newState);
-                                numberOfCreatedNodes++;
-                                numberOfCreatedNodes += Create(curHeight++, height, State.OppositeColor(color), childNode, newState);
-                            }
-                        }
-                    }
-                    else if (rootState.MovingPhase(color))
-                    {
-                        for(int i = 0; i < State.TRANSPOSED.Length; i++)
-                        {
-                            foreach(byte to in State.MOVES[i])
-                            {
-                                if(rootState.IsValidMove(State.TRANSPOSED[i], to, color))
-                                {
-                                    GameNode childNode = root.Add(new Moving(color, State.TRANSPOSED[i], to));
-                                    State newState = rootState.clone();
-                                    childNode.Data().Update(newState);
-                                    numberOfCreatedNodes++;
-                                    numberOfCreatedNodes += Create(curHeight++, height, State.OppositeColor(color), childNode, newState);
-                                }
-                            }
+                            GameNode childNode = root.Add(new Placing(color, position), color);
+                            State newState = rootState.clone();
+                            childNode.Data().Update(newState);
+                            numberOfCreatedNodes++;
+                            numberOfCreatedNodes += Create(curHeight++, height, State.OppositeColor(color), childNode, newState);
                         }
                     }
                 }
-                else
+                else if (rootState.MovingPhase(color))
                 {
-                    // Black is maximizer
-                    // Todo -> Wher to select minimizer maximizer?
-                    if (rootState.PlacingPhase(color) || rootState.JumpingPhase(color))
+                    for (int i = 0; i < State.TRANSPOSED.Length; i++)
                     {
-                        foreach (byte position in State.TRANSPOSED)
+                        foreach (byte to in State.MOVES[i])
                         {
-                            if (rootState.IsValidPlace(position, color))
+                            if (rootState.IsValidMove(State.TRANSPOSED[i], to, color))
                             {
-                                GameNode childNode = root.Add(new Placing(color, position));
+                                GameNode childNode = root.Add(new Moving(color, State.TRANSPOSED[i], to), color);
                                 State newState = rootState.clone();
                                 childNode.Data().Update(newState);
                                 numberOfCreatedNodes++;
                                 numberOfCreatedNodes += Create(curHeight++, height, State.OppositeColor(color), childNode, newState);
-                            }
-                        }
-                    }
-                    else if (rootState.MovingPhase(color))
-                    {
-                        for (int i = 0; i < State.TRANSPOSED.Length; i++)
-                        {
-                            foreach (byte to in State.MOVES[i])
-                            {
-                                if (rootState.IsValidMove(State.TRANSPOSED[i], to, color))
-                                {
-                                    GameNode childNode = root.Add(new Moving(color, State.TRANSPOSED[i], to));
-                                    State newState = rootState.clone();
-                                    childNode.Data().Update(newState);
-                                    numberOfCreatedNodes++;
-                                    numberOfCreatedNodes += Create(curHeight++, height, State.OppositeColor(color), childNode, newState);
-                                }
                             }
                         }
                     }
                 }
             }
+
             return numberOfCreatedNodes;
+        }
+
+        /**
+	     * Create new minimizer or maximizer node and add it to this as a child node.
+	     * @param a Action
+	     * @param score Score
+	     */
+        public GameNode Add(Action a, int score, sbyte color)
+        {
+            GameNode node = null;
+            if(color == IController.BLACK)
+            {
+                // Black is minimizer
+                node = new MinNode(a, score);
+                node.m_parent = this;
+                m_children.Enqueue(node);
+            } else
+            {
+                // White is maximizer
+                node = new MaxNode(a, score);
+                node.m_parent = this;
+                m_children.Enqueue(node);
+            }
+            return node;
+        }
+
+        /**
+	     * Create new minimizer or maximizer node and add it to this as a child node.
+	     * @param a Action
+	     * @param score Score
+	     */
+        public GameNode Add(Action a, sbyte color)
+        {
+            GameNode node = null;
+            if (color == IController.BLACK)
+            {
+                // Black is minimizer
+                node = new MinNode(a);
+                node.m_parent = this;
+                m_children.Enqueue(node);
+            }
+            else
+            {
+                // White is maximizer
+                node = new MaxNode(a);
+                node.m_parent = this;
+                m_children.Enqueue(node);
+            }
+            return node;
         }
 
         /**
@@ -120,7 +136,7 @@ namespace MillGame.Models
 	     */
         public GameNode Add(Action a, int score)
         {
-            // TODO Add minimizer or maximizer?
+            // This method doesn't different between minimizer and maximizer!
             GameNode node = new GameNode(a, score);
             node.m_parent = this;
             m_children.Enqueue(node);
@@ -129,7 +145,7 @@ namespace MillGame.Models
 
         public GameNode Add(Action a)
         {
-            // TODO Add minimizer or maximizer?
+            // This method doesn't different between minimizer and maximizer!
             GameNode node = new GameNode(a);
             node.m_parent = this;
             m_children.Enqueue(node);
@@ -171,11 +187,8 @@ namespace MillGame.Models
 
         public int GetWinnerScore()
         {
-            // Yanick: Why is this method here? I don't see the use of it. The winner store is stored in the state which is only available in the GameTree!
-            // Can I delete it? It's not in the class diagram but in the interface.. WTF
-            // Or maybe just compute the winner score (none, black or white)? But then I have to some how get a initial state an ancestor node of this to calculate this value..
-            // Take from minimizer / maximizer?
-            throw new NotImplementedException();
+            // Will be taken per default from minimizer or maximizer. It shouldn't happen that a GameNode itself will be created
+            return 0;
         }
 
         public int Score()

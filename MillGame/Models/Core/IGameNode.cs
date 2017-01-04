@@ -9,7 +9,7 @@ using Action = MillGame.Models.Core.Actions.Action;
 
 namespace MillGame.Models
 {
-    /**
+ /**
  * 
  * @author christoph.stamm
  * @version 24.11.2009

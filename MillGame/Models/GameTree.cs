@@ -35,10 +35,10 @@ namespace MillGame.Models
             if (pa == null)
             {
                 // First move made by computer
-                m_currentNode = new GameNode(ComputerPlayer());
+                m_currentNode = new MaxNode(ComputerPlayer());
             } else
             {
-                m_currentNode = new GameNode(pa);
+                m_currentNode = new MaxNode(pa);
             }
             m_currentState = new State();
             m_currentNode.Data().Update(m_currentState);

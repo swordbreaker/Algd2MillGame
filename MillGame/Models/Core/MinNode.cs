@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MillGame.Models.Core;
 using MillGame.Models.Core.Actions;
 
-namespace MillGame.Models
+namespace MillGame.Models.Core
 {
     /**
      * A MinNode is a child of a MaxNode
@@ -21,7 +20,7 @@ namespace MillGame.Models
 	 * Create node with action
 	 * @param a Action
 	 */
-    public MinNode(Action a) : base(a)
+    public MinNode(Actions.Action a) : base(a)
     {
     }
 
@@ -30,12 +29,12 @@ namespace MillGame.Models
 	 * @param a Action
 	 * @param score Score
 	 */
-    public MinNode(Action a, int score) : base(a, score) { }
+    public MinNode(Actions.Action a, int score) : base(a, score) { }
 
     /**
 	 * The children of a MaxNode will be ordered in increasing score order
 	 */
-    public int CompareTo(INode<Action> v)
+    public int CompareTo(INode<Actions.Action> v)
     {
         int score2 = ((GameNode)v).Score();
 
