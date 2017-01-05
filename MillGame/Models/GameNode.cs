@@ -50,9 +50,10 @@ namespace MillGame.Models
                     {
                         if (rootState.IsValidPlace(position, color))
                         {
-                            GameNode childNode = root.Add(new Placing(color, position), color);
-                            State newState = rootState.clone();
+                            var childNode = root.Add(new Placing(color, position), color);
+                            var newState = rootState.clone();
                             childNode.Data().Update(newState);
+                            childNode.m_score = newState.Score();
                             numberOfCreatedNodes++;
                             numberOfCreatedNodes += Create(curHeight + 1, height, State.OppositeColor(color), childNode, newState);
                         }
@@ -69,6 +70,7 @@ namespace MillGame.Models
                                 GameNode childNode = root.Add(new Moving(color, State.TRANSPOSED[i], to), color);
                                 State newState = rootState.clone();
                                 childNode.Data().Update(newState);
+                                childNode.m_score = newState.Score();
                                 numberOfCreatedNodes++;
                                 numberOfCreatedNodes += Create(curHeight + 1, height, State.OppositeColor(color), childNode, newState);
                             }

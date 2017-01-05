@@ -64,8 +64,10 @@ namespace MillGame.Models
         {
             GameNode oldNode = m_currentNode;
             m_currentNode = m_currentNode.RemoveUnusedChilds(a);
-            m_currentState = m_currentNode.ComputeState(m_currentState, oldNode);
-            m_currentNode.Create(0, m_height, m_currentNode.Data().Color(), m_currentNode, m_currentState);
+            m_currentState = m_currentNode.ComputeState(m_currentState, m_currentNode);
+            //m_currentState = m_currentNode.ComputeState(m_currentState, oldNode);
+            var oppColor = State.OppositeColor(a.Color());
+            m_currentNode.Create(0, m_height, oppColor, m_currentNode, m_currentState);
         }
 
         /**
@@ -89,10 +91,11 @@ namespace MillGame.Models
             }
             if (bestAction != null)
             {
-                GameNode oldNode = m_currentNode;
                 m_currentNode = m_currentNode.RemoveUnusedChilds(bestAction);
-                m_currentState = m_currentNode.ComputeState(m_currentState, oldNode);
-                m_currentNode.Create(0, m_height, m_currentNode.Data().Color(), m_currentNode, m_currentState);
+                m_currentState = m_currentNode.ComputeState(m_currentState, m_currentNode);
+                //m_currentState = m_currentNode.ComputeState(m_currentState, oldNode);
+                var oppColor = State.OppositeColor(bestAction.Color());
+                m_currentNode.Create(0, m_height, oppColor, m_currentNode, m_currentState);
             }
             return bestAction;
         }

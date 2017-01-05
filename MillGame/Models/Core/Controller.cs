@@ -36,7 +36,9 @@ namespace MillGame.Models
         private bool m_humanStarts;  // human starts the game
         private GameClient m_gc;        // client/server module
         private bool m_serverGame;   // server sends human moves
-        private ComputerPlayer m_compi; // asynchronous computer player used in human game
+        private ComputerPlayer m_compi; // asynchronous computer player used in human game$
+
+        public IGameTree GameTree => m_gameTree;
 
         /**
          * Constructor

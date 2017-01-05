@@ -488,6 +488,8 @@ namespace MillGame.Models.Core
             return str.ToString();
         }
 
+        static Random rnd = new Random();
+
         /**
          * Compute score of this game state: Black is a minimizer, White a maximizer.
          * If this state has already a winner, then one of the predefined values BLACKWINS or
@@ -506,7 +508,8 @@ namespace MillGame.Models.Core
             else
             {
                 // compute score
-                throw new NotImplementedException();
+                var v = rnd.Next(int.MinValue + 1, int.MaxValue - 1);
+                return v;
             }
         }
     }

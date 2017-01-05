@@ -29,6 +29,7 @@ namespace UnitTestProject
                 IsComputerAction = isComputerAction,
                 Action = a
             };
+            
             Debug.WriteLine("Update board:");
             Debug.WriteLine($"{s} {a} {isComputerAction}");
         }
