@@ -27,8 +27,10 @@ namespace MillGame.Models.Core.Actions
      */
         public Taking(ActionPM action, int pos) : base(action.Color())
         {
-            Contract.Assert(action != null && (action is Placing || action is Moving), "wrong action");
-            Contract.Assert(pos >= 0 && pos < State.NPOS, "wrong board position");
+            if (!(action != null && (action is Placing || action is Moving))) throw new Exception("wrong action");
+            if (!(pos >= 0 && pos < State.NPOS)) throw new Exception("wrong board position");
+            //Contract.Requires<ArgumentException>(action != null && (action is Placing || action is Moving), "wrong action");
+            //Contract.Requires<ArgumentException>(pos >= 0 && pos < State.NPOS, "wrong board position");
 
             Action = action; // the action resulting in a take
             TakePosition = (byte)pos;
@@ -58,7 +60,7 @@ namespace MillGame.Models.Core.Actions
                 return $"__-{Action.EndPosition,2}:{TakePosition,2}";
                 //return String.Format("__-%02d:%02d", Action.EndPosition, TakePosition);
             }
-            return "PSST nothing to see here";
+            //return "PSST nothing to see here";
         }
 
         /**
@@ -75,13 +77,15 @@ namespace MillGame.Models.Core.Actions
 
         public override bool IsValid(State s)
         {
-            Contract.Assert(s != null, "s is null");
+            if (s == null) throw new Exception("s is null");
+            //Contract.Requires<ArgumentException>(s != null, "s is null");
             return s.IsValidTake(TakePosition, State.OppositeColor(m_color));
         }
 
         public override void Update(State s)
         {
-            Contract.Assert(s != null, "s is null");
+            if (s == null) throw new Exception("s is null");
+            //Contract.Requires<ArgumentException>(s != null, "s is null");
             var moving = Action as Moving;
             if (moving != null)
             {

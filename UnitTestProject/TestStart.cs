@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Diagnostics.Contracts;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MillGame.Models;
 using MillGame.Models.Core;
@@ -23,8 +24,8 @@ namespace UnitTestProject
 
             var status = controller.Play(new Placing(IController.WHITE, 1));
             var action = controller.Compute();
-            var status2 = controller.Play(new Placing(IController.WHITE, 0));
-            //
+            var status2 = controller.Play(new Placing(IController.WHITE, 5));
+            controller.Compute();
 
         }
     }

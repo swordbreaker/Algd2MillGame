@@ -24,8 +24,10 @@ namespace MillGame.Models.Core.Actions
          */
         public Moving(sbyte color, int from, int to) : base(color, to)
         {
-            Contract.Assert(from >= 0 && from < State.NPOS, "wrong board position");
-            Contract.Assert(from >= 0 && from < State.NPOS, "wrong board position");
+            if (!(from >= 0 && from < State.NPOS)) throw new Exception("wrong board position");
+            if (!(from >= 0 && from < State.NPOS)) throw new Exception("wrong board position");
+            //Contract.Requires<ArgumentException>(from >= 0 && from < State.NPOS, "wrong board position");
+            //Contract.Requires<ArgumentException>(from >= 0 && from < State.NPOS, "wrong board position");
             m_from = (byte)from;
         }
 
@@ -43,8 +45,8 @@ namespace MillGame.Models.Core.Actions
 
         public override string ToString()
         {
-            return string.Format("$0 ", 5);
-            return string.Format("%02d-%02d:__", m_from, m_to);
+            return $"{m_from,2}-{m_to,2:__} ";
+            //return string.Format("%02d-%02d:__", m_from, m_to);
             //return String.format("%02d-%02d:__", m_from, m_to);
         }
 
@@ -55,13 +57,15 @@ namespace MillGame.Models.Core.Actions
 
         public override bool IsValid(State s)
         {
-            Contract.Assert(s != null, "s is null");
+            if (s == null) throw new Exception("s is null");
+            //Contract.Requires<ArgumentException>(s != null, "s is null");
             return s.IsValidMove(m_from, m_to, m_color);
         }
 
         public override void Update(State s)
         {
-            Contract.Assert(s != null, "s is null");
+            if (s == null) throw new Exception("s is null");
+            //Contract.Requires<ArgumentException>(s != null, "s is null");
             s.Update(this);
         }
 

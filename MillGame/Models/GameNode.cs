@@ -177,6 +177,8 @@ namespace MillGame.Models
                 }
             }
 
+            if (node == null) throw new Exception("Action a is not present in the Priority queue");
+
             m_children.Clear();
             m_children.Enqueue(node);
             //foreach (GameNode child in m_children)

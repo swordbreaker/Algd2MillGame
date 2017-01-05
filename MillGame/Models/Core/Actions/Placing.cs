@@ -51,13 +51,15 @@ namespace MillGame.Models.Core.Actions
 
         public override bool IsValid(State s)
         {
-            Contract.Assert(s != null, "s is null");
+            if (s == null) throw new Exception("s is null");
+            //Contract.Requires<ArgumentException>(s != null, "s is null");
             return s.IsValidPlace(m_to, m_color);
         }
 
         public override void Update(State s)
         {
-            Contract.Assert(s != null, "s is null");
+            if (s == null) throw new Exception("s is null");
+            //Contract.Requires<ArgumentException>(s != null, "s is null");
             s.Update(this);
         }
 

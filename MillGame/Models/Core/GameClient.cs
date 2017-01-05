@@ -59,7 +59,7 @@ namespace MillGame.Models
                     m_playerName = reader.ReadLine();
                     reader.Close();
                 }
-                catch (FileNotFoundException ex)
+                catch (FileNotFoundException)
                 {
                     Debug.WriteLine("Warning: config.txt not found.");
                     hostName = "localhost";
@@ -100,7 +100,7 @@ namespace MillGame.Models
                     return true;
                 }
             }
-            catch (SocketException ex)
+            catch (SocketException)
             {
             }
 
@@ -113,7 +113,8 @@ namespace MillGame.Models
 
         public void StartGame()
         {
-            Contract.Assert(Socket != null && Socket.Connected && Socket.IsBound);
+            if (!(Socket != null && Socket.Connected && Socket.IsBound)) throw new Exception();
+            //Contract.Requires<ArgumentException>(Socket != null && Socket.Connected && Socket.IsBound);
             Controller.SetPlayerName(m_playerName);
             m_game = new Game(this);
             //m_game.Start();
@@ -128,7 +129,8 @@ namespace MillGame.Models
 
         public void StopGame(int winner)
         {
-            Contract.Assert(Socket != null && Socket.Connected && Socket.IsBound);
+            if (!(Socket != null && Socket.Connected && Socket.IsBound)) throw new Exception();
+            //Contract.Requires<ArgumentException>(Socket != null && Socket.Connected && Socket.IsBound);
 
             switch (winner)
             {
@@ -195,7 +197,8 @@ namespace MillGame.Models
 
         private IController.Status ReadAndWait()
         {
-            Contract.Assert(m_client.Socket != null);
+            if (m_client.Socket == null) throw new Exception();
+            //Contract.Requires<ArgumentException>(m_client.Socket != null);
 
 
             var buffer = new byte[1024];

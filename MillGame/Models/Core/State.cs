@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Text;
 using System.Windows;
@@ -100,7 +101,8 @@ namespace MillGame.Models.Core
          */
         public static sbyte OppositeColor(sbyte color)
         {
-            Contract.Assert(color == IController.WHITE || color == IController.BLACK);
+            if (!(color == IController.WHITE || color == IController.BLACK)) throw new Exception();
+            //Contract.Requires<ArgumentException>(color == IController.WHITE || color == IController.BLACK);
             //assert color == IController.WHITE || color == IController.BLACK : "wrong color";
             return (sbyte)(IController.WHITE - color);
         }
@@ -142,7 +144,8 @@ namespace MillGame.Models.Core
          */
         public int UnplacedStones(byte color)
         {
-            Contract.Assert(color == IController.WHITE || color == IController.BLACK);
+            if (!(color == IController.WHITE || color == IController.BLACK)) throw new Exception();
+            //Contract.Requires<ArgumentException>(color == IController.WHITE || color == IController.BLACK);
             return m_unplacedStones[color];
         }
 
@@ -153,7 +156,8 @@ namespace MillGame.Models.Core
          */
         public bool PlacingPhase(sbyte color)
         {
-            Contract.Assert(color == IController.WHITE || color == IController.BLACK);
+            if (!(color == IController.WHITE || color == IController.BLACK)) throw new Exception();
+            //Contract.Requires<ArgumentException>(color == IController.WHITE || color == IController.BLACK);
             return m_unplacedStones[color] > 0;
         }
 
@@ -164,7 +168,8 @@ namespace MillGame.Models.Core
          */
         public bool MovingPhase(sbyte color)
         {
-            Contract.Assert(color == IController.WHITE || color == IController.BLACK);
+            if (!(color == IController.WHITE || color == IController.BLACK)) throw new Exception();
+            //Contract.Requires<ArgumentException>(color == IController.WHITE || color == IController.BLACK);
 
             return m_unplacedStones[color] == 0;
         }
@@ -176,7 +181,8 @@ namespace MillGame.Models.Core
          */
         public bool JumpingPhase(sbyte color)
         {
-            Contract.Assert(color == IController.WHITE || color == IController.BLACK);
+            if (!(color == IController.WHITE || color == IController.BLACK)) throw new Exception();
+            //Contract.Requires<ArgumentException>(color == IController.WHITE || color == IController.BLACK);
             return MovingPhase(color) && m_stonesOnBoard[color] == 3;
         }
 
@@ -186,7 +192,8 @@ namespace MillGame.Models.Core
          */
         public void SetWinner(sbyte color)
         {
-            Contract.Assert(color == IController.WHITE || color == IController.BLACK);
+            if (!(color == IController.WHITE || color == IController.BLACK)) throw new Exception();
+            //Contract.Requires<ArgumentException>(color == IController.WHITE || color == IController.BLACK);
             m_winner = color;
         }
 
@@ -212,7 +219,8 @@ namespace MillGame.Models.Core
          */
         public sbyte color(sbyte pos)
         {
-            Contract.Assert(pos >= 0 && pos < State.NPOS);
+            if (!(pos >= 0 && pos < State.NPOS)) throw new Exception();
+            //Contract.Requires<ArgumentException>(pos >= 0 && pos < State.NPOS);
             //assert pos >= 0 && pos < State.NPOS : "wrong board position";
 
             return m_board[pos];
@@ -226,8 +234,11 @@ namespace MillGame.Models.Core
          */
         public bool InMill(int pos, sbyte color)
         {
-            Contract.Assert(pos >= 0 && pos < State.NPOS, "wrong board position");
-            Contract.Assert(color == IController.WHITE || color == IController.BLACK || color == IController.NONE, "wrong color");
+            if (!(pos >= 0 && pos < State.NPOS)) throw new Exception("wrong board position");
+            if (!(color == IController.WHITE || color == IController.BLACK || color == IController.NONE)) throw new Exception("wrong color");
+
+            //Contract.Requires<ArgumentException>(pos >= 0 && pos < State.NPOS, "wrong board position");
+            //Contract.Requires<ArgumentException>(color == IController.WHITE || color == IController.BLACK || color == IController.NONE, "wrong color");
             //assert pos >= 0 && pos < State.NPOS : "wrong board position";
             //assert color == IController.WHITE || color == IController.BLACK || color == IController.NONE : "wrong color";
 
@@ -287,8 +298,10 @@ namespace MillGame.Models.Core
          */
         public bool IsValidPlace(byte pos, sbyte color)
         {
-            Contract.Assert(pos >= 0 && pos < State.NPOS, "wrong board position");
-            Contract.Assert(color == IController.WHITE || color == IController.BLACK, "wrong color");
+            if (!(pos >= 0 && pos < State.NPOS)) throw new Exception("wrong board position");
+            if (!(color == IController.WHITE || color == IController.BLACK)) throw new Exception("wrong color");
+            //Contract.Requires<ArgumentException>(pos >= 0 && pos < State.NPOS, "wrong board position");
+            //Contract.Requires<ArgumentException>(color == IController.WHITE || color == IController.BLACK, "wrong color");
             //assert pos >= 0 && pos < State.NPOS : "wrong board position";
             //assert color == IController.WHITE || color == IController.BLACK : "wrong color";
 
@@ -301,12 +314,14 @@ namespace MillGame.Models.Core
          */
         public void Update(Placing a)
         {
-            Contract.Assert(a != null, "action is null");
+            if (a == null) throw new Exception("action is null");
+            //Contract.Requires<ArgumentException>(a != null, "action is null");
 
             byte pos = a.EndPosition;
             sbyte color = a.Color();
 
-            Contract.Assert(IsValidPlace(pos, color), "invalid action");
+            if (!IsValidPlace(pos, color)) throw new Exception("invalid action");
+            //Contract.Requires<ArgumentException>(IsValidPlace(pos, color), "invalid action");
 
 
             m_board[pos] = color;
@@ -323,9 +338,13 @@ namespace MillGame.Models.Core
          */
         public bool IsValidMove(byte from, byte to, sbyte color)
         {
-            Contract.Assert(from >= 0 && from < State.NPOS, "wrong board position");
-            Contract.Assert(to >= 0 && to < State.NPOS, "wrong board position");
-            Contract.Assert(color == IController.WHITE || color == IController.BLACK, "wrong color");
+            if (!(from >= 0 && from < State.NPOS)) throw new Exception("wrong board position");
+            if (!(to >= 0 && to < State.NPOS)) throw new Exception("wrong board position");
+            if (!(color == IController.WHITE || color == IController.BLACK)) throw new Exception("wrong color");
+
+            //Contract.Requires<ArgumentException>(from >= 0 && from < State.NPOS, "wrong board position");
+            //Contract.Requires<ArgumentException>(to >= 0 && to < State.NPOS, "wrong board position");
+            //Contract.Requires<ArgumentException>(color == IController.WHITE || color == IController.BLACK, "wrong color");
 
             if (MovingPhase(color) && from != to && m_board[from] == color && m_board[to] == IController.NONE)
             {
@@ -352,13 +371,15 @@ namespace MillGame.Models.Core
 
         public void Update(Moving a)
         {
-            Contract.Assert(a != null, "action is null");
+            if (a == null) throw new Exception("action is null");
+            //Contract.Requires<ArgumentException>(a != null, "action is null");
 
             byte from = a.StartPosition;
             byte to = a.EndPosition;
             sbyte color = a.Color();
 
-            Contract.Assert(IsValidMove(from, to, color), "invalid action");
+            if(!IsValidMove(from, to, color)) throw new Exception("invalid action");
+            //Contract.Requires<ArgumentException>(IsValidMove(from, to, color), "invalid action");
 
             m_board[from] = IController.NONE;
             m_board[to] = color;
@@ -372,8 +393,10 @@ namespace MillGame.Models.Core
          */
         public bool IsValidTake(byte pos, sbyte color)
         {
-            Contract.Assert(pos >= 0 && pos < State.NPOS, "wrong board position");
-            Contract.Assert(color == IController.WHITE || color == IController.BLACK, "wrong color");
+            if (!(pos >= 0 && pos < State.NPOS)) throw new Exception("wrong board position");
+            if (!(color == IController.WHITE || color == IController.BLACK)) throw new Exception("wrong color");
+            //Contract.Requires<ArgumentException>(pos >= 0 && pos < State.NPOS, "wrong board position");
+            //Contract.Requires<ArgumentException>(color == IController.WHITE || color == IController.BLACK, "wrong color");
 
 
             bool valid = false;
@@ -408,12 +431,14 @@ namespace MillGame.Models.Core
          */
         public void Update(Taking a)
         {
-            Contract.Assert(a != null, "action is null");
+            if (a == null) throw new Exception("action is null");
+            //Contract.Requires<ArgumentException>(a != null, "action is null");
 
             byte pos = a.TakePosition;
             var color = a.TakeColor; // color of taken stone
 
-            Contract.Assert(IsValidTake(pos, color), "invalid action");
+            if (!IsValidTake(pos, color)) throw new Exception("invalid action");
+            //Contract.Requires<ArgumentException>(IsValidTake(pos, color), "invalid action");
 
             m_board[pos] = IController.NONE;
             m_stonesOnBoard[color]--;

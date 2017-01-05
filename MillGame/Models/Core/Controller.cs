@@ -73,11 +73,11 @@ namespace MillGame.Models
             else
             {
                 // computer will begin every second game
-                b = (m_humanColor == IController.WHITE);
+                b = (m_humanColor != IController.WHITE);
             }
 
             SetStarter(b);
-            Task.Run(() => m_compi.Run());
+            //Task.Run(() => m_compi.Run());
 
             //m_compi.Start();
 
@@ -227,7 +227,9 @@ namespace MillGame.Models
          */
         public override Status Play(Core.Actions.Action a)
         {
-            Contract.Assert(a != null);
+            if (a == null) throw new Exception();
+            //Contract.Requires<ArgumentException>(a != null);
+            
             Status status;
 
             var pm = a as ActionPM;
@@ -241,7 +243,8 @@ namespace MillGame.Models
             }
             else
             {
-                Contract.Assert(false);
+                throw new Exception();
+                //Contract.Requires<ArgumentException>(false);
                 //assert false;
                 status = Status.INVALIDACTION;
             }
@@ -262,7 +265,8 @@ namespace MillGame.Models
             {
                 if (a is Placing)
                 {
-                    Contract.Assert(m_humanColor == IController.WHITE, "wrong human player color");
+                    if (m_humanColor != IController.WHITE) throw new Exception("wrong human player color");
+                    //Contract.Requires<ArgumentException>(m_humanColor == IController.WHITE, "wrong human player color");
                     m_gameTree.Create(TREEDEPTH, (Placing)a);
                     s = m_gameTree.CurrentState();
                     if (VERBOSE) Debug.WriteLine("Human has played\n\ttree size: " + m_gameTree.Size());
@@ -388,7 +392,8 @@ namespace MillGame.Models
          */
         public override void ComputeAsync()
         {
-            Contract.Assert(!m_serverGame && m_compi != null);
+            if (!(!m_serverGame && m_compi != null)) throw new Exception();
+            //Contract.Requires<ArgumentException>(!m_serverGame && m_compi != null);
             m_compi.Play();
         }
 
