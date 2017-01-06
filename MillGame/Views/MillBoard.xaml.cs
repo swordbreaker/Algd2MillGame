@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using MillGame.ViewModels;
 
 namespace MillGame.Views
 {
@@ -20,9 +21,18 @@ namespace MillGame.Views
     /// </summary>
     public partial class MillBoard : UserControl
     {
+        public static MillBoardViewModel ViewModel { get; private set; }
+        private bool secondClick = false;
+
         public MillBoard()
         {
+            ViewModel = new MillBoardViewModel();
             InitializeComponent();
+        }
+
+        private void MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            secondClick = ViewModel.StoneClick(sender, e, secondClick);
         }
     }
 }
