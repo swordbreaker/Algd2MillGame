@@ -26,13 +26,22 @@ namespace MillGame.Views
 
         public MillBoard()
         {
-            ViewModel = new MillBoardViewModel();
+            ViewModel = new MillBoardViewModel(this);
             InitializeComponent();
         }
 
         private void MouseUp(object sender, MouseButtonEventArgs e)
         {
-            secondClick = ViewModel.StoneClick(sender, e, secondClick);
+            secondClick = ViewModel.StoneClick(sender, secondClick);
         }
+
+        /* //GetStone Test
+        private void MouseUp2(object sender, MouseButtonEventArgs e)
+        {
+            object v1 = ViewModel.GetStone("White1");
+
+            System.Console.Write("");
+        }
+        */
     }
 }

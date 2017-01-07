@@ -16,17 +16,19 @@ namespace MillGame.ViewModels
     {
         private Brush _previousFill = null;
         private Ellipse _previousEllipse = null;
+        private String state = "PLACE"; // PLACE, MOVE, TAKE
 
         private readonly SolidColorBrush black = new SolidColorBrush(Colors.Black);
         private readonly SolidColorBrush red = new SolidColorBrush(Colors.Red);
         private readonly SolidColorBrush transparent = new SolidColorBrush(Colors.Transparent);
+        private MillBoard mBoard;
 
-        public MillBoardViewModel()
+        public MillBoardViewModel(MillBoard _mBoard)
         {
-            
+            mBoard = _mBoard;
         }
 
-        public bool StoneClick(object sender, MouseEventArgs e, bool secondClick)
+        public bool StoneClick(object sender, bool secondClick)
         {
             Ellipse ellipse = sender as Ellipse;
 
@@ -70,6 +72,51 @@ namespace MillGame.ViewModels
             }
 
             return secondClick = !secondClick;
+        }
+
+        public object GetStone(String name)
+        {
+
+            return GetStone(mBoard, name);
+        }
+
+        private object GetStone(DependencyObject parent, string name)
+        {
+            if (parent == null) return null;
+
+            object foundChild = null;
+
+            int childrenCount = VisualTreeHelper.GetChildrenCount(parent);
+
+            for(int i = 0; i < childrenCount;i++)
+            {
+                var child = VisualTreeHelper.GetChild(parent, i);
+                Ellipse childType = child as Ellipse;
+
+                if(childType == null)
+                {
+                    foundChild = GetStone(child, name);
+
+                    if (foundChild != null) break;
+                }
+                else if(!string.IsNullOrEmpty(name))
+                {
+                    var ellipseChild = child as Ellipse;
+
+                    if(ellipseChild != null && ellipseChild.Name == name)
+                    {
+                        foundChild = child;
+                        break;
+                    }
+                }
+                else
+                {
+                    foundChild = child;
+                    break;
+                }
+            }
+
+            return foundChild;
         }
     }
 }
