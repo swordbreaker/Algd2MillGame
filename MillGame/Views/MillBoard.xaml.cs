@@ -24,6 +24,8 @@ namespace MillGame.Views
         public static MillBoardViewModel ViewModel { get; private set; }
         private bool secondClick = false;
 
+        private int i = 0;
+
         public MillBoard()
         {
             ViewModel = new MillBoardViewModel(this);
