@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using MillGame.Models.Core;
 using MillGame.Models.Core.Actions;
 using Action = MillGame.Models.Core.Actions.Action;
+using System.Diagnostics;
 
 namespace MillGame.Models
 {
@@ -41,6 +42,7 @@ namespace MillGame.Models
         */
         public int Create(int curHeight, int height, sbyte color, GameNode root, State rootState)
         {
+            Debug.WriteLine("Create method of GameNode entered");
             int numberOfCreatedNodes = 0;
             if (curHeight != height && !rootState.Finished())
             {
@@ -50,12 +52,36 @@ namespace MillGame.Models
                     {
                         if (rootState.IsValidPlace(position, color))
                         {
-                            var childNode = root.Add(new Placing(color, position), color);
+                            ActionPM nextAction = new Placing(color, position);
+                            var childNode = root.Add(nextAction, color);
                             var newState = rootState.clone();
-                            childNode.Data().Update(newState);
-                            childNode.m_score = newState.Score();
                             numberOfCreatedNodes++;
-                            numberOfCreatedNodes += Create(curHeight + 1, height, State.OppositeColor(color), childNode, newState);
+                            if (newState.InMill(position, color))
+                            {
+                                Debug.WriteLine("Create: In Mill detected");
+                                if (newState.TakingIsPossible(State.OppositeColor(color)))
+                                {
+                                    Debug.WriteLine("Create: Taking is possible");
+                                    foreach (byte takingPosition in State.TRANSPOSED)
+                                    {
+                                        if (newState.IsValidTake(takingPosition, State.OppositeColor(color)))
+                                        {
+                                            Debug.WriteLine("Create: Valid taking move detected");
+                                            var takingNode = root.Add(new Taking(nextAction, takingPosition));
+                                            takingNode.Data().Update(newState);
+                                            takingNode.m_score = newState.Score();
+                                            numberOfCreatedNodes += Create(curHeight + 1, height, State.OppositeColor(color), takingNode, newState);
+                                        }
+                                    }
+                                    childNode.Remove();
+                                }
+                            }
+                            else
+                            {
+                                childNode.Data().Update(newState);
+                                childNode.m_score = newState.Score();
+                                numberOfCreatedNodes += Create(curHeight + 1, height, State.OppositeColor(color), childNode, newState);
+                            }
                         }
                     }
                 }
@@ -67,12 +93,36 @@ namespace MillGame.Models
                         {
                             if (rootState.IsValidMove(State.TRANSPOSED[i], to, color))
                             {
-                                GameNode childNode = root.Add(new Moving(color, State.TRANSPOSED[i], to), color);
+                                ActionPM nextAction = new Moving(color, State.TRANSPOSED[i], to);
+                                GameNode childNode = root.Add(nextAction, color);
                                 State newState = rootState.clone();
-                                childNode.Data().Update(newState);
-                                childNode.m_score = newState.Score();
                                 numberOfCreatedNodes++;
-                                numberOfCreatedNodes += Create(curHeight + 1, height, State.OppositeColor(color), childNode, newState);
+                                if (newState.InMill(to, color))
+                                {
+                                    Debug.WriteLine("Create: In Mill detected");
+                                    if (newState.TakingIsPossible(State.OppositeColor(color)))
+                                    {
+                                        Debug.WriteLine("Create: Taking is possible");
+                                        foreach (byte takingPosition in State.TRANSPOSED)
+                                        {
+                                            if (newState.IsValidTake(takingPosition, State.OppositeColor(color)))
+                                            {
+                                                Debug.WriteLine("Create: Valid taking move detected");
+                                                var takingNode = root.Add(new Taking(nextAction, takingPosition));
+                                                takingNode.Data().Update(newState);
+                                                takingNode.m_score = newState.Score();
+                                                numberOfCreatedNodes += Create(curHeight + 1, height, State.OppositeColor(color), takingNode, newState);
+                                            }
+                                        }
+                                        childNode.Remove();
+                                    }
+                                }
+                                else
+                                {
+                                    childNode.Data().Update(newState);
+                                    childNode.m_score = newState.Score();
+                                    numberOfCreatedNodes += Create(curHeight + 1, height, State.OppositeColor(color), childNode, newState);
+                                }
                             }
                         }
                     }
