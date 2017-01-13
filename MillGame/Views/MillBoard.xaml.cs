@@ -23,6 +23,7 @@ namespace MillGame.Views
     {
         public static MillBoardViewModel ViewModel { get; private set; }
         private bool secondClick = false;
+        private bool start = false;
 
         private int i = 0;
 
@@ -34,10 +35,35 @@ namespace MillGame.Views
 
         private void MouseUp(object sender, MouseButtonEventArgs e)
         {
-            secondClick = ViewModel.StoneClick(sender, secondClick);
+            if(start)
+            {
+                secondClick = ViewModel.StoneClick(sender, secondClick);
+            }
+            
         }
 
-        /* //GetStone Test
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.ButtonClick(sender);
+            RemoveButtons();
+            start = true;
+        }
+
+        private void RemoveButtons()
+        {
+            
+            object White = this.FindName("White");
+            object Black = this.FindName("Black");
+
+            Button btnWhite = White as Button;
+            btnWhite.Visibility = Visibility.Collapsed;
+
+            Button btnBlack = Black as Button;
+            btnBlack.Visibility = Visibility.Collapsed;
+        }
+
+        /*
+        //GetStone Test
         private void MouseUp2(object sender, MouseButtonEventArgs e)
         {
             object v1 = ViewModel.GetStone("White1");
