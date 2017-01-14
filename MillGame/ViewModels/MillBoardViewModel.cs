@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -33,7 +30,7 @@ namespace MillGame.ViewModels
         private List<int> redStonesPlace = new List<int>();
         private List<int> blackStonesPlace = new List<int>();
 
-        private Controller ctrl;
+        private Controller _ctrl;
         private Placing p;
         private Moving m;
         private Taking t;
@@ -43,14 +40,37 @@ namespace MillGame.ViewModels
         private readonly SolidColorBrush red = new SolidColorBrush(Colors.Red);
         private readonly SolidColorBrush transparent = new SolidColorBrush(Colors.Transparent);
 
+        public bool IsGameRunning { get; set; } = false;
+
+        public ICommand WhiteCommand { get; set; }
+        public ICommand BlackCommand { get; set; }
+
         public MillBoardViewModel(MillBoard _mBoard)
         {
             mBoard = _mBoard;
+            _ctrl = new Controller(this);
+
+            WhiteCommand = new SimpleCommand((o) =>
+            {
+                if(IsGameRunning) return;
+                mBoard.HideButtons();
+                IsGameRunning = true;
+                _ctrl.StartHumanGame(false);
+            });
+
+            BlackCommand = new SimpleCommand((o) =>
+            {
+                if (IsGameRunning) return;
+                mBoard.HideButtons();
+                IsGameRunning = true;
+                _ctrl.StartHumanGame(true);
+            });
+
         }
 
         public void SetCtrl(Controller _ctrl)
         {
-            ctrl = _ctrl;
+            this._ctrl = _ctrl;
         }
 
         // UNUSED
@@ -159,12 +179,12 @@ namespace MillGame.ViewModels
                     if (playerWhite && player)
                     {
                         p = new Placing(1, uid);
-                        ctrl.Play(p);
+                        _ctrl.Play(p);
                     }
                     else if(!playerWhite && player)
                     {
                         p = new Placing(0, uid);
-                        ctrl.Play(p);
+                        _ctrl.Play(p);
                     }
 
                     // Add boardposition and check for Mill
@@ -202,7 +222,7 @@ namespace MillGame.ViewModels
                 state = "MOVE";
             }
 
-            return secondClick = !secondClick;
+            return !secondClick;
         }
 
         private bool MovePhase(Ellipse ellipse, bool secondClick)

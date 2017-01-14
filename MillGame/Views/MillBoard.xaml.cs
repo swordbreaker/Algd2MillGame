@@ -25,8 +25,6 @@ namespace MillGame.Views
         public static MillBoardViewModel ViewModel { get; private set; }
         public static Controller _ctrl { get; private set; }
         private bool secondClick = false;
-        private bool start = false;
-
         private int i = 0;
 
         public MillBoard()
@@ -40,7 +38,7 @@ namespace MillGame.Views
 
         private void MouseUp(object sender, MouseButtonEventArgs e)
         {
-            if(start)
+            if(ViewModel.IsGameRunning)
             {
                 secondClick = ViewModel.StoneClick(sender, secondClick, true);
 
@@ -51,34 +49,10 @@ namespace MillGame.Views
             }
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        public void HideButtons()
         {
-            ViewModel.ButtonClick(sender);
-            RemoveButtons();
-            start = true;
-            Button btn = sender as Button;
-            if(btn.Name == "White")
-            {
-                _ctrl.StartHumanGame(false);
-            }
-            else
-            {
-                _ctrl.StartHumanGame(true);
-                _ctrl.Compute();
-            }
-        }
-
-        private void RemoveButtons()
-        {
-            
-            object White = this.FindName("White");
-            object Black = this.FindName("Black");
-
-            Button btnWhite = White as Button;
-            btnWhite.Visibility = Visibility.Collapsed;
-
-            Button btnBlack = Black as Button;
-            btnBlack.Visibility = Visibility.Collapsed;
+            BlackButton.Visibility = Visibility.Collapsed;
+            WhiteButton.Visibility = Visibility.Collapsed;
         }
 
         /*

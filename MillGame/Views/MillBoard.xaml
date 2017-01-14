@@ -15,8 +15,8 @@
         <!--Play Field-->
         <Grid Grid.Column="1">
             <Canvas>
-                <Button x:Name="Black" Click="Button_Click" Content="Start as Black" Canvas.Left="551"/>
-                <Button x:Name="White" Click="Button_Click" Content="Start as White" />
+                <Button x:Name="BlackButton" Command="{Binding BlackCommand}" Content="Start as Black" Canvas.Left="551"/>
+                <Button x:Name="WhiteButton" Command="{Binding WhiteCommand}" Content="Start as White" />
             </Canvas>
             <Canvas Margin="71,0">
                 <Canvas.Background>
