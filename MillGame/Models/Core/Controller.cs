@@ -308,7 +308,7 @@ namespace MillGame.Models
                 // check if a is a valid human player action
                 if (a.IsValid(s))
                 {
-                    var sCopy = s.clone();
+                    var sCopy = s.Clone();
 
                     // update temporary state with user action
                     a.Update(sCopy);
@@ -393,7 +393,7 @@ namespace MillGame.Models
                     else
                     {
                         // ActionPM part of a is valid, just the taking is invalid
-                        State sCopy = s.clone();
+                        State sCopy = s.Clone();
 
                         // update state with user action
                         a.Action.Update(sCopy);

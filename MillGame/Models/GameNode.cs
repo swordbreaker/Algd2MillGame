@@ -42,7 +42,7 @@ namespace MillGame.Models
         */
         public int Create(int curHeight, int height, sbyte color, GameNode root, State rootState)
         {
-            Debug.WriteLine("Create method of GameNode entered");
+            //Debug.WriteLine("Create method of GameNode entered");
             int numberOfCreatedNodes = 0;
             if (curHeight != height && !rootState.Finished())
             {
@@ -54,7 +54,7 @@ namespace MillGame.Models
                         {
                             ActionPM nextAction = new Placing(color, position);
                             var childNode = root.Add(nextAction, color);
-                            var newState = rootState.clone();
+                            var newState = rootState.Clone();
                             numberOfCreatedNodes++;
                             if (newState.InMill(position, color))
                             {
@@ -95,7 +95,7 @@ namespace MillGame.Models
                             {
                                 ActionPM nextAction = new Moving(color, State.TRANSPOSED[i], to);
                                 GameNode childNode = root.Add(nextAction, color);
-                                State newState = rootState.clone();
+                                State newState = rootState.Clone();
                                 numberOfCreatedNodes++;
                                 if (newState.InMill(to, color))
                                 {
@@ -254,7 +254,7 @@ namespace MillGame.Models
 	     */
         public State ComputeState(State s, GameNode v)
         {
-            State computedState = s.clone();
+            State computedState = s.Clone();
             v.Data().Update(computedState);
             return computedState;
         }

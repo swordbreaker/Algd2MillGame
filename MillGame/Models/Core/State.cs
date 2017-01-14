@@ -1,9 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Text;
 using System.Windows;
 using MillGame.Models.Core.Actions;
+using System.ComponentModel;
+using System.Linq;
+using System.Windows.Controls.Primitives;
 
 namespace MillGame.Models.Core
 {
@@ -31,14 +35,13 @@ namespace MillGame.Models.Core
 
         // positions
         public const sbyte INVALID = -1;  // invalid position
-        public const byte NPOS = 24;     // number of board positions
+        public const byte NPOS = 24;      // number of board positions
 
         // transposed board positions
-        public static readonly byte[] TRANSPOSED = new byte[] { 0, 9, 21, 3, 10, 18, 6, 11, 15, 1, 4, 7, 16, 19, 22, 8, 12, 17, 5, 13, 20, 2, 14, 23 };
+        public static readonly byte[] TRANSPOSED = { 0, 9, 21, 3, 10, 18, 6, 11, 15, 1, 4, 7, 16, 19, 22, 8, 12, 17, 5, 13, 20, 2, 14, 23 };
 
         // valid moves for each board position
-        public static readonly byte[][] MOVES = new byte[][]
-        {
+        public static readonly byte[][] MOVES = {
             new byte[]{ 1, 9 },
             new byte[]{ 0, 2, 4 },
             new byte[]{ 1, 14 },
@@ -91,7 +94,6 @@ namespace MillGame.Models.Core
         new Point(0, 6),
         new Point(3, 6),
         new Point(6, 6)
-
     };
 
         // class methods
@@ -102,16 +104,14 @@ namespace MillGame.Models.Core
         public static sbyte OppositeColor(sbyte color)
         {
             if (!(color == IController.WHITE || color == IController.BLACK)) throw new Exception();
-            //Contract.Requires<ArgumentException>(color == IController.WHITE || color == IController.BLACK);
-            //assert color == IController.WHITE || color == IController.BLACK : "wrong color";
             return (sbyte)(IController.WHITE - color);
         }
 
         // instance variables
-        private sbyte[] m_board = new sbyte[NPOS];    // valid positions 0..23
-        private sbyte[] m_stonesOnBoard = { 0, 0 };  // number of stones on board
+        private sbyte[] m_board = new sbyte[NPOS];   // valid positions 0..23
+        private byte[] m_stonesOnBoard = { 0, 0 };  // number of stones on board
         private sbyte[] m_unplacedStones = { 9, 9 }; // number of unplaced stones
-        private sbyte m_winner = IController.NONE;               // IController.NONE, IController.WHITE, IController.BLACK	
+        private sbyte m_winner = IController.NONE;   // IController.NONE, IController.WHITE, IController.BLACK	
 
         public State()
         {
@@ -127,13 +127,15 @@ namespace MillGame.Models.Core
         /**
          * Creates deep copy.
          */
-        public State clone()
+        public State Clone()
         {
-            State s = new State();
-            s.m_board = (sbyte[])m_board.Clone();
-            s.m_stonesOnBoard = (sbyte[])m_stonesOnBoard.Clone();
-            s.m_unplacedStones = (sbyte[])m_unplacedStones.Clone();
-            s.m_winner = m_winner;
+            var s = new State
+            {
+                m_board = (sbyte[]) m_board.Clone(),
+                m_stonesOnBoard = (byte[]) m_stonesOnBoard.Clone(),
+                m_unplacedStones = (sbyte[]) m_unplacedStones.Clone(),
+                m_winner = m_winner
+            };
             return s;
         }
 
@@ -217,7 +219,7 @@ namespace MillGame.Models.Core
          * @param pos Board position
          * @return Stone color at position pos or IController.NONE
          */
-        public sbyte color(sbyte pos)
+        public sbyte Color(sbyte pos)
         {
             if (!(pos >= 0 && pos < State.NPOS)) throw new Exception();
             //Contract.Requires<ArgumentException>(pos >= 0 && pos < State.NPOS);
@@ -298,12 +300,8 @@ namespace MillGame.Models.Core
          */
         public bool IsValidPlace(byte pos, sbyte color)
         {
-            if (!(pos >= 0 && pos < State.NPOS)) throw new Exception("wrong board position");
+            if (!(pos < State.NPOS)) throw new Exception("wrong board position");
             if (!(color == IController.WHITE || color == IController.BLACK)) throw new Exception("wrong color");
-            //Contract.Requires<ArgumentException>(pos >= 0 && pos < State.NPOS, "wrong board position");
-            //Contract.Requires<ArgumentException>(color == IController.WHITE || color == IController.BLACK, "wrong color");
-            //assert pos >= 0 && pos < State.NPOS : "wrong board position";
-            //assert color == IController.WHITE || color == IController.BLACK : "wrong color";
 
             return PlacingPhase(color) && m_board[pos] == IController.NONE;
         }
@@ -315,14 +313,11 @@ namespace MillGame.Models.Core
         public void Update(Placing a)
         {
             if (a == null) throw new Exception("action is null");
-            //Contract.Requires<ArgumentException>(a != null, "action is null");
 
-            byte pos = a.EndPosition;
-            sbyte color = a.Color();
+            var pos = a.EndPosition;
+            var color = a.Color();
 
             if (!IsValidPlace(pos, color)) throw new Exception("invalid action");
-            //Contract.Requires<ArgumentException>(IsValidPlace(pos, color), "invalid action");
-
 
             m_board[pos] = color;
             m_unplacedStones[color]--;
@@ -338,13 +333,9 @@ namespace MillGame.Models.Core
          */
         public bool IsValidMove(byte from, byte to, sbyte color)
         {
-            if (!(from >= 0 && from < State.NPOS)) throw new Exception("wrong board position");
-            if (!(to >= 0 && to < State.NPOS)) throw new Exception("wrong board position");
+            if (!(from < State.NPOS)) throw new Exception("wrong board position");
+            if (!(to < State.NPOS)) throw new Exception("wrong board position");
             if (!(color == IController.WHITE || color == IController.BLACK)) throw new Exception("wrong color");
-
-            //Contract.Requires<ArgumentException>(from >= 0 && from < State.NPOS, "wrong board position");
-            //Contract.Requires<ArgumentException>(to >= 0 && to < State.NPOS, "wrong board position");
-            //Contract.Requires<ArgumentException>(color == IController.WHITE || color == IController.BLACK, "wrong color");
 
             if (MovingPhase(color) && from != to && m_board[from] == color && m_board[to] == IController.NONE)
             {
@@ -372,14 +363,12 @@ namespace MillGame.Models.Core
         public void Update(Moving a)
         {
             if (a == null) throw new Exception("action is null");
-            //Contract.Requires<ArgumentException>(a != null, "action is null");
 
             byte from = a.StartPosition;
             byte to = a.EndPosition;
             sbyte color = a.Color();
 
             if(!IsValidMove(from, to, color)) throw new Exception("invalid action");
-            //Contract.Requires<ArgumentException>(IsValidMove(from, to, color), "invalid action");
 
             m_board[from] = IController.NONE;
             m_board[to] = color;
@@ -393,7 +382,7 @@ namespace MillGame.Models.Core
          */
         public bool IsValidTake(byte pos, sbyte color)
         {
-            if (!(pos >= 0 && pos < State.NPOS)) throw new Exception("wrong board position");
+            if (!(pos < State.NPOS)) throw new Exception("wrong board position");
             if (!(color == IController.WHITE || color == IController.BLACK)) throw new Exception("wrong color");
             //Contract.Requires<ArgumentException>(pos >= 0 && pos < State.NPOS, "wrong board position");
             //Contract.Requires<ArgumentException>(color == IController.WHITE || color == IController.BLACK, "wrong color");
@@ -432,13 +421,11 @@ namespace MillGame.Models.Core
         public void Update(Taking a)
         {
             if (a == null) throw new Exception("action is null");
-            //Contract.Requires<ArgumentException>(a != null, "action is null");
 
             byte pos = a.TakePosition;
             var color = a.TakeColor; // color of taken stone
 
             if (!IsValidTake(pos, color)) throw new Exception("invalid action");
-            //Contract.Requires<ArgumentException>(IsValidTake(pos, color), "invalid action");
 
             m_board[pos] = IController.NONE;
             m_stonesOnBoard[color]--;
@@ -490,12 +477,73 @@ namespace MillGame.Models.Core
 
         static Random rnd = new Random();
 
+        public struct ScoreInfomations
+        {
+            public enum Phase
+            {
+                Placing, Moving, Jumping
+            }
+
+            public byte[] numOfMills;
+            public byte[] numOfBlockedStones;
+            public byte[] numOfStones;
+            public byte[] numOf2Combis;
+            public byte[] numOf3Combis;
+            public byte[] numOfPosibileOpenMills;
+
+            public byte[] GetValues(sbyte color)
+            {
+                return new byte[]
+                {
+                    numOfMills[color],
+                    numOfBlockedStones[color],
+                    numOfStones[color],
+                    numOf2Combis[color],
+                    numOf3Combis[color],
+                    numOfPosibileOpenMills[color]
+                };
+            }
+
+            public string ToString(byte color)
+            {
+                return $" Number of Mills : {numOfMills?[color]} \n Number of blocked stones: {numOfBlockedStones?[color]} \n Number of Stones : {numOfStones?[color]} \n Number of 2 stone combinations {numOf2Combis?[color]} \n Number of 3 stone combinations {numOf3Combis?[color]} \n Number of possible moves to open a Mill {numOfPosibileOpenMills?[color]}";
+            }
+
+            public int[] CalculateScores(sbyte color, Phase phase)
+            {
+                var vals = GetValues(color);
+                int[] factors;
+                switch (phase)
+                {
+                    case Phase.Placing:
+                        factors = _placingFactors;
+                        break;
+                    case Phase.Moving:
+                        factors = _movingFactors;
+                        break;
+                    case Phase.Jumping:
+                        factors = _flyingFactors;
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(phase), phase, null);
+                }
+
+                return factors.Zip(vals, (a, b) => a*b).ToArray();
+            }
+        }
+
+        // numOfMills, numOfBlockedStones, numOfStones, numOf2Combis, numOf3Combis, numOfPosibileOpenMills
+        private static readonly int[] _placingFactors = {26, 1, 9, 10, 7, 0};
+        private static readonly  int[] _movingFactors = {43, 10, 11, 0, 0, 20};
+        private static readonly  int[] _flyingFactors = {43, 10, 11, 0, 0, 0};
+
         /**
          * Compute score of this game state: Black is a minimizer, White a maximizer.
          * If this state has already a winner, then one of the predefined values BLACKWINS or
          * WHITEWINS should be returned.
          * @return Score of this game state
          */
+
         public int Score()
         {
             sbyte winner = Winner;
@@ -507,11 +555,226 @@ namespace MillGame.Models.Core
             }
             else
             {
+                var infos = Infomations;
+
                 // compute score
                 var v = rnd.Next(int.MinValue + 1, int.MaxValue - 1);
-                return v;
+
+                ScoreInfomations.Phase wphase = ScoreInfomations.Phase.Placing;
+                ScoreInfomations.Phase bphase = ScoreInfomations.Phase.Placing;
+                if (PlacingPhase(IController.WHITE))
+                {
+                    wphase = ScoreInfomations.Phase.Placing;
+                }
+                else if (JumpingPhase(IController.WHITE))
+                {
+                    wphase = ScoreInfomations.Phase.Jumping;
+                }
+                else if(MovingPhase(IController.WHITE))
+                {
+                    wphase = ScoreInfomations.Phase.Moving;
+                }
+
+                if (PlacingPhase(IController.WHITE))
+                {
+                    bphase = ScoreInfomations.Phase.Placing;
+                }
+                else if (JumpingPhase(IController.WHITE))
+                {
+                    bphase = ScoreInfomations.Phase.Jumping;
+                }
+                else if (MovingPhase(IController.WHITE))
+                {
+                    bphase = ScoreInfomations.Phase.Moving;
+                }
+
+                var wScore = infos.CalculateScores(IController.WHITE, wphase);
+                var bScore = infos.CalculateScores(IController.BLACK, bphase);
+                
+                //Num of Mills
+                wScore[0] = wScore[0] - bScore[0];
+                //Num of blocked
+                wScore[1] = bScore[1] - wScore[1];
+                //Num of stones
+                wScore[2] = wScore[2] - bScore[2];
+                //Num 2 combis
+                wScore[3] = wScore[3] - bScore[3];
+                //Num 3 combis
+                wScore[4] = wScore[4] - bScore[4];
+                //Num of open mills
+                wScore[5] = wScore[5] - bScore[5];
+
+                return wScore.Aggregate((a, b) => a + b);
             }
         }
-    }
 
+        public ScoreInfomations Infomations
+        {
+            get
+            {
+                var inf = new ScoreInfomations();
+                GetMillInformations(ref inf);
+                GetStoneInformations(ref inf);
+                inf.numOfStones = m_stonesOnBoard;
+                return inf;
+            }
+        }
+
+        private void GetMillInformations(ref ScoreInfomations infos)
+        {
+            byte[] cornerStones = {0, 3, 6, 17, 20, 2};
+            byte[] middleStones = {01, 16, 09, 12};
+            var mills = new byte[2];
+            var potentialOpenings = new byte[2];
+
+            for (int i = 0; i < cornerStones.Length; i++)
+            {
+                var k = cornerStones[i];
+                var color = m_board[k];
+                if (color == IController.NONE) continue;
+                var direction = (cornerStones[i] <= 6) ? 1 : -1;
+                byte openings;
+                if (CheckForHorizontalMill(k, color, direction, out openings))
+                {
+                    mills[color]++;
+                    potentialOpenings[color] += openings;
+                }
+                if (CheckForVerticalMill(k, color, direction, out openings))
+                {
+                    mills[color]++;
+                    potentialOpenings[color] += openings;
+                }
+            }
+
+            for (int i = 0; i < 2; i++)
+            {
+                var k = middleStones[i];
+                var color = m_board[k];
+                if (color == IController.NONE) continue;
+                byte openings;
+                if (CheckForVerticalMill(k, color, 1, out openings))
+                {
+                    mills[color]++;
+                    potentialOpenings[color] += openings;
+                }
+            }
+
+            for (int i = 2; i < 4; i++)
+            {
+                var k = middleStones[i];
+                var color = m_board[k];
+                if (color == IController.NONE) continue;
+                byte openings;
+                if (CheckForHorizontalMill(k, color, 1, out openings))
+                {
+                    mills[color]++;
+                    potentialOpenings[color] += openings;
+                }
+            }
+
+            infos.numOfMills = mills;
+            infos.numOfPosibileOpenMills = potentialOpenings;
+        }
+
+        private void GetStoneInformations(ref ScoreInfomations infos)
+        {
+            var blocks = new byte[2];
+            var twoCombis = new byte[2];
+            var threeCombis = new byte[2];
+            var checkedStones = new bool[m_board.Length];
+
+
+            for (int i = 0; i < m_board.Length; i++)
+            {
+                var isBlocked = true;
+                var color = m_board[i];
+                var combi = 0;
+                checkedStones[i] = true;
+                for (int j = 0; j < MOVES[i].Length; j++)
+                {
+                    var k = MOVES[i][j];
+                    //Check if stone can move in this position
+                    if (m_board[k] == IController.NONE)
+                    {
+                        isBlocked = false;
+                    }
+                    //Check if this position is the same color and we not already have checked it
+                    else if (!checkedStones[k] && m_board[k] == color)
+                    {
+                        if (!InMill(k, color)) combi++;
+                        checkedStones[k] = true;
+                    }
+                }
+                if (isBlocked) blocks[color]++;
+                if (combi == 1) twoCombis[color]++;
+                if (combi == 2) threeCombis[color]++;
+            }
+
+            infos.numOf2Combis = twoCombis;
+            infos.numOf3Combis = threeCombis;
+            infos.numOfBlockedStones = blocks;
+        }
+
+        /// <summary>
+        /// Check if there is a Mill in the Horizontal line
+        /// </summary>
+        /// <param name="k">Start position need to be a corner position</param>
+        /// <param name="color">The color of the stone in the  start postion</param>
+        /// <param name="direction">1 for checking to the right -1 to checking to the left</param>
+        /// <param name="freePositions">Returns a number which represents the diffrent options to open the mill. Only returns a valid output when this method returns ture</param>
+        /// <returns>True if there is a Mill</returns>
+        private bool CheckForHorizontalMill(int k, sbyte color, int direction, out byte freePositions)
+        {
+            freePositions = 0;
+
+            //check if there is a open position at k
+            for (int j = 0; j < MOVES[k].Length; j++)
+            {
+                if (m_board[MOVES[k][j]] == IController.NONE) freePositions++;
+            }
+
+            for (int i = 1; i < 3; i++)
+            {
+                //calculate new postion t
+                var t = k + i*direction;
+                //check the color
+                if (m_board[t] != color)
+                {
+                    return false;
+                }
+                //check if there is a open position at t
+                for (int j = 0; j < MOVES[t].Length; j++)
+                {
+                    if (m_board[MOVES[t][j]] == IController.NONE) freePositions++;
+                }
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Check if there is a Mill in the Vertica line
+        /// </summary>
+        /// <param name="k">Start position need to be a corner position</param>
+        /// <param name="color">The color of the stone in the  start postion</param>
+        /// <param name="direction">1 for checking to the bottim -1 to checking to the top</param>
+        /// <param name="freePositions">Returns a number which represents the diffrent options to open the mill. Only returns a valid output when this method returns ture</param>
+        /// <returns>True if there is a Mill</returns>
+        private bool CheckForVerticalMill(int k, sbyte color, int direction, out byte freePositions)
+        {
+            freePositions = 0;
+            for (int i = 1; i < 3; i++)
+            {
+                var t = TRANSPOSED[k + i*direction];
+                if (m_board[t] != color)
+                {
+                    return false;
+                }
+                for (int j = 0; j < MOVES[t].Length; j++)
+                {
+                    if (m_board[MOVES[t][j]] == IController.NONE) freePositions++;
+                }
+            }
+            return true;
+        }
+    }
 }

@@ -55,6 +55,7 @@
     <Compile Include="TestStart.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestView.cs" />
+    <Compile Include="UnitTest1.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MillGame\MillGame.csproj">
