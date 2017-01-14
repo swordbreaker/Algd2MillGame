@@ -212,15 +212,6 @@ namespace MillGame.Models
         {
             GameNode node = null;
 
-            //for (int i = 0; i < m_children.Count; i++)
-            //{
-            //    var curr = m_children.Deque();
-            //    if (curr.Data() == a)
-            //    {
-            //        node = (GameNode)curr;
-            //    }
-            //}
-
             foreach (GameNode child in m_children)
             {
                 if (child.Data().Equals(a))
@@ -233,16 +224,6 @@ namespace MillGame.Models
 
             m_children.Clear();
             m_children.Enqueue(node);
-            //foreach (GameNode child in m_children)
-            //{
-            //    if (child.Data() != a)
-            //    {
-            //        m_children.Remove(child);
-            //    } else
-            //    {
-            //        node = child;
-            //    }
-            //}
             return node;
         }
 

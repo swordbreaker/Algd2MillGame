@@ -522,7 +522,7 @@ namespace MillGame.Models.Core
                         factors = _movingFactors;
                         break;
                     case Phase.Jumping:
-                        factors = _flyingFactors;
+                        factors = _jumpingFactors;
                         break;
                     default:
                         throw new ArgumentOutOfRangeException(nameof(phase), phase, null);
@@ -533,9 +533,9 @@ namespace MillGame.Models.Core
         }
 
         // numOfMills, numOfBlockedStones, numOfStones, numOf2Combis, numOf3Combis, numOfPosibileOpenMills
-        private static readonly int[] _placingFactors = {26, 1, 9, 10, 7, 0};
-        private static readonly  int[] _movingFactors = {43, 10, 11, 0, 0, 20};
-        private static readonly  int[] _flyingFactors = {43, 10, 11, 0, 0, 0};
+        private static readonly int[] _placingFactors  = {26, 1 , 9 , 10, 7, 0 };
+        private static readonly  int[] _movingFactors  = {43, 10, 11, 0 , 0, 20};
+        private static readonly  int[] _jumpingFactors = {0 , 0 , 0 , 10, 1, 0 };
 
         /**
          * Compute score of this game state: Black is a minimizer, White a maximizer.
@@ -686,8 +686,9 @@ namespace MillGame.Models.Core
 
             for (int i = 0; i < m_board.Length; i++)
             {
-                var isBlocked = true;
                 var color = m_board[i];
+                if(color == IController.NONE) continue;
+                var isBlocked = true;
                 var combi = 0;
                 checkedStones[i] = true;
                 for (int j = 0; j < MOVES[i].Length; j++)
