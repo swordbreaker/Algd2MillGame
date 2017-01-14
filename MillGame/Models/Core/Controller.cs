@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.IO;
 using System.Threading.Tasks;
+using System.Windows;
 using MillGame.Models.Core;
 using MillGame.Models.Core.Actions;
 
@@ -433,8 +434,11 @@ namespace MillGame.Models
             //m_gameTree.print();	
 
             // redraw game board: current game tree state is the state after computer played
-            m_view.UpdateBoard(m_gameTree.CurrentState(), a, true);
-
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                m_view.UpdateBoard(m_gameTree.CurrentState(), a, true);
+            });
+            
             return a;
         }
 

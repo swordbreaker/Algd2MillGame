@@ -78,7 +78,7 @@ namespace MillGame.Models
         public Action ComputerPlayer()
         {
             //TODO what should the bot do at the first turn?
-            if(m_currentNode == null) return new Placing(1, 10);
+            if(m_currentNode == null) return new Placing(IController.WHITE, 10);
             int maxScore = int.MinValue;
             Action bestAction = null;
             foreach(GameNode child in m_currentNode.m_children)

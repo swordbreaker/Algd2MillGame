@@ -82,6 +82,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ExtentionMethods\EllipseExtention.cs" />
     <Compile Include="Models\Core\Tree.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="ViewModels\MillBoardViewModel.cs" />

@@ -4,26 +4,149 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:MillGame.Views"
+             xmlns:system="clr-namespace:System;assembly=mscorlib"
              mc:Ignorable="d" 
              d:DesignHeight="540" d:DesignWidth="800" DataContext="{Binding ViewModel, RelativeSource={RelativeSource Self}}">
     <Grid>
-        <Grid.ColumnDefinitions>
+        <Grid>
+            <Grid.ColumnDefinitions>
             <ColumnDefinition Width="80"/>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="80"/>
         </Grid.ColumnDefinitions>
         <!--Play Field-->
         <Grid Grid.Column="1">
-            <Canvas>
+            <!--<Canvas>
                 <Button x:Name="BlackButton" Command="{Binding BlackCommand}" Content="Start as Black" Canvas.Left="551"/>
                 <Button x:Name="WhiteButton" Command="{Binding WhiteCommand}" Content="Start as White" />
-            </Canvas>
-            <Canvas Margin="71,0">
-                <Canvas.Background>
+            </Canvas>-->
+            <Image Margin="71,0" Source="/MillGame;component/Assets/Img/MillBoard.png" Stretch="Uniform"></Image>
+            <Canvas x:Name="BoardCanvas" Margin="71,0">
+                <!--<Canvas.Background>
                     <ImageBrush ImageSource="/MillGame;component/Assets/Img/MillBoard.png" Stretch="Uniform"/>
-                </Canvas.Background>
-            </Canvas>
-            <Grid>
+                </Canvas.Background>-->
+                    <Rectangle Width="50" Height="50" Canvas.Top="10" Panel.ZIndex="10" Fill="#00000000" Canvas.Left="-11" MouseUp="BoardRect_OnMouseUp">
+                        <Rectangle.Tag>
+                            <system:Int32>0</system:Int32>
+                        </Rectangle.Tag>
+                    </Rectangle>
+                    <Rectangle Width="50" Height="50" Canvas.Top="10" Panel.ZIndex="10" Fill="#00000000" Canvas.Left="224" MouseUp="BoardRect_OnMouseUp">
+                        <Rectangle.Tag>
+                            <system:Int32>1</system:Int32>
+                        </Rectangle.Tag>
+                    </Rectangle>
+                    <Rectangle Width="50" Height="50" Canvas.Top="10" Panel.ZIndex="10" Fill="#00000000" Canvas.Left="458" MouseUp="BoardRect_OnMouseUp">
+                        <Rectangle.Tag>
+                            <system:Int32>2</system:Int32>
+                        </Rectangle.Tag>
+                    </Rectangle>
+                    <Rectangle Width="50" Height="50" Canvas.Top="88" Panel.ZIndex="10" Fill="#00000000" Canvas.Left="69" MouseUp="BoardRect_OnMouseUp">
+                        <Rectangle.Tag>
+                            <system:Int32>3</system:Int32>
+                        </Rectangle.Tag>
+                    </Rectangle>
+                    <Rectangle Width="50" Height="50" Canvas.Top="88" Panel.ZIndex="10" Fill="#00000000" Canvas.Left="224" MouseUp="BoardRect_OnMouseUp">
+                        <Rectangle.Tag>
+                            <system:Int32>4</system:Int32>
+                        </Rectangle.Tag>
+                    </Rectangle>
+                    <Rectangle Width="50" Height="50" Canvas.Top="88" Panel.ZIndex="10" Fill="#00000000" Canvas.Left="379" MouseUp="BoardRect_OnMouseUp">
+                        <Rectangle.Tag>
+                            <system:Int32>5</system:Int32>
+                        </Rectangle.Tag>
+                    </Rectangle>
+                    <Rectangle Width="50" Height="50" Canvas.Top="166" Panel.ZIndex="10" Fill="#00000000" Canvas.Left="146" MouseUp="BoardRect_OnMouseUp">
+                        <Rectangle.Tag>
+                            <system:Int32>6</system:Int32>
+                        </Rectangle.Tag>
+                    </Rectangle>
+                    <Rectangle Width="50" Height="50" Canvas.Top="166" Panel.ZIndex="10" Fill="#00000000" Canvas.Left="224" MouseUp="BoardRect_OnMouseUp">
+                        <Rectangle.Tag>
+                            <system:Int32>7</system:Int32>
+                        </Rectangle.Tag>
+                    </Rectangle>
+                    <Rectangle Width="50" Height="50" Canvas.Top="166" Panel.ZIndex="10" Fill="#00000000" Canvas.Left="300" MouseUp="BoardRect_OnMouseUp">
+                        <Rectangle.Tag>
+                            <system:Int32>8</system:Int32>
+                        </Rectangle.Tag>
+                    </Rectangle>
+                    <Rectangle Width="50" Height="50" Canvas.Top="243" Panel.ZIndex="10" Fill="#00000000" Canvas.Left="-11" MouseUp="BoardRect_OnMouseUp">
+                        <Rectangle.Tag>
+                            <system:Int32>9</system:Int32>
+                        </Rectangle.Tag>
+                    </Rectangle>
+                    <Rectangle Width="50" Height="50" Canvas.Top="243"  Panel.ZIndex="10" Fill="#00000000" Canvas.Left="69" MouseUp="BoardRect_OnMouseUp">
+                        <Rectangle.Tag>
+                            <system:Int32>10</system:Int32>
+                        </Rectangle.Tag>
+                    </Rectangle>
+                    <Rectangle Width="50" Height="50" Canvas.Top="243"  Panel.ZIndex="10" Fill="#00000000" Canvas.Left="146" MouseUp="BoardRect_OnMouseUp">
+                        <Rectangle.Tag>
+                            <system:Int32>11</system:Int32>
+                        </Rectangle.Tag>
+                    </Rectangle>
+                    <Rectangle Width="50" Height="50" Canvas.Top="243"  Panel.ZIndex="10" Fill="#00000000" Canvas.Left="300" MouseUp="BoardRect_OnMouseUp">
+                        <Rectangle.Tag>
+                            <system:Int32>12</system:Int32>
+                        </Rectangle.Tag>
+                    </Rectangle>
+                    <Rectangle Width="50" Height="50" Canvas.Top="243"  Panel.ZIndex="10" Fill="#00000000" Canvas.Left="379" MouseUp="BoardRect_OnMouseUp">
+                        <Rectangle.Tag>
+                            <system:Int32>13</system:Int32>
+                        </Rectangle.Tag>
+                    </Rectangle>
+                    <Rectangle Width="50" Height="50" Canvas.Top="243"  Panel.ZIndex="10" Fill="#00000000" Canvas.Left="458" MouseUp="BoardRect_OnMouseUp">
+                        <Rectangle.Tag>
+                            <system:Int32>14</system:Int32>
+                        </Rectangle.Tag>
+                    </Rectangle>
+                    <Rectangle Width="50" Height="50" Canvas.Top="322"  Panel.ZIndex="10" Fill="#00000000" Canvas.Left="146" MouseUp="BoardRect_OnMouseUp">
+                        <Rectangle.Tag>
+                            <system:Int32>15</system:Int32>
+                        </Rectangle.Tag>
+                    </Rectangle>
+                    <Rectangle Width="50" Height="50" Canvas.Top="322"  Panel.ZIndex="10" Fill="#00000000" Canvas.Left="224" MouseUp="BoardRect_OnMouseUp">
+                        <Rectangle.Tag>
+                            <system:Int32>16</system:Int32>
+                        </Rectangle.Tag>
+                    </Rectangle>
+                    <Rectangle Width="50" Height="50" Canvas.Top="322"  Panel.ZIndex="10" Fill="#00000000" Canvas.Left="300" MouseUp="BoardRect_OnMouseUp">
+                        <Rectangle.Tag>
+                            <system:Int32>17</system:Int32>
+                        </Rectangle.Tag>
+                    </Rectangle>
+                    <Rectangle Width="50" Height="50" Canvas.Top="399"  Panel.ZIndex="10" Fill="#00000000" Canvas.Left="69" MouseUp="BoardRect_OnMouseUp">
+                        <Rectangle.Tag>
+                            <system:Int32>18</system:Int32>
+                        </Rectangle.Tag>
+                    </Rectangle>
+                    <Rectangle Width="50" Height="50" Canvas.Top="399"  Panel.ZIndex="10" Fill="#00000000" Canvas.Left="224" MouseUp="BoardRect_OnMouseUp">
+                        <Rectangle.Tag>
+                            <system:Int32>19</system:Int32>
+                        </Rectangle.Tag>
+                    </Rectangle>
+                    <Rectangle Width="50" Height="50" Canvas.Top="399"  Panel.ZIndex="10" Fill="#00000000" Canvas.Left="379" MouseUp="BoardRect_OnMouseUp">
+                        <Rectangle.Tag>
+                            <system:Int32>20</system:Int32>
+                        </Rectangle.Tag>
+                    </Rectangle>
+                    <Rectangle Width="50" Height="50" Canvas.Top="480"  Panel.ZIndex="10" Fill="#00000000" Canvas.Left="-11" MouseUp="BoardRect_OnMouseUp">
+                        <Rectangle.Tag>
+                            <system:Int32>21</system:Int32>
+                        </Rectangle.Tag>
+                    </Rectangle>
+                    <Rectangle Width="50" Height="50" Canvas.Top="480"  Panel.ZIndex="10" Fill="#00000000" Canvas.Left="224" MouseUp="BoardRect_OnMouseUp">
+                        <Rectangle.Tag>
+                            <system:Int32>22</system:Int32>
+                        </Rectangle.Tag>
+                    </Rectangle>
+                    <Rectangle Width="50" Height="50" Canvas.Top="480"  Panel.ZIndex="10" Fill="#00000000" Canvas.Left="458" MouseUp="BoardRect_OnMouseUp">
+                        <Rectangle.Tag>
+                            <system:Int32>23</system:Int32>
+                        </Rectangle.Tag>
+                    </Rectangle>
+                </Canvas>
+            <Grid Visibility="Collapsed">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="52"/>
                     <ColumnDefinition Width="60"/>
@@ -74,77 +197,77 @@
                 </Grid.RowDefinitions>
                 <!--    <Grid  > -->
                 <Canvas Grid.Column="1" Grid.Row="1" x:Uid="0">
-                    <Ellipse Width="50" Height="50" Fill="Transparent" Canvas.Left="5" Canvas.Bottom="5" MouseUp="MouseUp"/>
+                    <Ellipse Width="50" Height="50" Fill="Transparent" Canvas.Left="5" Canvas.Bottom="5" MouseUp="Stone_MouseUp"/>
                 </Canvas>
                 <!--     </Grid> -->
                 <Canvas Grid.Column="7" Grid.Row="1" x:Uid="1">
-                    <Ellipse Width="50" Height="50" Fill="Transparent" Canvas.Left="15" Canvas.Bottom="5" MouseUp="MouseUp"/>
+                    <Ellipse Width="50" Height="50" Fill="Transparent" Canvas.Left="15" Canvas.Bottom="5" MouseUp="Stone_MouseUp"/>
                 </Canvas>
                 <Canvas Grid.Column="13" Grid.Row="1" x:Uid="2">
-                    <Ellipse Width="50" Height="50" Fill="Transparent" Canvas.Left="24" Canvas.Bottom="5" MouseUp="MouseUp"/>
+                    <Ellipse Width="50" Height="50" Fill="Transparent" Canvas.Left="24" Canvas.Bottom="5" MouseUp="Stone_MouseUp"/>
                 </Canvas>
                 <Canvas Grid.Column="3" Grid.Row="3" x:Uid="3">
-                    <Ellipse Width="50" Height="50" Fill="Transparent" Canvas.Left="10" Canvas.Bottom="5" MouseUp="MouseUp"/>
+                    <Ellipse Width="50" Height="50" Fill="Transparent" Canvas.Left="10" Canvas.Bottom="5" MouseUp="Stone_MouseUp"/>
                 </Canvas>
                 <Canvas Grid.Column="7" Grid.Row="3" x:Uid="4">
-                    <Ellipse Width="50" Height="50" Fill="Transparent" Canvas.Left="10" Canvas.Bottom="5" MouseUp="MouseUp"/>
+                    <Ellipse Width="50" Height="50" Fill="Transparent" Canvas.Left="10" Canvas.Bottom="5" MouseUp="Stone_MouseUp"/>
                 </Canvas>
                 <Canvas Grid.Column="11" Grid.Row="3" x:Uid="5">
-                    <Ellipse Width="50" Height="50" Fill="Transparent" Canvas.Left="10" Canvas.Bottom="5" MouseUp="MouseUp"/>
+                    <Ellipse Width="50" Height="50" Fill="Transparent" Canvas.Left="10" Canvas.Bottom="5" MouseUp="Stone_MouseUp"/>
                 </Canvas>
                 <Canvas Grid.Column="5" Grid.Row="5" x:Uid="6">
-                    <Ellipse Width="50" Height="50" Fill="Transparent" Canvas.Left="10" Canvas.Bottom="5" MouseUp="MouseUp"/>
+                    <Ellipse Width="50" Height="50" Fill="Transparent" Canvas.Left="10" Canvas.Bottom="5" MouseUp="Stone_MouseUp"/>
                 </Canvas>
                 <Canvas Grid.Column="7" Grid.Row="5" x:Uid="7">
-                    <Ellipse Width="50" Height="50" Fill="Transparent" Canvas.Left="10" Canvas.Bottom="5" MouseUp="MouseUp"/>
+                    <Ellipse Width="50" Height="50" Fill="Transparent" Canvas.Left="10" Canvas.Bottom="5" MouseUp="Stone_MouseUp"/>
                 </Canvas>
                 <Canvas Grid.Column="9" Grid.Row="5" x:Uid="8">
-                    <Ellipse Width="50" Height="50" Fill="Transparent" Canvas.Left="10" Canvas.Bottom="5" MouseUp="MouseUp"/>
+                    <Ellipse Width="50" Height="50" Fill="Transparent" Canvas.Left="10" Canvas.Bottom="5" MouseUp="Stone_MouseUp"/>
                 </Canvas>
                 <Canvas Grid.Column="1" Grid.Row="7" x:Uid="9">
-                    <Ellipse Width="50" Height="50" Fill="Transparent" Canvas.Left="10" Canvas.Bottom="5" MouseUp="MouseUp"/>
+                    <Ellipse Width="50" Height="50" Fill="Transparent" Canvas.Left="10" Canvas.Bottom="5" MouseUp="Stone_MouseUp"/>
                 </Canvas>
                 <Canvas Grid.Column="3" Grid.Row="7" x:Uid="10">
-                    <Ellipse Width="50" Height="50" Fill="Transparent" Canvas.Left="10" Canvas.Bottom="5" MouseUp="MouseUp"/>
+                    <Ellipse Width="50" Height="50" Fill="Transparent" Canvas.Left="10" Canvas.Bottom="5" MouseUp="Stone_MouseUp"/>
                 </Canvas>
                 <Canvas Grid.Column="5" Grid.Row="7" x:Uid="11">
-                    <Ellipse Width="50" Height="50" Fill="Transparent" Canvas.Left="10" Canvas.Bottom="5" MouseUp="MouseUp"/>
+                    <Ellipse Width="50" Height="50" Fill="Transparent" Canvas.Left="10" Canvas.Bottom="5" MouseUp="Stone_MouseUp"/>
                 </Canvas>
                 <Canvas Grid.Column="9" Grid.Row="7" x:Uid="12">
-                    <Ellipse Width="50" Height="50" Fill="Transparent" Canvas.Left="10" Canvas.Bottom="5" MouseUp="MouseUp"/>
+                    <Ellipse Width="50" Height="50" Fill="Transparent" Canvas.Left="10" Canvas.Bottom="5" MouseUp="Stone_MouseUp"/>
                 </Canvas>
                 <Canvas Grid.Column="11" Grid.Row="7" x:Uid="13">
-                    <Ellipse Width="50" Height="50" Fill="Transparent" Canvas.Left="10" Canvas.Bottom="5" MouseUp="MouseUp"/>
+                    <Ellipse Width="50" Height="50" Fill="Transparent" Canvas.Left="10" Canvas.Bottom="5" MouseUp="Stone_MouseUp"/>
                 </Canvas>
                 <Canvas Grid.Column="13" Grid.Row="7" x:Uid="14">
-                    <Ellipse Width="50" Height="50" Fill="Transparent" Canvas.Left="10" Canvas.Bottom="5" MouseUp="MouseUp"/>
+                    <Ellipse Width="50" Height="50" Fill="Transparent" Canvas.Left="10" Canvas.Bottom="5" MouseUp="Stone_MouseUp"/>
                 </Canvas>
                 <Canvas Grid.Column="5" Grid.Row="9" x:Uid="15">
-                    <Ellipse Width="50" Height="50" Fill="Transparent" Canvas.Left="10" Canvas.Bottom="5" MouseUp="MouseUp"/>
+                    <Ellipse Width="50" Height="50" Fill="Transparent" Canvas.Left="10" Canvas.Bottom="5" MouseUp="Stone_MouseUp"/>
                 </Canvas>
                 <Canvas Grid.Column="7" Grid.Row="9" x:Uid="16">
-                    <Ellipse Width="50" Height="50" Fill="Transparent" Canvas.Left="10" Canvas.Bottom="5" MouseUp="MouseUp"/>
+                    <Ellipse Width="50" Height="50" Fill="Transparent" Canvas.Left="10" Canvas.Bottom="5" MouseUp="Stone_MouseUp"/>
                 </Canvas>
                 <Canvas Grid.Column="9" Grid.Row="9" x:Uid="17">
-                    <Ellipse Width="50" Height="50" Fill="Transparent" Canvas.Left="10" Canvas.Bottom="5" MouseUp="MouseUp"/>
+                    <Ellipse Width="50" Height="50" Fill="Transparent" Canvas.Left="10" Canvas.Bottom="5" MouseUp="Stone_MouseUp"/>
                 </Canvas>
                 <Canvas Grid.Column="3" Grid.Row="11" x:Uid="18">
-                    <Ellipse Width="50" Height="50" Fill="Transparent" Canvas.Left="10" Canvas.Bottom="5" MouseUp="MouseUp"/>
+                    <Ellipse Width="50" Height="50" Fill="Transparent" Canvas.Left="10" Canvas.Bottom="5" MouseUp="Stone_MouseUp"/>
                 </Canvas>
                 <Canvas Grid.Column="7" Grid.Row="11" x:Uid="19">
-                    <Ellipse Width="50" Height="50" Fill="Transparent" Canvas.Left="10" Canvas.Bottom="5" MouseUp="MouseUp"/>
+                    <Ellipse Width="50" Height="50" Fill="Transparent" Canvas.Left="10" Canvas.Bottom="5" MouseUp="Stone_MouseUp"/>
                 </Canvas>
                 <Canvas Grid.Column="11" Grid.Row="11" x:Uid="20">
-                    <Ellipse Width="50" Height="50" Fill="Transparent" Canvas.Left="10" Canvas.Bottom="5" MouseUp="MouseUp"/>
+                    <Ellipse Width="50" Height="50" Fill="Transparent" Canvas.Left="10" Canvas.Bottom="5" MouseUp="Stone_MouseUp"/>
                 </Canvas>
                 <Canvas Grid.Column="1" Grid.Row="13" x:Uid="21">
-                    <Ellipse Width="50" Height="50" Fill="Transparent" Canvas.Left="10" Canvas.Bottom="5" MouseUp="MouseUp"/>
+                    <Ellipse Width="50" Height="50" Fill="Transparent" Canvas.Left="10" Canvas.Bottom="5" MouseUp="Stone_MouseUp"/>
                 </Canvas>
                 <Canvas Grid.Column="7" Grid.Row="13" x:Uid="22">
-                    <Ellipse Width="50" Height="50" Fill="Transparent" Canvas.Left="10" Canvas.Bottom="5" MouseUp="MouseUp"/>
+                    <Ellipse Width="50" Height="50" Fill="Transparent" Canvas.Left="10" Canvas.Bottom="5" MouseUp="Stone_MouseUp"/>
                 </Canvas>
                 <Canvas Grid.Column="13" Grid.Row="13" x:Uid="23">
-                    <Ellipse Width="50" Height="50" Fill="Transparent" Canvas.Left="10" Canvas.Bottom="5" MouseUp="MouseUp"/>
+                    <Ellipse Width="50" Height="50" Fill="Transparent" Canvas.Left="10" Canvas.Bottom="5" MouseUp="Stone_MouseUp"/>
                 </Canvas>
             </Grid>
         </Grid>
@@ -164,55 +287,55 @@
             <Grid Grid.Row="0">
                 <Canvas Uid="50">
                     <Ellipse Width="50" Height="50" Fill="Red" Canvas.Left="15" Canvas.Bottom="5" 
-                             x:Name="White1" MouseUp="MouseUp" />
+                             x:Name="White1" MouseUp="Stone_MouseUp" Panel.ZIndex="15"/>
                 </Canvas>
             </Grid>
             <Grid Grid.Row="1">
                 <Canvas Uid="51">
                     <Ellipse Width="50" Height="50" Fill="Red" Canvas.Left="15" Canvas.Bottom="5"
-                             x:Name="White2" MouseUp="MouseUp" />
+                             x:Name="White2" MouseUp="Stone_MouseUp" Panel.ZIndex="15"/>
                 </Canvas>
             </Grid>
             <Grid Grid.Row="2">
                 <Canvas Uid="52">
                     <Ellipse Width="50" Height="50" Fill="Red" Canvas.Left="15" Canvas.Bottom="5"
-                             x:Name="White3" MouseUp="MouseUp" />
+                             x:Name="White3" MouseUp="Stone_MouseUp" Panel.ZIndex="15"/>
                 </Canvas>
             </Grid>
             <Grid Grid.Row="3">
                 <Canvas Uid="53">
                     <Ellipse Width="50" Height="50" Fill="Red" Canvas.Left="15" Canvas.Bottom="5"
-                             x:Name="White4" MouseUp="MouseUp" />
+                             x:Name="White4" MouseUp="Stone_MouseUp" Panel.ZIndex="15"/>
                 </Canvas>
             </Grid>
             <Grid Grid.Row="4">
                 <Canvas Uid="54">
                     <Ellipse Width="50" Height="50" Fill="Red" Canvas.Left="15" Canvas.Bottom="5"
-                             x:Name="White5" MouseUp="MouseUp" />
+                             x:Name="White5" MouseUp="Stone_MouseUp" Panel.ZIndex="15"/>
                 </Canvas>
             </Grid>
             <Grid Grid.Row="5">
                 <Canvas Uid="55">
                     <Ellipse Width="50" Height="50" Fill="Red" Canvas.Left="15" Canvas.Bottom="5"
-                             x:Name="White6" MouseUp="MouseUp" />
+                             x:Name="White6" MouseUp="Stone_MouseUp" Panel.ZIndex="15"/>
                 </Canvas>
             </Grid>
             <Grid Grid.Row="6">
                 <Canvas Uid="56">
                     <Ellipse Width="50" Height="50" Fill="Red" Canvas.Left="15" Canvas.Bottom="5"
-                             x:Name="White7" MouseUp="MouseUp" />
+                             x:Name="White7" MouseUp="Stone_MouseUp" Panel.ZIndex="15" />
                 </Canvas>
             </Grid>
             <Grid Grid.Row="7">
                 <Canvas Uid="57">
                     <Ellipse Width="50" Height="50" Fill="Red" Canvas.Left="15" Canvas.Bottom="5"
-                             x:Name="White8" MouseUp="MouseUp" />
+                             x:Name="White8" MouseUp="Stone_MouseUp" Panel.ZIndex="15"/>
                 </Canvas>
             </Grid>
             <Grid Grid.Row="8">
                 <Canvas  Uid="58">
                     <Ellipse Width="50" Height="50" Fill="Red" Canvas.Left="15" Canvas.Bottom="5"
-                             x:Name="White9" MouseUp="MouseUp" />
+                             x:Name="White9" MouseUp="Stone_MouseUp" Panel.ZIndex="15"/>
                 </Canvas>
             </Grid>
         </Grid>
@@ -232,57 +355,64 @@
             <Grid Grid.Row="0">
                 <Canvas Uid="60">
                     <Ellipse Width="50" Height="50" Fill="Black" Canvas.Right="15" Canvas.Bottom="5"
-                             x:Name="Black1" MouseUp="MouseUp" />
+                             x:Name="Black1" MouseUp="Stone_MouseUp" Panel.ZIndex="15"/>
                 </Canvas>
             </Grid>
             <Grid Grid.Row="1">
                 <Canvas Uid="61">
                     <Ellipse Width="50" Height="50" Fill="Black" Canvas.Right="15" Canvas.Bottom="5"
-                             x:Name="Black2" MouseUp="MouseUp" />
+                             x:Name="Black2" MouseUp="Stone_MouseUp" Panel.ZIndex="15"/>
                 </Canvas>
             </Grid>
             <Grid Grid.Row="2">
                 <Canvas Uid="62">
                     <Ellipse Width="50" Height="50" Fill="Black" Canvas.Right="15" Canvas.Bottom="5"
-                             x:Name="Black3" MouseUp="MouseUp" />
+                             x:Name="Black3" MouseUp="Stone_MouseUp" Panel.ZIndex="15" />
                 </Canvas>
             </Grid>
             <Grid Grid.Row="3">
                 <Canvas Uid="63">
                     <Ellipse Width="50" Height="50" Fill="Black" Canvas.Right="15" Canvas.Bottom="5"
-                             x:Name="Black4" MouseUp="MouseUp" />
+                             x:Name="Black4" MouseUp="Stone_MouseUp" Panel.ZIndex="15"/>
                 </Canvas>
             </Grid>
             <Grid Grid.Row="4">
                 <Canvas Uid="64">
                     <Ellipse Width="50" Height="50" Fill="Black" Canvas.Right="15" Canvas.Bottom="5"
-                             x:Name="Black5" MouseUp="MouseUp" />
+                             x:Name="Black5" MouseUp="Stone_MouseUp" Panel.ZIndex="15"/>
                 </Canvas>
             </Grid>
             <Grid Grid.Row="5">
                 <Canvas Uid="65">
                     <Ellipse Width="50" Height="50" Fill="Black" Canvas.Right="15" Canvas.Bottom="5"
-                             x:Name="Black6" MouseUp="MouseUp" />
+                             x:Name="Black6" MouseUp="Stone_MouseUp" Panel.ZIndex="15"/>
                 </Canvas>
             </Grid>
             <Grid Grid.Row="6">
                 <Canvas Uid="66">
                     <Ellipse Width="50" Height="50" Fill="Black" Canvas.Right="15" Canvas.Bottom="5"
-                             x:Name="Black7" MouseUp="MouseUp" />
+                             x:Name="Black7" MouseUp="Stone_MouseUp" Panel.ZIndex="15"/>
                 </Canvas>
             </Grid>
             <Grid Grid.Row="7">
                 <Canvas Uid="67">
                     <Ellipse Width="50" Height="50" Fill="Black" Canvas.Right="15" Canvas.Bottom="5"
-                             x:Name="Black8" MouseUp="MouseUp" />
+                             x:Name="Black8" MouseUp="Stone_MouseUp" Panel.ZIndex="15"/>
                 </Canvas>
             </Grid>
             <Grid Grid.Row="8">
                 <Canvas Uid="68">
                     <Ellipse Width="50" Height="50" Fill="Black" Canvas.Right="15" Canvas.Bottom="5"
-                             x:Name="Black9" MouseUp="MouseUp" />
+                             x:Name="Black9" MouseUp="Stone_MouseUp" Panel.ZIndex="15"/>
                 </Canvas>
             </Grid>
+        </Grid>
+        </Grid>
+        <Grid x:Name="BeginGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="#33FFFFFF">
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                <Button x:Name="BlackButton" Command="{Binding BlackCommand}" Content="Start as Black" Margin="10,10"/>
+                <Button x:Name="WhiteButton" Command="{Binding WhiteCommand}" Content="Start as White" Margin="10,10"/>
+            </StackPanel>
         </Grid>
     </Grid>
 </UserControl>

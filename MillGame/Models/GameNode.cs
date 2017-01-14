@@ -212,6 +212,8 @@ namespace MillGame.Models
         {
             GameNode node = null;
 
+            if (a is Taking) a = ((Taking) a).Action;
+
             foreach (GameNode child in m_children)
             {
                 if (child.Data().Equals(a))
