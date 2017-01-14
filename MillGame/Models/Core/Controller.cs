@@ -89,6 +89,28 @@ namespace MillGame.Models
             }
         }
 
+        public void StartHumanGame(bool compiBegin)
+        {
+            if (m_serverGame) StopServerGame();
+
+            // set player's name
+            m_view.SetComputerName("Computer");
+            m_view.SetHumanName("Player");
+
+            // start computer player
+            m_compi = new ComputerPlayer(this);
+
+            SetStarter(compiBegin);
+            //Task.Run(() => m_compi.Run());
+
+            //m_compi.Start();
+
+            if (compiBegin)
+            {
+                m_compi.Play();
+            }
+        }
+
         /**
          * Start a new game between two computer players using a game server
          */

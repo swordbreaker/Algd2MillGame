@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using MillGame.ViewModels;
+using MillGame.Models;
 
 namespace MillGame.Views
 {
@@ -22,6 +23,7 @@ namespace MillGame.Views
     public partial class MillBoard : UserControl
     {
         public static MillBoardViewModel ViewModel { get; private set; }
+        public static Controller _ctrl { get; private set; }
         private bool secondClick = false;
         private bool start = false;
 
@@ -30,6 +32,9 @@ namespace MillGame.Views
         public MillBoard()
         {
             ViewModel = new MillBoardViewModel(this);
+            _ctrl = new Controller(ViewModel);
+            ViewModel.SetCtrl(_ctrl);
+
             InitializeComponent();
         }
 
@@ -37,9 +42,13 @@ namespace MillGame.Views
         {
             if(start)
             {
-                secondClick = ViewModel.StoneClick(sender, secondClick);
+                secondClick = ViewModel.StoneClick(sender, secondClick, true);
+
+                if(!secondClick)
+                {
+                    _ctrl.Compute();
+                }
             }
-            
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -47,6 +56,16 @@ namespace MillGame.Views
             ViewModel.ButtonClick(sender);
             RemoveButtons();
             start = true;
+            Button btn = sender as Button;
+            if(btn.Name == "White")
+            {
+                _ctrl.StartHumanGame(false);
+            }
+            else
+            {
+                _ctrl.StartHumanGame(true);
+                _ctrl.Compute();
+            }
         }
 
         private void RemoveButtons()

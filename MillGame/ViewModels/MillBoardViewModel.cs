@@ -10,11 +10,16 @@ using System.Windows.Shapes;
 using System.Windows.Controls;
 using MillGame.Commands;
 using MillGame.Views;
+using MillGame.Models;
+using MillGame.Models.Core;
+using MillGame.Models.Core.Actions;
+using System.Text.RegularExpressions;
 
 namespace MillGame.ViewModels
 {
-    public class MillBoardViewModel
+    public class MillBoardViewModel : IView
     {
+        // Private Variables
         private Brush _previousFill = null;
         private Ellipse _previousEllipse = null;
         private String state = "PLACE"; // PLACE, MOVE
@@ -28,6 +33,12 @@ namespace MillGame.ViewModels
         private List<int> redStonesPlace = new List<int>();
         private List<int> blackStonesPlace = new List<int>();
 
+        private Controller ctrl;
+        private Placing p;
+        private Moving m;
+        private Taking t;
+
+        // Colors
         private readonly SolidColorBrush black = new SolidColorBrush(Colors.Black);
         private readonly SolidColorBrush red = new SolidColorBrush(Colors.Red);
         private readonly SolidColorBrush transparent = new SolidColorBrush(Colors.Transparent);
@@ -37,6 +48,12 @@ namespace MillGame.ViewModels
             mBoard = _mBoard;
         }
 
+        public void SetCtrl(Controller _ctrl)
+        {
+            ctrl = _ctrl;
+        }
+
+        // UNUSED
         public void ChangeState(String newState)
         {
             if(state == "PLACE" || state == "MOVE")
@@ -45,6 +62,7 @@ namespace MillGame.ViewModels
             }
         }
 
+        // Set Player Color
         public void ButtonClick(object sender)
         {
             Button btn = sender as Button;
@@ -54,15 +72,14 @@ namespace MillGame.ViewModels
             }
         }
 
-        public bool StoneClick(object sender, bool secondClick)
+        // Click on Stone behaviour
+        public bool StoneClick(object sender, bool secondClick, bool player)
         {
-            Ellipse ellipse = sender as Ellipse;
-
-            //if(whitePhase != playerWhite) return !secondClick; // Comment out to test         
+            Ellipse ellipse = sender as Ellipse;       
 
             if(state == "PLACE" && !take)
             {
-                secondClick = PlacePhase(ellipse, secondClick);
+                secondClick = PlacePhase(ellipse, secondClick, player);
             }
             else if(state == "MOVE" && !take && redStonesOnBoard > 2 && blackStonesOnBoard > 2)
             {
@@ -77,17 +94,17 @@ namespace MillGame.ViewModels
                 }
                 
             }
-
             return secondClick;
         }
 
-        private bool PlacePhase(Ellipse ellipse, bool secondClick)
+        private bool PlacePhase(Ellipse ellipse, bool secondClick, bool player)
         {
             int uid;
             Int32.TryParse(ellipse.Parent.GetValue(UIElement.UidProperty).ToString(), out uid);
 
             if (!secondClick)
             {
+                // Check valid click
                 if (ellipse.Fill.ToString() == transparent.ToString())
                 {
                     return secondClick;
@@ -105,6 +122,7 @@ namespace MillGame.ViewModels
                     return secondClick;
                 }                
 
+                // Save stone
                 _previousEllipse = ellipse;
                 _previousFill = ellipse.Fill;
 
@@ -112,6 +130,7 @@ namespace MillGame.ViewModels
             }
             else
             {
+                // Check valid click
                 if (ellipse.Fill.ToString() == red.ToString() || ellipse.Fill.ToString() == black.ToString())
                 {
                     return secondClick;
@@ -126,6 +145,7 @@ namespace MillGame.ViewModels
                 }
                 else
                 {
+                    // Add attributes to the new stone and remove previous position 
                     ellipse.Fill = _previousFill;
                     ellipse.Name = _previousEllipse.Name;
                     _previousFill = null;
@@ -134,7 +154,21 @@ namespace MillGame.ViewModels
                     _previousEllipse = null;
                     placed++;
 
-                    if(whitePhase)
+                    // Give the information to the computer
+                    // IController.WHITE = 1, IController.BLACK = 0 (sometimes ???)
+                    if (playerWhite && player)
+                    {
+                        p = new Placing(1, uid);
+                        ctrl.Play(p);
+                    }
+                    else if(!playerWhite && player)
+                    {
+                        p = new Placing(0, uid);
+                        ctrl.Play(p);
+                    }
+
+                    // Add boardposition and check for Mill
+                    if (whitePhase)
                     {
                         redStonesOnBoard++;
                         redStonesPlace.Add(uid);
@@ -178,6 +212,7 @@ namespace MillGame.ViewModels
 
             if (!secondClick)
             {
+                // Check valid click
                 if (ellipse.Fill.ToString() == transparent.ToString())
                 {
                     return secondClick;
@@ -195,6 +230,7 @@ namespace MillGame.ViewModels
                     return secondClick;
                 }
 
+                // Save stone
                 _previousEllipse = ellipse;
                 _previousFill = ellipse.Fill;
 
@@ -205,6 +241,7 @@ namespace MillGame.ViewModels
                 int _previousUid;
                 Int32.TryParse(_previousEllipse.Parent.GetValue(UIElement.UidProperty).ToString(), out _previousUid);
 
+                // Check valid  move
                 if (ellipse.Fill.ToString() == red.ToString() || ellipse.Fill.ToString() == black.ToString())
                 {
                     return secondClick;
@@ -228,6 +265,7 @@ namespace MillGame.ViewModels
                 }
                 else
                 {
+                    // Add attributes to the new stone and remove previous position
                     ellipse.Fill = _previousFill;
                     ellipse.Name = _previousEllipse.Name;
                     _previousFill = null;
@@ -235,6 +273,9 @@ namespace MillGame.ViewModels
                     _previousEllipse.Name = null;
                     _previousEllipse = null;
 
+                    // TODO: Give information to the computer
+
+                    // Add boardposition and check for Mill
                     if(whitePhase)
                     {
                         redStonesPlace.Remove(_previousUid);
@@ -274,6 +315,7 @@ namespace MillGame.ViewModels
             int uid;
             Int32.TryParse(ellipse.Parent.GetValue(UIElement.UidProperty).ToString(), out uid);
 
+            // Check valid  click
             if (whitePhase && ellipse.Fill.ToString() == red.ToString() || ellipse.Fill.ToString() == transparent.ToString())
             {
                 return false;
@@ -295,6 +337,7 @@ namespace MillGame.ViewModels
                 return false;
             }
 
+            // Remove stone from board
             ellipse.Fill = transparent;
             ellipse.Name = null;
             ellipse = null;
@@ -364,6 +407,131 @@ namespace MillGame.ViewModels
             else if ((pos == 5 || pos == 13 || pos == 20) && (places.Exists(item => item == 5) && places.Exists(item => item == 13) && places.Exists(item => item == 20))) return true;
             else if ((pos == 2 || pos == 14 || pos == 23) && (places.Exists(item => item == 2) && places.Exists(item => item == 14) && places.Exists(item => item == 23))) return true;
             else return false;
+        }
+
+        // Simulate click from computer
+        public void PlacingStoneHelper(int color, int unusedStones, int uid)
+        {
+            object stone = null;
+            if(color == 0)
+            {
+                stone = GetStone("White" + (unusedStones + 1));
+            }
+            else
+            {
+                stone = GetStone("Black" + (unusedStones + 1));
+            }
+
+            StoneClick(stone, false,false);
+//            System.Threading.Thread.Sleep(4000);
+            stone = ClickPlacingStoneHelper(mBoard, uid);
+            StoneClick(stone, true, false);
+        }
+
+        // Get stone from UID
+        public object ClickPlacingStoneHelper(DependencyObject parent, int uid)
+        {
+            if (parent == null) return null;
+
+            object foundChild = null;
+            int childrenCount = VisualTreeHelper.GetChildrenCount(parent);
+
+            for(int i = 0;i < childrenCount; i++)
+            {
+                var child = VisualTreeHelper.GetChild(parent, i);
+                Canvas childType = child as Canvas;
+
+                if(childType == null)
+                {
+                    foundChild = ClickPlacingStoneHelper(child, uid);
+                    if (foundChild != null) break;
+                }
+                else
+                {
+                    var canvasChild = child as Canvas;
+                    if(canvasChild != null && canvasChild.Uid == uid.ToString())
+                    {
+                        var e = VisualTreeHelper.GetChild(canvasChild, 0);
+
+                        foundChild = e;
+                        break;
+                    }
+                }
+            }
+            return foundChild;
+        }
+
+        /* ####################################################### USER - COMPUTER ####################################################### */
+
+        public void UpdateBoard(State s, Models.Core.Actions.Action a, bool isComputerAction)
+        {
+            if(isComputerAction)
+            {
+                string[] sub = a.ToString().Split(new Char[] { '-', ':' });
+                string sfrom = Regex.Match(sub[0], @"\d+").Value;
+                string sto = Regex.Match(sub[1], @"\d+").Value;
+                string stake = Regex.Match(sub[2], @"\d+").Value;
+
+                int from = -1;
+                if (!String.IsNullOrEmpty(sfrom))
+                {
+                    Int32.TryParse(sfrom, out from);
+                }
+                
+                int to = -1;
+                if (!String.IsNullOrEmpty(sto))
+                {
+                    Int32.TryParse(sto, out to);
+                }
+
+
+                int take = -1;
+                if (!String.IsNullOrEmpty(stake))
+                {
+                    Int32.TryParse(stake, out take);
+                }
+
+                if(a.Color() == 0) // white
+                {
+                    ComputerAction(0, s.UnplacedStones(0), take, from, to);
+                }
+                else
+                {
+                    ComputerAction(1, s.UnplacedStones(1), take, from, to);
+                }
+                
+            }
+        }
+
+        public void PrepareBoard()
+        {
+           // throw new NotImplementedException();
+        }
+
+        public void SetComputerName(string name)
+        {
+           // throw new NotImplementedException();
+        }
+
+        public void SetHumanName(string name)
+        {
+           // throw new NotImplementedException();
+        }
+
+        private void ComputerAction(int color, int unusedStone, int take, int from, int to)
+        {
+            if (take != -1)
+            {
+
+            }
+            else if (from != -1)
+            {
+
+            }
+            else if (to != -1)
+            {
+                PlacingStoneHelper(color, unusedStone, to);
+            }
         }
     }
 }
