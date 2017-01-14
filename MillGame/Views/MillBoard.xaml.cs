@@ -34,14 +34,8 @@ namespace MillGame.Views
 
             InitializeComponent();
             BoardRectangles = BoardCanvas.Children.Cast<Rectangle>().ToList();
-            WhitePlacingStones = new Queue<Ellipse>(new List<Ellipse>()
-            {
-                White1, White2, White3, White4, White5, White6, White7, White8, White9
-            });
-            BlackPlacingStones = new Queue<Ellipse>(new List<Ellipse>()
-            {
-                Black1, Black2, Black3, Black4, Black5, Black6, Black7, Black8, Black9
-            });
+            WhitePlacingStones = new Queue<Ellipse>(LeftPanel.Children.Cast<Ellipse>());
+            BlackPlacingStones = new Queue<Ellipse>(RightPanel.Children.Cast<Ellipse>());
         }
 
         private void Stone_MouseUp(object sender, MouseButtonEventArgs e)
@@ -70,7 +64,7 @@ namespace MillGame.Views
             
             BoardStones.Add(pos, stone);
             stone.Tag = pos;
-            ((Canvas)stone.Parent).Children.Remove(stone);
+            ((StackPanel)stone.Parent).Children.Remove(stone);
             BoardCanvas.Children.Add(stone);
             Canvas.SetLeft(stone, Canvas.GetLeft(BoardRectangles[pos]));
             Canvas.SetTop(stone, Canvas.GetTop(BoardRectangles[pos]));

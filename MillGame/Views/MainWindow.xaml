@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:MillGame"
         xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         mc:Ignorable="d"
-        Title="MainWindow" Height="570" Width="800" DataContext="{Binding ViewModel, RelativeSource={RelativeSource Self}}"
+        Title="Mill Game" Height="650" Width="800" DataContext="{Binding ViewModel, RelativeSource={RelativeSource Self}}"
         ResizeMode="NoResize">
     <Grid>
         <UserControl Content="{Binding CurrentPage}"></UserControl>

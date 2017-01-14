@@ -1,8 +1,12 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using MillGame.Annotations;
 using MillGame.Commands;
 using MillGame.Views;
 using MillGame.Models;
@@ -11,7 +15,7 @@ using MillGame.Models.Core.Actions;
 
 namespace MillGame.ViewModels
 {
-    public class MillBoardViewModel : IView
+    public class MillBoardViewModel : IView, INotifyPropertyChanged
     {
         // Private Variables
         //private Brush _previousFill = null;
@@ -41,14 +45,25 @@ namespace MillGame.ViewModels
         private ActionPM _previousAction;
 
         // Colors
-        private readonly Color _white = Colors.Red;
+        private readonly Color _white = Colors.White;
         private readonly Color _black = Colors.Black;
+        private string _message;
         //private readonly SolidColorBrush black = new SolidColorBrush(Colors.Black);
         //private readonly SolidColorBrush red = new SolidColorBrush(Colors.Red);
         //private readonly SolidColorBrush transparent = new SolidColorBrush(Colors.Transparent);
 
         public bool IsGameRunning { get; set; } = false;
         public bool ComputerIsPlaying { get; set; } = false;
+
+        public string Message
+        {
+            get { return _message; }
+            set
+            {
+                _message = value;
+                OnPropertyChanged(nameof(Message));
+            }
+        }
 
         public ICommand WhiteCommand { get; set; }
         public ICommand BlackCommand { get; set; }
@@ -75,6 +90,7 @@ namespace MillGame.ViewModels
                 IsGameRunning = true;
                 ComputerIsPlaying = true;
                 _ctrl.StartHumanGame(true);
+                Message = "Computer is thinking";
             });
 
             _mBoard.OnBoardRectPressed += MBoardOnOnBoardRectPressed;
@@ -115,9 +131,8 @@ namespace MillGame.ViewModels
             {
                 if(stone.Tag == null || color == _playerColor) return;
                 _ctrl.Play(new Taking(_previousAction, (int) stone.Tag));
-                ComputerIsPlaying = true;
                 _take = false;
-                _ctrl.Compute();
+                Compute();
             }
             else
             {
@@ -157,11 +172,11 @@ namespace MillGame.ViewModels
                         {
                             ComputerIsPlaying = false;
                             _take = true;
+                            Message = "You have a Mill take a stone";
                         }
                         else
                         {
-                            ComputerIsPlaying = true;
-                            _ctrl.Compute();
+                            Compute();
                         }
                     }
                     break;
@@ -174,11 +189,11 @@ namespace MillGame.ViewModels
                         if (status == IController.Status.CLOSEDMILL)
                         {
                             _take = true;
+                            Message = "You have a Mill take a stone";
                         }
                         else
                         {
-                            ComputerIsPlaying = true;
-                            _ctrl.Compute();
+                            Compute();
                         }
                     }
                     break;
@@ -192,6 +207,13 @@ namespace MillGame.ViewModels
             _selecterEllipse = null;
         }
 
+
+        private void Compute()
+        {
+            ComputerIsPlaying = true;
+            Task.Run(() => _ctrl.Compute());
+            Message = "Computer is thinking";
+        }
 
 //        public void SetCtrl(Controller _ctrl)
 //        {
@@ -625,6 +647,7 @@ namespace MillGame.ViewModels
                 if (s.InMill(placing.EndPosition, placing.Color()) && isComputerAction)
                 {
                     ComputerIsPlaying = true;
+                    Message = "Computer has a Mill";
                     _ctrl.Compute();
                     return;
                 }
@@ -636,6 +659,7 @@ namespace MillGame.ViewModels
                 if (s.InMill(moving.EndPosition, moving.Color()) && isComputerAction)
                 {
                     ComputerIsPlaying = true;
+                    Message = "Computer has a Mill";
                     _ctrl.Compute();
                     return;
                 }
@@ -647,6 +671,8 @@ namespace MillGame.ViewModels
             }
 
             ComputerIsPlaying = !isComputerAction;
+
+            if (!ComputerIsPlaying) Message = "Your turn";
         }
 
         public void PrepareBoard()
@@ -662,6 +688,14 @@ namespace MillGame.ViewModels
         public void SetHumanName(string name)
         {
             // throw new NotImplementedException();
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }
