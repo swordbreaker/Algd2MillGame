@@ -614,7 +614,7 @@ namespace MillGame.ViewModels
             {
                 Debug.WriteLine(a);
             }
-            
+
             var taking = a as Taking;
             var moving = a as Moving;
             var placing = a as Placing;
@@ -622,11 +622,23 @@ namespace MillGame.ViewModels
             if (placing != null)
             {
                 _mBoard.PlaceStone(placing.EndPosition, placing.Color());
+                if (s.InMill(placing.EndPosition, placing.Color()) && isComputerAction)
+                {
+                    ComputerIsPlaying = true;
+                    _ctrl.Compute();
+                    return;
+                }
             }
 
             if (moving != null)
             {
                 _mBoard.MoveStone(moving.StartPosition, moving.EndPosition);
+                if (s.InMill(moving.EndPosition, moving.Color()) && isComputerAction)
+                {
+                    ComputerIsPlaying = true;
+                    _ctrl.Compute();
+                    return;
+                }
             }
 
             if (taking != null)

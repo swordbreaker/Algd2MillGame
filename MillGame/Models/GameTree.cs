@@ -23,6 +23,7 @@ namespace MillGame.Models
         private GameNode m_currentNode;
         private State m_currentState;
         private int m_height;
+        private bool _firstTurn;
 
         /**
         * Creates a new game tree: the first action is white, on the next level plays black.
@@ -35,16 +36,19 @@ namespace MillGame.Models
             if (pa == null)
             {
                 // First move made by computer
-                m_currentNode = new MaxNode(ComputerPlayer());
+                var placing = new Placing(IController.WHITE, 10);
+                m_currentNode = new MaxNode(placing);
+                _firstTurn = true;
+                //m_currentNode = new MaxNode(ComputerPlayer());
             } else
             {
                 m_currentNode = new MaxNode(pa);
             }
+            m_root = m_currentNode;
             m_currentState = new State();
             m_currentNode.Data().Update(m_currentState);
-            m_height = height;
-            m_root = m_currentNode;
             m_root.Create(0, height, IController.BLACK, m_root, m_currentState);
+            m_height = height;
         }
 
         /**
@@ -77,8 +81,11 @@ namespace MillGame.Models
          */
         public Action ComputerPlayer()
         {
-            //TODO what should the bot do at the first turn?
-            if(m_currentNode == null) return new Placing(IController.WHITE, 10);
+            if (_firstTurn)
+            {
+                _firstTurn = false;
+                return m_currentNode.Data();
+            }
             int maxScore = int.MinValue;
             Action bestAction = null;
             foreach(GameNode child in m_currentNode.m_children)
