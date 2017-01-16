@@ -46,102 +46,86 @@ namespace MillGame.Models
         public int Create(int curHeight, int height, sbyte color, GameNode root, State rootState)
         {
             var alpha = int.MinValue;
-            var beta = int.MinValue;
+            var beta = int.MaxValue;
             return Create(curHeight, height, color, root, rootState, alpha, beta);
         }
 
         public int Create(int curHeight, int height, sbyte color, GameNode root, State rootState, int alpha, int beta)
         {
             int numberOfCreatedNodes = 0;
-            if (curHeight == height || rootState.Finished()) return numberOfCreatedNodes;
+            if (curHeight == height || rootState.Finished())
+            {
+                return rootState.Score();
+            }
+            var v = (color == IController.BLACK) ? int.MinValue : int.MaxValue;
             if (rootState.PlacingPhase(color))
             {
                 foreach (byte position in State.TRANSPOSED)
                 {
-                    if (rootState.IsValidPlace(position, color))
+                    if (!rootState.IsValidPlace(position, color)) continue;
+                    var nextAction = new Placing(color, position);
+                    var newState = rootState.Clone();
+                    nextAction.Update(newState);
+                    var childNode = Create(nextAction);
+                    numberOfCreatedNodes++;
+                    if (newState.InMill(position, color))
                     {
-                        var nextAction = new Placing(color, position);
-                        var newState = rootState.Clone();
-                        nextAction.Update(newState);
-                        var childNode = Create(nextAction);
-                        numberOfCreatedNodes++;
-                        if (newState.InMill(position, color))
+                        if (newState.TakingIsPossible(State.OppositeColor(color)))
                         {
-                            if (newState.TakingIsPossible(State.OppositeColor(color)))
+                            foreach (byte takingPosition in State.TRANSPOSED)
                             {
-                                foreach (byte takingPosition in State.TRANSPOSED)
+                                if (newState.IsValidTake(takingPosition, State.OppositeColor(color)))
                                 {
-                                    if (newState.IsValidTake(takingPosition, State.OppositeColor(color)))
-                                    {
-                                        var takeState = rootState.Clone();
-                                        var takingAction = new Taking(nextAction, takingPosition);
-                                        takingAction.Update(takeState);
-                                        var takingNode = Create(takingAction);
-                                        //var takingNode = root.Add(takingAction, takeState.Score());
-                                        numberOfCreatedNodes += Create(curHeight + 1, height, State.OppositeColor(color), takingNode, takeState, takingNode.m_alpha, takingNode.m_beta);
-                                        UpdateScore(takingNode, takeState.Score());
-                                        root.m_children.Enqueue(takingNode);
-                                            
-                                        // Alpha Beta Pruning
-                                        if (color == IController.BLACK)
-                                        {
-                                            // Black is minimizer
-                                            if (takeState.Score() < takingNode.m_alpha)
-                                            {
-                                                // Alpha cut
-                                                return numberOfCreatedNodes;
-                                            }
-                                        }
-                                        else
-                                        {
-                                            // White is maximizer
-                                            if (takeState.Score() > takingNode.m_beta)
-                                            {
-                                                // Beta Cut
-                                                return numberOfCreatedNodes;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        else
-                        {
-                            numberOfCreatedNodes += Create(curHeight + 1, height, State.OppositeColor(color), childNode, newState, childNode.m_alpha, childNode.m_beta);
-                            UpdateScore(childNode, newState.Score());
-                            root.m_children.Enqueue(childNode);
+                                    var takeState = rootState.Clone();
+                                    var takingAction = new Taking(nextAction, takingPosition);
+                                    takingAction.Update(takeState);
+                                    var takingNode = Create(takingAction);
+                                    //var takingNode = root.Add(takingAction, takeState.Score());
 
-                            // Alpha Beta Pruning
-                            if (color == IController.BLACK)
-                            {
-                                // Black is minimizer
-                                if (newState.Score() < childNode.m_alpha)
-                                {
-                                    // Alpha cut
-                                    return numberOfCreatedNodes;
-                                }
-                            }
-                            else
-                            {
-                                // White is maximizer
-                                if (newState.Score() > childNode.m_beta)
-                                {
-                                    // Beta Cut
-                                    return numberOfCreatedNodes;
+                                    //Minimizer
+                                    if (color == IController.BLACK)
+                                    {
+                                        v = Math.Max(v,
+                                            Create(curHeight + 1, height, State.OppositeColor(color), takingNode,
+                                                takeState, alpha, beta));
+
+                                        alpha = Math.Max(alpha, v);
+                                    }
+                                    else //Maximizer
+                                    {
+                                        v = Math.Min(v, Create(curHeight + 1, height, State.OppositeColor(color), takingNode,
+                                            takeState, alpha, beta));
+                                        beta = Math.Min(beta, v);
+                                    }
+                                           
+                                    UpdateScore(takingNode, takeState.Score());
+                                    root.m_children.Enqueue(takingNode);
+                                    if (beta <= alpha) break;
                                 }
                             }
                         }
-                        // Set siblings alpha or beta value
+                    }
+                    else
+                    {
+                        //Minimizer
                         if (color == IController.BLACK)
                         {
-                            // Black ist minimizer
-                            m_alpha = childNode.Score();
+                            v = Math.Max(v,
+                                Create(curHeight + 1, height, State.OppositeColor(color), childNode,
+                                    newState, alpha, beta));
+
+                            alpha = Math.Max(alpha, v);
                         }
-                        else
+                        else //Maximizer
                         {
-                            // White is maximizer
-                            m_beta = childNode.Score();
+                            v = Math.Min(v, Create(curHeight + 1, height, State.OppositeColor(color), childNode,
+                                newState, alpha, beta));
+                            beta = Math.Min(beta, v);
                         }
+
+                        UpdateScore(childNode, newState.Score());
+                        root.m_children.Enqueue(childNode);
+                        if (beta <= alpha) break;
                     }
                 }
             }
@@ -167,73 +151,55 @@ namespace MillGame.Models
                                     var takingNode = Create(new Taking(nextAction, takingPosition));
                                     var takeState = rootState.Clone();
                                     takingNode.Data().Update(takeState);
-                                    numberOfCreatedNodes += Create(curHeight + 1, height, State.OppositeColor(color), takingNode, takeState, alpha, beta);
-                                    UpdateScore(takingNode, takeState.Score());
-                                    root.m_children.Enqueue(takingNode);
 
-                                    // Alpha Beta Pruning
+                                    //Minimizer
                                     if (color == IController.BLACK)
                                     {
-                                        // Black is minimizer
-                                        if (takeState.Score() < takingNode.m_alpha)
-                                        {
-                                            // Alpha cut
-                                            return numberOfCreatedNodes;
-                                        }
+                                        v = Math.Max(v,
+                                            Create(curHeight + 1, height, State.OppositeColor(color), takingNode,
+                                                takeState, alpha, beta));
+
+                                        alpha = Math.Max(alpha, v);
                                     }
-                                    else
+                                    else //Maximizer
                                     {
-                                        // White is maximizer
-                                        if (takeState.Score() > takingNode.m_beta)
-                                        {
-                                            // Beta Cut
-                                            return numberOfCreatedNodes;
-                                        }
+                                        v = Math.Min(v, Create(curHeight + 1, height, State.OppositeColor(color), takingNode,
+                                            takeState, alpha, beta));
+                                        beta = Math.Min(beta, v);
                                     }
+
+                                    UpdateScore(takingNode, takeState.Score());
+                                    root.m_children.Enqueue(takingNode);
+                                    if (beta <= alpha) break;
                                 }
                             }
                         }
                         else
                         {
-                            numberOfCreatedNodes += Create(curHeight + 1, height, State.OppositeColor(color), childNode, newState, alpha, beta);
-                            UpdateScore(childNode, newState.Score());
-                            root.m_children.Enqueue(childNode);
-
-                            // Alpha Beta Pruning
+                            //Minimizer
                             if (color == IController.BLACK)
                             {
-                                // Black is minimizer
-                                if (childNode.Score() < childNode.m_alpha)
-                                {
-                                    // Alpha cut
-                                    return numberOfCreatedNodes;
-                                }
+                                v = Math.Max(v,
+                                    Create(curHeight + 1, height, State.OppositeColor(color), childNode,
+                                        newState, alpha, beta));
+
+                                alpha = Math.Max(alpha, v);
                             }
-                            else
+                            else //Maximizer
                             {
-                                // White is maximizer
-                                if (childNode.Score() > childNode.m_beta)
-                                {
-                                    // Beta Cut
-                                    return numberOfCreatedNodes;
-                                }
+                                v = Math.Min(v, Create(curHeight + 1, height, State.OppositeColor(color), childNode,
+                                    newState, alpha, beta));
+                                beta = Math.Min(beta, v);
                             }
-                        }
-                        // Set siblings alpha or beta value
-                        if (color == IController.BLACK)
-                        {
-                            // Black ist minimizer
-                            m_alpha = childNode.Score();
-                        }
-                        else
-                        {
-                            // White is maximizer
-                            m_beta = childNode.Score();
+
+                            UpdateScore(childNode, newState.Score());
+                            root.m_children.Enqueue(childNode);
+                            if (beta <= alpha) break;
                         }
                     }
                 }
             }
-            return numberOfCreatedNodes;
+            return v;
         }
 
         private void UpdateScore(GameNode node, int score)
@@ -277,114 +243,6 @@ namespace MillGame.Models
             }
             node.m_score = score;
         }
-
-        /**
-        * Create new nodes recursively.
-        * Approximate O(24^(height-curHeight))
-        * @param curHeight current subtree height
-        * @param height Subtree height
-        * @param color Color of next actions
-        * @param root Subtree root
-        * @param rootState Game state at root
-        * @return Number of created nodes
-        */
-        /*
-        public int Create(int curHeight, int height, sbyte color, GameNode root, State rootState)
-        {
-            //Debug.WriteLine("Create method of GameNode entered");
-            int numberOfCreatedNodes = 0;
-            if (curHeight != height && !rootState.Finished())
-            {
-                if (rootState.PlacingPhase(color))
-                {
-                    foreach (byte position in State.TRANSPOSED)
-                    {
-                        if (rootState.IsValidPlace(position, color))
-                        {
-                            ActionPM nextAction = new Placing(color, position);
-                            var childNode = root.Add(nextAction, color);
-                            var newState = rootState.Clone();
-                            //var oldState = rootState.Clone();
-                            numberOfCreatedNodes++;
-                            childNode.Data().Update(newState);
-                            if (newState.InMill(position, color))
-                            {
-                                //newState = oldState;
-                                //Debug.WriteLine("Create: In Mill detected");
-                                if (newState.TakingIsPossible(State.OppositeColor(color)))
-                                {
-                                    //Debug.WriteLine("Create: Taking is possible");
-                                    foreach (byte takingPosition in State.TRANSPOSED)
-                                    {
-                                        if (newState.IsValidTake(takingPosition, State.OppositeColor(color)))
-                                        {
-                                            //Debug.WriteLine("Create: Valid taking move detected");
-                                            var takingNode = root.Add(new Taking(nextAction, takingPosition));
-                                            var takeState = rootState.Clone();
-                                            takingNode.Data().Update(takeState);
-                                            takingNode.m_score = takeState.Score();
-                                            numberOfCreatedNodes += Create(curHeight + 1, height, State.OppositeColor(color), takingNode, takeState);
-                                        }
-                                    }
-                                    childNode.Remove();
-                                }
-                            }
-                            else
-                            {
-                                childNode.m_score = newState.Score();
-                                numberOfCreatedNodes += Create(curHeight + 1, height, State.OppositeColor(color), childNode, newState);
-                            }
-                        }
-                    }
-                }
-                else if (rootState.MovingPhase(color) || rootState.JumpingPhase(color))
-                {
-                    for (byte i = 0; i < rootState.Board.Length; i++)
-                    {
-                        foreach (byte to in State.MOVES[i])
-                        {
-                            if (rootState.IsValidMove(i, to, color))
-                            {
-                                ActionPM nextAction = new Moving(color, i, to);
-                                GameNode childNode = root.Add(nextAction, color);
-                                State newState = rootState.Clone();
-                                numberOfCreatedNodes++;
-                                childNode.Data().Update(newState);
-                                if (newState.InMill(to, color))
-                                {
-                                    //Debug.WriteLine("Create: In Mill detected");
-                                    if (newState.TakingIsPossible(State.OppositeColor(color)))
-                                    {
-                                        //Debug.WriteLine("Create: Taking is possible");
-                                        foreach (byte takingPosition in State.TRANSPOSED)
-                                        {
-                                            if (newState.IsValidTake(takingPosition, State.OppositeColor(color)))
-                                            {
-                                                //Debug.WriteLine("Create: Valid taking move detected");
-                                                var takingNode = root.Add(new Taking(nextAction, takingPosition));
-                                                var takeState = rootState.Clone();
-                                                takingNode.Data().Update(takeState);
-                                                takingNode.m_score = takeState.Score();
-                                                numberOfCreatedNodes += Create(curHeight + 1, height, State.OppositeColor(color), takingNode, takeState);
-                                            }
-                                        }
-                                        childNode.Remove();
-                                    }
-                                }
-                                else
-                                {
-                                    childNode.m_score = newState.Score();
-                                    numberOfCreatedNodes += Create(curHeight + 1, height, State.OppositeColor(color), childNode, newState);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            return numberOfCreatedNodes;
-        }
-        */
 
         /**
 	     * Create new minimizer or maximizer node and add it to this as a child node.
@@ -477,17 +335,20 @@ namespace MillGame.Models
          */
         public GameNode RemoveUnusedChilds(Action a)
         {
-            GameNode node = null;
+            GameNode node = Create(a);
 
-            foreach (GameNode child in m_children)
-            {
-                if (child.Data().Equals(a))
-                {
-                    node = child;
-                }
-            }
+            //foreach (GameNode child in m_children)
+            //{
+            //    if (child.Data().Equals(a))
+            //    {
+            //        node = child;
+            //    }
+            //}
 
-            if (node == null) throw new Exception("Action a is not present in the Priority queue");
+            //if (node == null)
+            //{
+            //    throw new Exception("Action a is not present in the Priority queue");
+            //}
 
             m_children.Clear();
             m_children.Enqueue(node);

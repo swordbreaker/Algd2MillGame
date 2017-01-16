@@ -17,27 +17,15 @@ namespace MillGame.ViewModels
 {
     public class MillBoardViewModel : IView, INotifyPropertyChanged
     {
-        // Private Variables
-        //private Brush _previousFill = null;
-        //private Ellipse _previousEllipse = null;
         public enum BoardState
         {
             Placing, Moving, Jumping
         }
         private bool _take = false;
-        //private bool whitePhase = true;
-        //private bool playerWhite = true;
         private readonly MillBoard _mBoard;
-        //private int redStonesOnBoard = 0;
-        //private int blackStonesOnBoard = 0;
-        //private int placed = 0;
-        //private List<int> redStonesPlace = new List<int>();
-        //private List<int> blackStonesPlace = new List<int>();
+
 
         private readonly Controller _ctrl;
-        //private Placing p;
-        //private Moving m;
-        //private Taking t;
 
         private Color _playerColor;
         private Ellipse _selecterEllipse;
@@ -48,9 +36,6 @@ namespace MillGame.ViewModels
         private readonly Color _white = Colors.White;
         private readonly Color _black = Colors.Black;
         private string _message;
-        //private readonly SolidColorBrush black = new SolidColorBrush(Colors.Black);
-        //private readonly SolidColorBrush red = new SolidColorBrush(Colors.Red);
-        //private readonly SolidColorBrush transparent = new SolidColorBrush(Colors.Transparent);
 
         public bool IsGameRunning { get; set; } = false;
         public bool ComputerIsPlaying { get; set; } = false;
