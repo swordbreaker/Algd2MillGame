@@ -14,33 +14,21 @@ namespace MillGame.Models
     * 
     * @author christoph.stamm
     * @author yanick.schraner
+    * @author tobias.bollinger
     * @version 04.01.2017
     *
     */
     public class GameNode : Node<Core.Actions.Action>, IGameNode
     {
         protected int m_score;
-        protected int m_alpha;
-        protected int m_beta;
 
         public GameNode(Core.Actions.Action action) : base(action)
         {
-            m_alpha = int.MinValue;
-            m_beta = int.MaxValue;
         }
 
         public GameNode(Core.Actions.Action action, int score) : base(action)
         {
             m_score = score;
-            m_alpha = int.MinValue;
-            m_beta = int.MaxValue;
-        }
-
-        public GameNode(Core.Actions.Action action, int score, int alpha, int beta) : base(action)
-        {
-            m_score = score;
-            m_alpha = alpha;
-            m_beta = beta;
         }
 
         public int Create(int curHeight, int height, sbyte color, GameNode root, State rootState)
@@ -80,7 +68,6 @@ namespace MillGame.Models
                                     var takingAction = new Taking(nextAction, takingPosition);
                                     takingAction.Update(takeState);
                                     var takingNode = Create(takingAction);
-                                    //var takingNode = root.Add(takingAction, takeState.Score());
 
                                     //Minimizer
                                     if (color == IController.BLACK)
@@ -321,6 +308,11 @@ namespace MillGame.Models
             return node;
         }
 
+        /// <summary>
+        /// Create a new Node as MinNode or MaxNode
+        /// </summary>
+        /// <param name="a">Action in Node</param>
+        /// <returns>The new GameNode</returns>
         public GameNode Create(Action a)
         {
             var isMinimizer = this is MinNode;
@@ -335,21 +327,7 @@ namespace MillGame.Models
          */
         public GameNode RemoveUnusedChilds(Action a)
         {
-            GameNode node = Create(a);
-
-            //foreach (GameNode child in m_children)
-            //{
-            //    if (child.Data().Equals(a))
-            //    {
-            //        node = child;
-            //    }
-            //}
-
-            //if (node == null)
-            //{
-            //    throw new Exception("Action a is not present in the Priority queue");
-            //}
-
+            var node = Create(a);
             m_children.Clear();
             m_children.Enqueue(node);
             return node;
@@ -363,7 +341,7 @@ namespace MillGame.Models
 	     */
         public State ComputeState(State s, GameNode v)
         {
-            State computedState = s.Clone();
+            var computedState = s.Clone();
             v.Data().Update(computedState);
             return computedState;
         }
@@ -386,7 +364,7 @@ namespace MillGame.Models
          */
         public override int CompareTo(Node<Action> other)
         {
-            GameNode gameNodeOther = (GameNode)other;
+            var gameNodeOther = (GameNode)other;
             return m_score - gameNodeOther.m_score;
         }
     }

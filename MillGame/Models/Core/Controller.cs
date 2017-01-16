@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Diagnostics.Contracts;
 using System.IO;
-using System.Threading.Tasks;
 using System.Windows;
 using MillGame.Models.Core;
 using MillGame.Models.Core.Actions;

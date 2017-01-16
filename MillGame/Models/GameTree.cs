@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MillGame.Models.Core;
 using MillGame.Models.Core.Actions;
 using Action = MillGame.Models.Core.Actions.Action;
@@ -25,7 +21,6 @@ namespace MillGame.Models
         private State m_currentState;
         private int m_height;
         private bool _firstTurn;
-        private bool inMovingPhase;
 
         /**
         * Creates a new game tree: the first action is white, on the next level plays black.
@@ -34,15 +29,14 @@ namespace MillGame.Models
         */
         public void Create(int height, Placing pa)
         {
-            // TODO Create Tree
             if (pa == null)
             {
                 // First move made by computer
                 var placing = new Placing(IController.WHITE, 10);
                 m_currentNode = new MaxNode(placing);
                 _firstTurn = true;
-                //m_currentNode = new MaxNode(ComputerPlayer());
-            } else
+            }
+            else
             {
                 m_currentNode = new MaxNode(pa);
             }
@@ -68,10 +62,8 @@ namespace MillGame.Models
 	     */
         public void HumanPlayer(Action a)
         {
-            GameNode oldNode = m_currentNode;
             m_currentNode = m_currentNode.RemoveUnusedChilds(a);
             m_currentState = m_currentNode.ComputeState(m_currentState, m_currentNode);
-            //m_currentState = m_currentNode.ComputeState(m_currentState, oldNode);
         }
 
         /**
@@ -92,14 +84,9 @@ namespace MillGame.Models
             if (m_currentNode.m_children.IsEmpty) return null;
             Action bestAction = null;
 
-            if (m_currentNode.Data().Color() == IController.BLACK)
-            {
-                bestAction = m_currentNode.m_children.Max().Data();
-            }
-            else
-            {
-                bestAction = m_currentNode?.m_children.Min().Data();
-            }
+            bestAction = m_currentNode.Data().Color() == IController.BLACK ? 
+                m_currentNode.m_children.Max().Data() : 
+                m_currentNode?.m_children.Min().Data();
 
             if (bestAction != null)
             {
@@ -110,7 +97,6 @@ namespace MillGame.Models
                 Debug.WriteLine(m_currentState.Infomations.ToString((byte)m_currentNode.Data().Color()));
                 Debug.WriteLine("PLAYER");
                 Debug.WriteLine(m_currentState.Infomations.ToString((byte)State.OppositeColor(m_currentNode.Data().Color())));
-                //m_currentState = m_currentNode.ComputeState(m_currentState, oldNode);
                 var oppColor = State.OppositeColor(bestAction.Color());
                 m_currentNode.Create(0, 1, oppColor, m_currentNode, m_currentState);
             }
