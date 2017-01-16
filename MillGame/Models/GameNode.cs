@@ -38,9 +38,20 @@ namespace MillGame.Models
             return Create(curHeight, height, color, root, rootState, alpha, beta);
         }
 
+
+        /// <summary>
+        /// Creates the childrens of the Node with alpha–beta pruning
+        /// </summary>
+        /// <param name="curHeight">current subtree height</param>
+        /// <param name="height">height Subtree height</param>
+        /// <param name="color">Color of next actions</param>
+        /// <param name="root">Subtree root</param>
+        /// <param name="rootState">Game state at root</param>
+        /// <param name="alpha"></param>
+        /// <param name="beta"></param>
+        /// <returns>The </returns>
         public int Create(int curHeight, int height, sbyte color, GameNode root, State rootState, int alpha, int beta)
         {
-            int numberOfCreatedNodes = 0;
             if (curHeight == height || rootState.Finished())
             {
                 return rootState.Score();
@@ -55,7 +66,6 @@ namespace MillGame.Models
                     var newState = rootState.Clone();
                     nextAction.Update(newState);
                     var childNode = Create(nextAction);
-                    numberOfCreatedNodes++;
                     if (newState.InMill(position, color))
                     {
                         if (newState.TakingIsPossible(State.OppositeColor(color)))
@@ -120,13 +130,13 @@ namespace MillGame.Models
             {
                 for (byte i = 0; i < rootState.Board.Length; i++)
                 {
-                    foreach (byte to in State.MOVES[i])
+                    var moves = (rootState.JumpingPhase(color)) ? State.TRANSPOSED : State.MOVES[i];
+                    foreach (byte to in moves)
                     {
                         if (!rootState.IsValidMove(i, to, color)) continue;
                         var nextAction = new Moving(color, i, to);
                         var childNode = Create(nextAction);
                         var newState = rootState.Clone();
-                        numberOfCreatedNodes++;
                         childNode.Data().Update(newState);
                         if (newState.InMill(to, color))
                         {
@@ -232,66 +242,13 @@ namespace MillGame.Models
         }
 
         /**
-	     * Create new minimizer or maximizer node and add it to this as a child node.
-	     * @param a Action
-	     * @param score Score
-	     */
-        public GameNode Add(Action a, int score, sbyte color)
-        {
-            GameNode node = null;
-            if (color == IController.BLACK)
-            {
-                // Black is minimizer
-                node = new MinNode(a, score);
-                node.m_parent = this;
-                m_children.Enqueue(node);
-            }
-            else
-            {
-                // White is maximizer
-                node = new MaxNode(a, score);
-                node.m_parent = this;
-                m_children.Enqueue(node);
-            }
-            return node;
-        }
-
-        /**
-	     * Create new minimizer or maximizer node and add it to this as a child node.
-	     * @param a Action
-	     * @param score Score
-	     */
-        public GameNode Add(Action a, sbyte color)
-        {
-            GameNode node = null;
-            if (color == IController.BLACK)
-            {
-                // Black is minimizer
-                node = new MinNode(a);
-                node.m_parent = this;
-                m_children.Enqueue(node);
-            }
-            else
-            {
-                // White is maximizer
-                node = new MaxNode(a);
-                node.m_parent = this;
-                m_children.Enqueue(node);
-            }
-            return node;
-        }
-
-        /**
 	     * Create new node and add it to this as a child node.
 	     * @param a Action
 	     * @param score Score
 	     */
         public GameNode Add(Action a, int score)
         {
-            var isMinimizer = this is MinNode;
-            // This method doesn't different between minimizer and maximizer!
-            GameNode node = (isMinimizer) ? (GameNode) new MinNode(a, score) : new MaxNode(a, score);
-            //GameNode node = new GameNode(a, score);
+            var node = (this is MinNode) ? (GameNode) new MaxNode(a, score) : new MinNode(a, score);
             node.m_parent = this;
             m_children.Enqueue(node);
             return node;
@@ -299,10 +256,7 @@ namespace MillGame.Models
 
         public GameNode Add(Action a)
         {
-            var isMinimizer = this is MinNode;
-            // This method doesn't different between minimizer and maximizer!
-            GameNode node = (isMinimizer) ? (GameNode)new MinNode(a) : new MaxNode(a);
-            //var node = new GameNode(a);
+            var node = (this is MinNode) ? (GameNode)new MaxNode(a) : new MinNode(a);
             node.m_parent = this;
             m_children.Enqueue(node);
             return node;
