@@ -549,8 +549,12 @@ namespace MillGame.Models.Core
         }
 
         // numOfMills, numOfMovePosibilities, numOfStones, numOf2Combis, numOf3Combis, numOfPosibileOpenMills, opponentPotentailMills
-        private static readonly int[] _placingFactors = { 6, 13, 3, 2, 2, 12, 12};
-        private static readonly int[] _movingFactors = { 10, 5, 10, 4, 5, 8, 8};
+        //private static readonly int[] _placingFactors = { 6, 13, 3, 2, 2, 12, 12};
+        //private static readonly int[] _movingFactors = { 10, 5, 10, 4, 5, 8, 8};
+        //private static readonly int[] _jumpingFactors = { 0, 0, 0, 15, 0, 15, 20 };
+
+        private static readonly int[] _placingFactors = { 4, 10, 4, 2, 2, 14, 14 };
+        private static readonly int[] _movingFactors = { 8, 4, 10, 4, 6, 9, 9 };
         private static readonly int[] _jumpingFactors = { 0, 0, 0, 15, 0, 15, 20 };
 
         /**
