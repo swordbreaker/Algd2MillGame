@@ -49,15 +49,14 @@ namespace MillGame.Models.Core.Actions
 
         public override string ToString()
         {
-            //ToDo fix
             if (Action is Moving)
             {
-                return $"{((Moving) Action).StartPosition,2}-{Action.EndPosition,2}:{TakePosition,2}";
+                return $"TAKING MOVING {((Moving) Action).StartPosition,2}-{Action.EndPosition,2}:{TakePosition,2}";
                 //return String.Format("%02d-%02d:%02d", ((Moving)Action).StartPosition, Action.EndPosition, TakePosition);
             }
             else
             {
-                return $"__-{Action.EndPosition,2}:{TakePosition,2}";
+                return $"TAKING __-{Action.EndPosition,2}:{TakePosition,2}";
                 //return String.Format("__-%02d:%02d", Action.EndPosition, TakePosition);
             }
             //return "PSST nothing to see here";

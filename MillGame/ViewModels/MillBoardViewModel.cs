@@ -79,7 +79,7 @@ namespace MillGame.ViewModels
                 mBoard.HideButtons();
                 IsGameRunning = true;
                 _playerColor = _white;
-                _ctrl.StartHumanGame(false);
+                Task.Run(() => _ctrl.StartHumanGame(false));
             });
 
             BlackCommand = new SimpleCommand((o) =>
@@ -89,7 +89,7 @@ namespace MillGame.ViewModels
                 mBoard.HideButtons();
                 IsGameRunning = true;
                 ComputerIsPlaying = true;
-                _ctrl.StartHumanGame(true);
+                Task.Run(() => _ctrl.StartHumanGame(true));
                 Message = "Computer is thinking";
             });
 
@@ -130,7 +130,12 @@ namespace MillGame.ViewModels
             if (_take)
             {
                 if(stone.Tag == null || color == _playerColor) return;
-                _ctrl.Play(new Taking(_previousAction, (int) stone.Tag));
+                var status = _ctrl.Play(new Taking(_previousAction, (int) stone.Tag));
+                if (status == IController.Status.INVALIDACTION)
+                {
+                    Message = "Stein in der Mühle";
+                    return;
+                }
                 _take = false;
                 Compute();
             }
@@ -181,6 +186,7 @@ namespace MillGame.ViewModels
                     }
                     break;
                 case BoardState.Moving:
+                case BoardState.Jumping:
                     if (_selecterEllipse != null)
                     {
                         if (_selecterEllipse.Tag == null) return;
@@ -188,6 +194,7 @@ namespace MillGame.ViewModels
                         var status = _ctrl.Play(_previousAction);
                         if (status == IController.Status.CLOSEDMILL)
                         {
+                            ComputerIsPlaying = false;
                             _take = true;
                             Message = "You have a Mill take a stone";
                         }
@@ -196,9 +203,6 @@ namespace MillGame.ViewModels
                             Compute();
                         }
                     }
-                    break;
-                case BoardState.Jumping:
-
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -214,419 +218,6 @@ namespace MillGame.ViewModels
             Task.Run(() => _ctrl.Compute());
             Message = "Computer is thinking";
         }
-
-//        public void SetCtrl(Controller _ctrl)
-//        {
-//            this._ctrl = _ctrl;
-//        }
-
-//        // UNUSED
-//        public void ChangeState(BoardState newState)
-//        {
-//            if (_state == BoardState.Placing || _state == BoardState.Moving)
-//            {
-//                _state = newState;
-//            }
-//        }
-
-//        // Set Player Color
-//        public void ButtonClick(object sender)
-//        {
-//            Button btn = sender as Button;
-//            if (btn.Name == "Black")
-//            {
-//                playerWhite = false;
-//            }
-//        }
-
-//        // Click on Stone behaviour
-//        public bool StoneClick(object sender, bool secondClick, bool player)
-//        {
-//            var ellipse = sender as Ellipse;
-
-//            if (_state == BoardState.Placing && !take)
-//            {
-//                secondClick = PlacePhase(ellipse, secondClick, player);
-//            }
-//            else if (_state == BoardState.Moving && !take && redStonesOnBoard > 2 && blackStonesOnBoard > 2)
-//            {
-//                secondClick = MovePhase(ellipse, secondClick);
-//            }
-//            else if (take)
-//            {
-//                if (TakePhase(ellipse))
-//                {
-//                    whitePhase = !whitePhase;
-//                    take = false;
-//                }
-//            }
-//            return secondClick;
-//        }
-
-//        private bool PlacePhase(Ellipse ellipse, bool secondClick, bool player)
-//        {
-//            int uid;
-
-//            Int32.TryParse(ellipse.Parent.GetValue(UIElement.UidProperty).ToString(), out uid);
-
-//            if (!secondClick)
-//            {
-//                // Check valid click
-//                if (ellipse.Fill.ToString() == transparent.ToString())
-//                {
-//                    return secondClick;
-//                }
-//                else if (!((uid <= 58 && uid >= 50) || (uid <= 68 && uid >= 60)))
-//                {
-//                    return secondClick;
-//                }
-//                else if (whitePhase && ellipse.Fill.ToString() != red.ToString())
-//                {
-//                    return secondClick;
-//                }
-//                else if (!whitePhase && ellipse.Fill.ToString() != black.ToString())
-//                {
-//                    return secondClick;
-//                }
-
-//                // Save stone
-//                _previousEllipse = ellipse;
-//                _previousFill = ellipse.Fill;
-
-//                ellipse.Fill = new SolidColorBrush(Colors.Green);
-//            }
-//            else
-//            {
-//                // Check valid click
-//                if (ellipse.Fill.ToString() == red.ToString() || ellipse.Fill.ToString() == black.ToString())
-//                {
-//                    return secondClick;
-//                }
-//                else if ((uid <= 58 && uid >= 50) || (uid <= 68 && uid >= 60))
-//                {
-//                    return secondClick;
-//                }
-//                else if (ellipse.Name == _previousEllipse.Name)
-//                {
-//                    return secondClick;
-//                }
-//                else
-//                {
-//                    // Add attributes to the new stone and remove previous position 
-//                    ellipse.Fill = _previousFill;
-//                    ellipse.Name = _previousEllipse.Name;
-//                    _previousFill = null;
-//                    _previousEllipse.Fill = transparent;
-//                    _previousEllipse.Name = null;
-//                    _previousEllipse = null;
-//                    placed++;
-
-//                    // Give the information to the computer
-//                    // IController.WHITE = 1, IController.BLACK = 0 (sometimes ???)
-//                    if (playerWhite && player)
-//                    {
-//                        p = new Placing(1, uid);
-//                        _ctrl.Play(p);
-//                    }
-//                    else if (!playerWhite && player)
-//                    {
-//                        p = new Placing(0, uid);
-//                        _ctrl.Play(p);
-//                    }
-
-//                    // Add boardposition and check for Mill
-//                    if (whitePhase)
-//                    {
-//                        redStonesOnBoard++;
-//                        redStonesPlace.Add(uid);
-//                        if (Mill(redStonesPlace, uid))
-//                        {
-//                            take = true;
-//                        }
-//                        else
-//                        {
-//                            whitePhase = !whitePhase;
-//                        }
-//                    }
-//                    else
-//                    {
-//                        blackStonesOnBoard++;
-//                        blackStonesPlace.Add(uid);
-//                        if (Mill(blackStonesPlace, uid))
-//                        {
-//                            take = true;
-//                        }
-//                        else
-//                        {
-//                            whitePhase = !whitePhase;
-//                        }
-//                    }
-//                }
-//            }
-
-//            if (placed == 18) // EDIT FOR TESTING
-//            {
-//                _state = BoardState.Moving;
-//            }
-
-//            return !secondClick;
-//        }
-
-//        private bool MovePhase(Ellipse ellipse, bool secondClick)
-//        {
-//            int uid;
-//            Int32.TryParse(ellipse.Parent.GetValue(UIElement.UidProperty).ToString(), out uid);
-
-//            if (!secondClick)
-//            {
-//                // Check valid click
-//                if (ellipse.Fill.ToString() == transparent.ToString())
-//                {
-//                    return secondClick;
-//                }
-//                else if (!(uid >= 0 && uid <= 23))
-//                {
-//                    return secondClick;
-//                }
-//                else if (whitePhase && ellipse.Fill.ToString() != red.ToString())
-//                {
-//                    return secondClick;
-//                }
-//                else if (!whitePhase && ellipse.Fill.ToString() != black.ToString())
-//                {
-//                    return secondClick;
-//                }
-
-//                // Save stone
-//                _previousEllipse = ellipse;
-//                _previousFill = ellipse.Fill;
-
-//                ellipse.Fill = new SolidColorBrush(Colors.Green);
-//            }
-//            else
-//            {
-//                int _previousUid;
-//                Int32.TryParse(_previousEllipse.Parent.GetValue(UIElement.UidProperty).ToString(), out _previousUid);
-
-//                // Check valid  move
-//                if (ellipse.Fill.ToString() == red.ToString() || ellipse.Fill.ToString() == black.ToString())
-//                {
-//                    return secondClick;
-//                }
-//                else if (!(uid >= 0 && uid <= 23))
-//                {
-//                    return secondClick;
-//                }
-//                else if (ellipse.Name == _previousEllipse.Name)
-//                {
-//                    ellipse.Fill = _previousFill;
-//                    return !secondClick;
-//                }
-//                else if (whitePhase && redStonesOnBoard > 3 && !ValidMove(_previousUid, uid))
-//                {
-//                    return secondClick;
-//                }
-//                else if (!whitePhase && blackStonesOnBoard > 3 && !ValidMove(_previousUid, uid))
-//                {
-//                    return secondClick;
-//                }
-//                else
-//                {
-//                    // Add attributes to the new stone and remove previous position
-//                    ellipse.Fill = _previousFill;
-//                    ellipse.Name = _previousEllipse.Name;
-//                    _previousFill = null;
-//                    _previousEllipse.Fill = transparent;
-//                    _previousEllipse.Name = null;
-//                    _previousEllipse = null;
-
-//                    // TODO: Give information to the computer
-
-//                    // Add boardposition and check for Mill
-//                    if (whitePhase)
-//                    {
-//                        redStonesPlace.Remove(_previousUid);
-//                        redStonesPlace.Add(uid);
-//                        if (Mill(redStonesPlace, uid))
-//                        {
-//                            take = true;
-//                        }
-//                        else
-//                        {
-//                            whitePhase = !whitePhase;
-//                        }
-//                    }
-//                    else
-//                    {
-//                        blackStonesPlace.Remove(_previousUid);
-//                        blackStonesPlace.Add(uid);
-//                        if (Mill(blackStonesPlace, uid))
-//                        {
-//                            take = true;
-//                        }
-//                        else
-//                        {
-//                            whitePhase = !whitePhase;
-//                        }
-//                    }
-
-//                    _previousUid = -1;
-//                }
-//            }
-
-//            return !secondClick;
-//        }
-
-//        private bool TakePhase(Ellipse ellipse)
-//        {
-//            int uid;
-//            Int32.TryParse(ellipse.Parent.GetValue(UIElement.UidProperty).ToString(), out uid);
-
-//            // Check valid  click
-//            if (whitePhase && ellipse.Fill.ToString() == red.ToString() || ellipse.Fill.ToString() == transparent.ToString())
-//            {
-//                return false;
-//            }
-//            else if (!whitePhase && ellipse.Fill.ToString() == black.ToString() || ellipse.Fill.ToString() == transparent.ToString())
-//            {
-//                return false;
-//            }
-//            else if (!(uid >= 0 && uid <= 23))
-//            {
-//                return false;
-//            }
-//            else if (whitePhase && Mill(blackStonesPlace, uid))
-//            {
-//                return false;
-//            }
-//            else if (!whitePhase && Mill(redStonesPlace, uid))
-//            {
-//                return false;
-//            }
-
-//            // Remove stone from board
-//            ellipse.Fill = transparent;
-//            ellipse.Name = null;
-//            ellipse = null;
-
-//            if (whitePhase)
-//            {
-//                blackStonesOnBoard--;
-//            }
-//            else
-//            {
-//                redStonesOnBoard--;
-//            }
-
-//            return true;
-//        }
-
-//        public object GetStone(String name)
-//        {
-//            return _mBoard.FindName(name);
-//        }
-
-//        private bool ValidMove(int oldPos, int newPos)
-//        {
-//            if (oldPos == 0 && (newPos == 1 || newPos == 9)) return true;
-//            else if (oldPos == 1 && (newPos == 0 || newPos == 2 || newPos == 4)) return true;
-//            else if (oldPos == 2 && (newPos == 1 || newPos == 14)) return true;
-//            else if (oldPos == 3 && (newPos == 4 || newPos == 10)) return true;
-//            else if (oldPos == 4 && (newPos == 1 || newPos == 3 || newPos == 5 || newPos == 7)) return true;
-//            else if (oldPos == 5 && (newPos == 4 || newPos == 13)) return true;
-//            else if (oldPos == 6 && (newPos == 7 || newPos == 11)) return true;
-//            else if (oldPos == 7 && (newPos == 4 || newPos == 6 || newPos == 8)) return true;
-//            else if (oldPos == 8 && (newPos == 7 || newPos == 12)) return true;
-//            else if (oldPos == 9 && (newPos == 0 || newPos == 10 || newPos == 21)) return true;
-//            else if (oldPos == 10 && (newPos == 3 || newPos == 9 || newPos == 11 || newPos == 18)) return true;
-//            else if (oldPos == 11 && (newPos == 6 || newPos == 10 || newPos == 15)) return true;
-//            else if (oldPos == 12 && (newPos == 8 || newPos == 13 || newPos == 17)) return true;
-//            else if (oldPos == 13 && (newPos == 5 || newPos == 12 || newPos == 14 || newPos == 20)) return true;
-//            else if (oldPos == 14 && (newPos == 2 || newPos == 13 || newPos == 23)) return true;
-//            else if (oldPos == 15 && (newPos == 11 || newPos == 16)) return true;
-//            else if (oldPos == 16 && (newPos == 15 || newPos == 17 || newPos == 19)) return true;
-//            else if (oldPos == 17 && (newPos == 12 || newPos == 16)) return true;
-//            else if (oldPos == 18 && (newPos == 10 || newPos == 19)) return true;
-//            else if (oldPos == 19 && (newPos == 16 || newPos == 18 || newPos == 20 || newPos == 22)) return true;
-//            else if (oldPos == 20 && (newPos == 13 || newPos == 19)) return true;
-//            else if (oldPos == 21 && (newPos == 9 || newPos == 22)) return true;
-//            else if (oldPos == 22 && (newPos == 19 || newPos == 21 || newPos == 23)) return true;
-//            else if (oldPos == 23 && (newPos == 14 || newPos == 22)) return true;
-//            else return false;
-//        }
-
-//        private bool Mill(List<int> places, int pos)
-//        {
-//            if ((pos == 0 || pos == 1 || pos == 2) && (places.Exists(item => item == 0) && places.Exists(item => item == 1) && places.Exists(item => item == 2))) return true;
-//            else if ((pos == 3 || pos == 4 || pos == 5) && (places.Exists(item => item == 3) && places.Exists(item => item == 4) && places.Exists(item => item == 5))) return true;
-//            else if ((pos == 6 || pos == 7 || pos == 8) && (places.Exists(item => item == 6) && places.Exists(item => item == 7) && places.Exists(item => item == 8))) return true;
-//            else if ((pos == 9 || pos == 10 || pos == 11) && (places.Exists(item => item == 9) && places.Exists(item => item == 10) && places.Exists(item => item == 11))) return true;
-//            else if ((pos == 12 || pos == 13 || pos == 14) && (places.Exists(item => item == 12) && places.Exists(item => item == 13) && places.Exists(item => item == 14))) return true;
-//            else if ((pos == 15 || pos == 16 || pos == 17) && (places.Exists(item => item == 15) && places.Exists(item => item == 16) && places.Exists(item => item == 17))) return true;
-//            else if ((pos == 18 || pos == 19 || pos == 20) && (places.Exists(item => item == 18) && places.Exists(item => item == 19) && places.Exists(item => item == 20))) return true;
-//            else if ((pos == 21 || pos == 22 || pos == 23) && (places.Exists(item => item == 21) && places.Exists(item => item == 22) && places.Exists(item => item == 23))) return true;
-//            else if ((pos == 0 || pos == 9 || pos == 21) && (places.Exists(item => item == 0) && places.Exists(item => item == 9) && places.Exists(item => item == 21))) return true;
-//            else if ((pos == 3 || pos == 10 || pos == 18) && (places.Exists(item => item == 3) && places.Exists(item => item == 10) && places.Exists(item => item == 18))) return true;
-//            else if ((pos == 6 || pos == 11 || pos == 15) && (places.Exists(item => item == 6) && places.Exists(item => item == 11) && places.Exists(item => item == 15))) return true;
-//            else if ((pos == 1 || pos == 4 || pos == 7) && (places.Exists(item => item == 1) && places.Exists(item => item == 4) && places.Exists(item => item == 7))) return true;
-//            else if ((pos == 16 || pos == 19 || pos == 22) && (places.Exists(item => item == 16) && places.Exists(item => item == 19) && places.Exists(item => item == 22))) return true;
-//            else if ((pos == 8 || pos == 12 || pos == 17) && (places.Exists(item => item == 8) && places.Exists(item => item == 12) && places.Exists(item => item == 17))) return true;
-//            else if ((pos == 5 || pos == 13 || pos == 20) && (places.Exists(item => item == 5) && places.Exists(item => item == 13) && places.Exists(item => item == 20))) return true;
-//            else if ((pos == 2 || pos == 14 || pos == 23) && (places.Exists(item => item == 2) && places.Exists(item => item == 14) && places.Exists(item => item == 23))) return true;
-//            else return false;
-//        }
-
-//        // Simulate click from computer
-//        public void PlacingStoneHelper(int color, int unusedStones, int uid)
-//        {
-//            object stone = null;
-//            if (color == 0)
-//            {
-//                stone = GetStone("White" + (unusedStones + 1));
-//            }
-//            else
-//            {
-//                stone = GetStone("Black" + (unusedStones + 1));
-//            }
-
-//            StoneClick(stone, false, false);
-////            System.Threading.Thread.Sleep(4000);
-//            stone = ClickPlacingStoneHelper(_mBoard, uid);
-//            StoneClick(stone, true, false);
-//        }
-
-//        // Get stone from UID
-//        public object ClickPlacingStoneHelper(DependencyObject parent, int uid)
-//        {
-//            if (parent == null) return null;
-
-//            object foundChild = null;
-//            int childrenCount = VisualTreeHelper.GetChildrenCount(parent);
-
-//            for (int i = 0; i < childrenCount; i++)
-//            {
-//                var child = VisualTreeHelper.GetChild(parent, i);
-//                Canvas childType = child as Canvas;
-
-//                if (childType == null)
-//                {
-//                    foundChild = ClickPlacingStoneHelper(child, uid);
-//                    if (foundChild != null) break;
-//                }
-//                else
-//                {
-//                    var canvasChild = child as Canvas;
-//                    if (canvasChild != null && canvasChild.Uid == uid.ToString())
-//                    {
-//                        var e = VisualTreeHelper.GetChild(canvasChild, 0);
-
-//                        foundChild = e;
-//                        break;
-//                    }
-//                }
-//            }
-//            return foundChild;
-//        }
 
         /* ####################################################### USER - COMPUTER ####################################################### */
 
@@ -644,33 +235,33 @@ namespace MillGame.ViewModels
             if (placing != null)
             {
                 _mBoard.PlaceStone(placing.EndPosition, placing.Color());
-                if (s.InMill(placing.EndPosition, placing.Color()) && isComputerAction)
-                {
-                    ComputerIsPlaying = true;
-                    Message = "Computer has a Mill";
-                    _ctrl.Compute();
-                    return;
-                }
             }
 
             if (moving != null)
             {
                 _mBoard.MoveStone(moving.StartPosition, moving.EndPosition);
-                if (s.InMill(moving.EndPosition, moving.Color()) && isComputerAction)
-                {
-                    ComputerIsPlaying = true;
-                    Message = "Computer has a Mill";
-                    _ctrl.Compute();
-                    return;
-                }
             }
 
             if (taking != null)
             {
                 _mBoard.TakeStone(taking.TakePosition);
+                if (isComputerAction)
+                {
+                    var tplacing = taking.Action as Placing;
+                    var tmoving = taking.Action as Moving;
+                    if(tplacing != null) _mBoard.PlaceStone(taking.Action.EndPosition, taking.Action.Color());
+                    if(tmoving != null) _mBoard.MoveStone(tmoving.StartPosition, tmoving.EndPosition);
+                }
             }
 
             ComputerIsPlaying = !isComputerAction;
+
+            if (_ctrl.GetStatus() == IController.Status.FINISHED)
+            {
+                var winner = (_ctrl.GetWinner() == 1) ? "White" : "Black";
+                Message = $"{winner} has won";
+                IsGameRunning = false;
+            }
 
             if (!ComputerIsPlaying) Message = "Your turn";
         }

@@ -86,16 +86,35 @@ namespace MillGame.Models
                 _firstTurn = false;
                 return m_currentNode.Data();
             }
-            int maxScore = int.MinValue;
+
             Action bestAction = null;
-            foreach(GameNode child in m_currentNode.m_children)
+
+            if (m_currentNode.Data().Color() == IController.BLACK)
             {
-                if (maxScore < child.Score())
+                int maxScore = int.MinValue;
+                
+                foreach (GameNode child in m_currentNode.m_children)
                 {
-                    maxScore = child.Score();
-                    bestAction = child.Data();
+                    if (maxScore < child.Score())
+                    {
+                        maxScore = child.Score();
+                        bestAction = child.Data();
+                    }
                 }
             }
+            else
+            {
+                int minScore = int.MaxValue;
+                foreach (GameNode child in m_currentNode.m_children)
+                {
+                    if (minScore > child.Score())
+                    {
+                        minScore = child.Score();
+                        bestAction = child.Data();
+                    }
+                }
+            }
+
             if (bestAction != null)
             {
                 m_currentNode = m_currentNode.RemoveUnusedChilds(bestAction);

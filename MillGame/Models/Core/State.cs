@@ -96,6 +96,7 @@ namespace MillGame.Models.Core
         new Point(6, 6)
     };
 
+        public sbyte[] Board => m_board;
         // class methods
 
         /**

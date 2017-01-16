@@ -45,7 +45,7 @@ namespace MillGame.Models.Core.Actions
         public override string ToString()
         {
             //TODO Fix
-            return $"__-{m_to,2}:__";
+            return $"PLACING __-{m_to,2}:__";
             //return String.format("__-%02d:__", m_to);
         }
 

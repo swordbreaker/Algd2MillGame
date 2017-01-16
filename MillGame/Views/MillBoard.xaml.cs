@@ -1,10 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Shapes;
+using MahApps.Metro.Controls;
 using MillGame.ExtentionMethods;
 using MillGame.ViewModels;
 using MillGame.Models.Core;
@@ -82,11 +87,35 @@ namespace MillGame.Views
             stone.Tag = to;
         }
 
+        //<Storyboard x:Key="StoneFadeOut">
+        //    <ColorAnimationUsingKeyFrames x:Name="ColorFade" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)" Storyboard.TargetName="White1">
+        //        <EasingColorKeyFrame KeyTime = "0" Value="Red"/>
+        //        <EasingColorKeyFrame KeyTime = "0:0:0.5" Value="Red"/>
+        //        <EasingColorKeyFrame KeyTime = "0:0:1.7" Value="#00FF0000"/>
+        //    </ColorAnimationUsingKeyFrames>
+        //</Storyboard>
+
         public void TakeStone(int pos)
         {
             var stone = BoardStones[pos];
+            stone.Fill = new SolidColorBrush(Colors.Red);
+
             BoardStones.Remove(pos);
-            BoardCanvas.Children.Remove(stone);
+
+            var a = new DoubleAnimation
+            {
+                From = 1.0,
+                To = 0.0,
+                FillBehavior = FillBehavior.Stop,
+                Duration = new Duration(TimeSpan.FromSeconds(1))
+            };
+            var storyboard = new Storyboard();
+            storyboard.Children.Add(a);
+            Storyboard.SetTarget(a, stone);
+            Storyboard.SetTargetProperty(a, new PropertyPath(OpacityProperty));
+
+            storyboard.Completed += (sender, args) => BoardCanvas.Children.Remove(stone);
+            storyboard.Begin();
         }
 
         private void BoardRect_OnMouseUp(object sender, MouseButtonEventArgs e)

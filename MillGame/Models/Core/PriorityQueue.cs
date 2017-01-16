@@ -162,7 +162,8 @@ namespace MillGame.Models
         public void Remove(T value)
         {
             if (!Contains(value)) throw new ArgumentOutOfRangeException(nameof(value), "not found in the Queue");
-            var itemId = _values.BinarySearch(value);
+            //var itemId = _values.BinarySearch(value);
+            var itemId = _values.FindIndex(v => v.Equals(value));
             _values[itemId] = _values[Count - 1];
             _values[Count - 1] = value;
             SiftUp(itemId);

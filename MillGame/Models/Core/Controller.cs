@@ -364,7 +364,7 @@ namespace MillGame.Models
             // human take action
             if (s == null)
             {
-                m_view.UpdateBoard(m_gameTree.CurrentState(), a, false);
+                //m_view.UpdateBoard(m_gameTree.CurrentState(), a, false);
                 return Status.INVALIDACTION;
             }
             else
@@ -400,7 +400,7 @@ namespace MillGame.Models
                         a.Action.Update(sCopy);
 
                         // redraw game board
-                        m_view.UpdateBoard(sCopy, a.Action, false);
+                        //m_view.UpdateBoard(sCopy, a.Action, false);
                         return Status.INVALIDACTION;
                     }
                 }

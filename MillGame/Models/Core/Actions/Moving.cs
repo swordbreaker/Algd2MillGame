@@ -45,7 +45,7 @@ namespace MillGame.Models.Core.Actions
 
         public override string ToString()
         {
-            return $"{m_from,2}-{m_to,2:__} ";
+            return $"MOVING _{m_from,2}-{m_to,2:__} ";
             //return string.Format("%02d-%02d:__", m_from, m_to);
             //return String.format("%02d-%02d:__", m_from, m_to);
         }
