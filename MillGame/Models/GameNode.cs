@@ -78,7 +78,8 @@ namespace MillGame.Models
                                             numberOfCreatedNodes += Create(curHeight + 1, height, State.OppositeColor(color), takingNode, takeState, takingNode.m_alpha, takingNode.m_beta);
                                             if (curHeight + 1 == height)
                                             {
-                                                takingNode.m_score = takeState.Score();
+                                                UpdateScore(takingNode, takeState.Score());
+                                                //takingNode.m_score = takeState.Score();
                                             }
                                             else
                                             {
@@ -93,7 +94,8 @@ namespace MillGame.Models
                                                             maxScore = child.Score();
                                                         }
                                                     }
-                                                    takingNode.m_score = maxScore;
+                                                    UpdateScore(takingNode, maxScore);
+                                                    //takingNode.m_score = maxScore;
                                                 }
                                                 else
                                                 {
@@ -105,7 +107,8 @@ namespace MillGame.Models
                                                             minScore = child.Score();
                                                         }
                                                     }
-                                                    takingNode.m_score = minScore;
+                                                    UpdateScore(takingNode, minScore);
+                                                    //takingNode.m_score = minScore;
                                                 }
                                             }
                                             // Alpha Beta Pruning
@@ -137,7 +140,8 @@ namespace MillGame.Models
                                 numberOfCreatedNodes += Create(curHeight + 1, height, State.OppositeColor(color), childNode, newState, childNode.m_alpha, childNode.m_beta);
                                 if (curHeight + 1 == height)
                                 {
-                                    childNode.m_score = newState.Score();
+                                    UpdateScore(childNode, newState.Score());
+                                    //childNode.m_score = newState.Score();
                                 }
                                 else
                                 {
@@ -152,7 +156,8 @@ namespace MillGame.Models
                                                 maxScore = child.Score();
                                             }
                                         }
-                                        childNode.m_score = maxScore;
+                                        UpdateScore(childNode, maxScore);
+                                        //childNode.m_score = maxScore;
                                     }
                                     else
                                     {
@@ -164,7 +169,8 @@ namespace MillGame.Models
                                                 minScore = child.Score();
                                             }
                                         }
-                                        childNode.m_score = minScore;
+                                        UpdateScore(childNode, minScore);
+                                        //childNode.m_score = minScore;
                                     }
                                 }
                                 // Alpha Beta Pruning
@@ -231,7 +237,8 @@ namespace MillGame.Models
                                                 numberOfCreatedNodes += Create(curHeight + 1, height, State.OppositeColor(color), takingNode, takeState, alpha, beta);
                                                 if (curHeight + 1 == height)
                                                 {
-                                                    takingNode.m_score = takeState.Score();
+                                                    UpdateScore(takingNode, takeState.Score());
+                                                    //takingNode.m_score = takeState.Score();
                                                 }
                                                 else
                                                 {
@@ -246,7 +253,8 @@ namespace MillGame.Models
                                                                 maxScore = child.Score();
                                                             }
                                                         }
-                                                        takingNode.m_score = maxScore;
+                                                        UpdateScore(takingNode, maxScore);
+                                                        //takingNode.m_score = maxScore;
                                                     }
                                                     else
                                                     {
@@ -258,7 +266,8 @@ namespace MillGame.Models
                                                                 minScore = child.Score();
                                                             }
                                                         }
-                                                        takingNode.m_score = minScore;
+                                                        UpdateScore(takingNode, minScore);
+                                                        //takingNode.m_score = minScore;
                                                     }
                                                 }
                                                 // Alpha Beta Pruning
@@ -289,7 +298,8 @@ namespace MillGame.Models
                                         numberOfCreatedNodes += Create(curHeight + 1, height, State.OppositeColor(color), childNode, newState, alpha, beta);
                                         if (curHeight + 1 == height)
                                         {
-                                            childNode.m_score = newState.Score();
+                                            UpdateScore(childNode, newState.Score());
+                                            //childNode.m_score = newState.Score();
                                         }
                                         else
                                         {
@@ -304,7 +314,8 @@ namespace MillGame.Models
                                                         maxScore = child.Score();
                                                     }
                                                 }
-                                                childNode.m_score = maxScore;
+                                                UpdateScore(childNode, maxScore);
+                                                //childNode.m_score = maxScore;
                                             }
                                             else
                                             {
@@ -316,7 +327,8 @@ namespace MillGame.Models
                                                         minScore = child.Score();
                                                     }
                                                 }
-                                                childNode.m_score = minScore;
+                                                UpdateScore(childNode, minScore);
+                                                //childNode.m_score = minScore;
                                             }
                                         }
                                         // Alpha Beta Pruning
@@ -357,6 +369,48 @@ namespace MillGame.Models
                 }
             }
             return numberOfCreatedNodes;
+        }
+
+        private void UpdateScore(GameNode node, int score)
+        {
+            var minNode = node as MinNode;
+            var maxNode = node as MaxNode;
+
+            if (minNode != null)
+            {
+                UpdateScore(minNode, score);
+            }
+            else
+            {
+                UpdateScore(maxNode, score);
+            }
+        }
+
+        private void UpdateScore(MinNode node, int score)
+        {
+            if (!node.m_children.IsEmpty)
+            {
+                var maxNode = (GameNode)node.m_children.Min();
+                if (maxNode.m_score < score)
+                {
+                    node.m_score = maxNode.m_score;
+                    return;
+                }
+            }
+            node.m_score = score;
+        }
+        private void UpdateScore(MaxNode node, int score)
+        {
+            if (!node.m_children.IsEmpty)
+            {
+                var minNode = (GameNode)node.m_children.Min();
+                if (minNode.m_score > score)
+                {
+                    node.m_score = minNode.m_score;
+                    return;
+                }
+            }
+            node.m_score = score;
         }
 
         /**
@@ -524,8 +578,10 @@ namespace MillGame.Models
 	     */
         public GameNode Add(Action a, int score)
         {
+            var isMinimizer = this is MinNode;
             // This method doesn't different between minimizer and maximizer!
-            GameNode node = new GameNode(a, score);
+            GameNode node = (isMinimizer) ? (GameNode) new MinNode(a, score) : new MaxNode(a, score);
+            //GameNode node = new GameNode(a, score);
             node.m_parent = this;
             m_children.Enqueue(node);
             return node;
@@ -533,8 +589,10 @@ namespace MillGame.Models
 
         public GameNode Add(Action a)
         {
+            var isMinimizer = this is MinNode;
             // This method doesn't different between minimizer and maximizer!
-            var node = new GameNode(a);
+            GameNode node = (isMinimizer) ? (GameNode)new MinNode(a) : new MaxNode(a);
+            //var node = new GameNode(a);
             node.m_parent = this;
             m_children.Enqueue(node);
             return node;

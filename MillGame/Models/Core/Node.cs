@@ -30,7 +30,7 @@ namespace MillGame.Models
         public Node(T data)
         {
             m_data = data;
-            m_children = new PriorityQueue<Node<T>>(Comparer<Node<T>>.Default);
+            m_children = new PriorityQueue<Node<T>>(Comparer<Node<T>>.Create((node, node1) => node.CompareTo(node1)));
         }
 
         public override String ToString()

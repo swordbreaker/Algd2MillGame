@@ -25,6 +25,7 @@ namespace MillGame.Models
         private State m_currentState;
         private int m_height;
         private bool _firstTurn;
+        private bool inMovingPhase;
 
         /**
         * Creates a new game tree: the first action is white, on the next level plays black.
@@ -71,8 +72,7 @@ namespace MillGame.Models
             m_currentNode = m_currentNode.RemoveUnusedChilds(a);
             m_currentState = m_currentNode.ComputeState(m_currentState, m_currentNode);
             //m_currentState = m_currentNode.ComputeState(m_currentState, oldNode);
-            var oppColor = State.OppositeColor(a.Color());
-            m_currentNode.Create(0, m_height, oppColor, m_currentNode, m_currentState);
+
         }
 
         /**
@@ -82,6 +82,14 @@ namespace MillGame.Models
          */
         public Action ComputerPlayer()
         {
+            if (!inMovingPhase && m_currentState.MovingPhase(IController.WHITE) && m_currentState.MovingPhase(IController.BLACK))
+            {
+                inMovingPhase = true;
+                m_height = m_height*2;
+            }
+            var opColor = State.OppositeColor(m_currentNode.Data().Color());
+            m_currentNode.Create(0, m_height, opColor, m_currentNode, m_currentState);
+
             if (_firstTurn)
             {
                 _firstTurn = false;
@@ -116,8 +124,6 @@ namespace MillGame.Models
                 }
             }
 
-            
-
             if (bestAction != null)
             {
                 m_currentNode = m_currentNode.RemoveUnusedChilds(bestAction);
@@ -129,7 +135,7 @@ namespace MillGame.Models
                 Debug.WriteLine(m_currentState.Infomations.ToString((byte)State.OppositeColor(m_currentNode.Data().Color())));
                 //m_currentState = m_currentNode.ComputeState(m_currentState, oldNode);
                 var oppColor = State.OppositeColor(bestAction.Color());
-                m_currentNode.Create(0, m_height, oppColor, m_currentNode, m_currentState);
+                m_currentNode.Create(0, 1, oppColor, m_currentNode, m_currentState);
             }
             return bestAction;
         }

@@ -373,6 +373,7 @@ namespace MillGame.Models.Core
 
             m_board[from] = IController.NONE;
             m_board[to] = color;
+            CheckMove();
         }
 
         /**
@@ -430,8 +431,9 @@ namespace MillGame.Models.Core
 
             m_board[pos] = IController.NONE;
             m_stonesOnBoard[color]--;
-
-            if (MovingPhase(color) && m_stonesOnBoard[color] < 3) m_winner = a.Color();
+            
+            if ((MovingPhase(color) || JumpingPhase(color)) && m_stonesOnBoard[color] < 3) m_winner = a.Color();
+            CheckMove();
         }
 
         /**
@@ -472,11 +474,22 @@ namespace MillGame.Models.Core
                     str.Append("\r\n");
                 }
             }
-
             return str.ToString();
         }
 
-        static Random rnd = new Random();
+        private void CheckMove()
+        {
+            var si = new ScoreInfomations();
+            GetStoneInformations(ref si);
+            if (si.numOfMovePosibilities[0] == 0)
+            {
+                m_winner = 1;
+            }
+            else if(si.numOfMovePosibilities[1] == 0)
+            {
+                m_winner = 0;
+            }
+        }
 
         public struct ScoreInfomations
         {
@@ -536,9 +549,9 @@ namespace MillGame.Models.Core
         }
 
         // numOfMills, numOfMovePosibilities, numOfStones, numOf2Combis, numOf3Combis, numOfPosibileOpenMills, opponentPotentailMills
-        private static readonly int[] _placingFactors = { 15, 10, 9, 10, 7, 0, 35};
-        private static readonly int[] _movingFactors = { 43, 10, 11, 0, 0, 20, 5 };
-        private static readonly int[] _jumpingFactors = { 0, 0, 0, 10, 1, 0, 10 };
+        private static readonly int[] _placingFactors = { 6, 13, 3, 2, 2, 12, 12};
+        private static readonly int[] _movingFactors = { 10, 5, 10, 4, 5, 8, 8};
+        private static readonly int[] _jumpingFactors = { 0, 0, 0, 15, 0, 15, 20 };
 
         /**
          * Compute score of this game state: Black is a minimizer, White a maximizer.
@@ -560,11 +573,8 @@ namespace MillGame.Models.Core
             {
                 var infos = Infomations;
 
-                // compute score
-                var v = rnd.Next(int.MinValue + 1, int.MaxValue - 1);
-
-                ScoreInfomations.Phase wphase = ScoreInfomations.Phase.Placing;
-                ScoreInfomations.Phase bphase = ScoreInfomations.Phase.Placing;
+                var wphase = ScoreInfomations.Phase.Placing;
+                var bphase = ScoreInfomations.Phase.Placing;
                 if (PlacingPhase(IController.WHITE))
                 {
                     wphase = ScoreInfomations.Phase.Placing;

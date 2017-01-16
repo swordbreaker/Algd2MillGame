@@ -38,9 +38,7 @@ namespace MillGame.Models.Core
     public int CompareTo(INode<Actions.Action> v)
     {
         int score1 = Score(), score2 = ((GameNode)v).Score();
-
-        if (score1 == score2) return 0;
-        else return (score1 > score2) ? -1 : 1;
+        return score2.CompareTo(score1);
     }
 
     /**

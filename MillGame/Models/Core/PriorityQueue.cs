@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MillGame.Models
 {
-    public class PriorityQueue<T> : ICollection
+    public class PriorityQueue<T> : ICollection, IEnumerable<T>
     {
         private readonly List<T> _values;
         private readonly IComparer<T> _comp;
@@ -145,6 +145,11 @@ namespace MillGame.Models
                     return;
                 }
             }
+        }
+
+        IEnumerator<T> IEnumerable<T>.GetEnumerator()
+        {
+            return _values.GetEnumerator();
         }
 
         public IEnumerator GetEnumerator()

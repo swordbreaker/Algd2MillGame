@@ -102,9 +102,6 @@ namespace MillGame.Models
             m_compi = new ComputerPlayer(this);
 
             SetStarter(compiBegin);
-            //Task.Run(() => m_compi.Run());
-
-            //m_compi.Start();
 
             if (compiBegin)
             {

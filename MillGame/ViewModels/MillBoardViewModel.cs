@@ -123,7 +123,7 @@ namespace MillGame.ViewModels
 
         private void MBoardOnOnStonePressed(object sender, EventArgs eventArgs)
         {
-            if(ComputerIsPlaying) return;
+            if(ComputerIsPlaying || !IsGameRunning) return;
             var stone = (Ellipse)sender;
             var color = ((SolidColorBrush)stone.Fill).Color;
             if(color != _white && color != _black) return;
@@ -162,7 +162,7 @@ namespace MillGame.ViewModels
 
         private void MBoardOnOnBoardRectPressed(object sender, EventArgs eventArgs)
         {
-            if(_selecterEllipse == null) return;
+            if(_selecterEllipse == null || !IsGameRunning) return;
             var rect = (Rectangle)sender;
             var color = GetColorIdex(_selectedEllipseColor);
 
@@ -261,6 +261,7 @@ namespace MillGame.ViewModels
                 var winner = (_ctrl.GetWinner() == 1) ? "White" : "Black";
                 Message = $"{winner} has won";
                 IsGameRunning = false;
+                return;
             }
 
             if (!ComputerIsPlaying) Message = "Your turn";
