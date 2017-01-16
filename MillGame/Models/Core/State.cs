@@ -132,9 +132,9 @@ namespace MillGame.Models.Core
         {
             var s = new State
             {
-                m_board = (sbyte[]) m_board.Clone(),
-                m_stonesOnBoard = (byte[]) m_stonesOnBoard.Clone(),
-                m_unplacedStones = (sbyte[]) m_unplacedStones.Clone(),
+                m_board = (sbyte[])m_board.Clone(),
+                m_stonesOnBoard = (byte[])m_stonesOnBoard.Clone(),
+                m_unplacedStones = (sbyte[])m_unplacedStones.Clone(),
                 m_winner = m_winner
             };
             return s;
@@ -369,7 +369,7 @@ namespace MillGame.Models.Core
             byte to = a.EndPosition;
             sbyte color = a.Color();
 
-            if(!IsValidMove(from, to, color)) throw new Exception("invalid action");
+            if (!IsValidMove(from, to, color)) throw new Exception("invalid action");
 
             m_board[from] = IController.NONE;
             m_board[to] = color;
@@ -486,28 +486,30 @@ namespace MillGame.Models.Core
             }
 
             public byte[] numOfMills;
-            public byte[] numOfBlockedStones;
+            public byte[] numOfMovePosibilities;
             public byte[] numOfStones;
             public byte[] numOf2Combis;
             public byte[] numOf3Combis;
             public byte[] numOfPosibileOpenMills;
+            public byte[] opponentPotentailMills;
 
             public byte[] GetValues(sbyte color)
             {
                 return new byte[]
                 {
                     numOfMills[color],
-                    numOfBlockedStones[color],
+                    numOfMovePosibilities[color],
                     numOfStones[color],
                     numOf2Combis[color],
                     numOf3Combis[color],
-                    numOfPosibileOpenMills[color]
+                    numOfPosibileOpenMills[color],
+                    opponentPotentailMills[color]
                 };
             }
 
             public string ToString(byte color)
             {
-                return $" Number of Mills : {numOfMills?[color]} \n Number of blocked stones: {numOfBlockedStones?[color]} \n Number of Stones : {numOfStones?[color]} \n Number of 2 stone combinations {numOf2Combis?[color]} \n Number of 3 stone combinations {numOf3Combis?[color]} \n Number of possible moves to open a Mill {numOfPosibileOpenMills?[color]}";
+                return $" Number of Mills : {numOfMills?[color]} \n Number of Move Posibilities: {numOfMovePosibilities?[color]} \n Number of Stones : {numOfStones?[color]} \n Number of 2 stone combinations {numOf2Combis?[color]} \n Number of 3 stone combinations {numOf3Combis?[color]} \n Number of possible moves to open a Mill {numOfPosibileOpenMills?[color]} \n Opponent Potentianal Mills: {opponentPotentailMills?[color]}";
             }
 
             public int[] CalculateScores(sbyte color, Phase phase)
@@ -529,14 +531,14 @@ namespace MillGame.Models.Core
                         throw new ArgumentOutOfRangeException(nameof(phase), phase, null);
                 }
 
-                return factors.Zip(vals, (a, b) => a*b).ToArray();
+                return factors.Zip(vals, (a, b) => a * b).ToArray();
             }
         }
 
-        // numOfMills, numOfBlockedStones, numOfStones, numOf2Combis, numOf3Combis, numOfPosibileOpenMills
-        private static readonly int[] _placingFactors  = {26, 1 , 9 , 10, 7, 0 };
-        private static readonly  int[] _movingFactors  = {43, 10, 11, 0 , 0, 20};
-        private static readonly  int[] _jumpingFactors = {0 , 0 , 0 , 10, 1, 0 };
+        // numOfMills, numOfMovePosibilities, numOfStones, numOf2Combis, numOf3Combis, numOfPosibileOpenMills, opponentPotentailMills
+        private static readonly int[] _placingFactors = { 15, 10, 9, 10, 7, 0, 10 };
+        private static readonly int[] _movingFactors = { 43, 10, 11, 0, 0, 20, 5 };
+        private static readonly int[] _jumpingFactors = { 0, 0, 0, 10, 1, 0, 10 };
 
         /**
          * Compute score of this game state: Black is a minimizer, White a maximizer.
@@ -571,7 +573,7 @@ namespace MillGame.Models.Core
                 {
                     wphase = ScoreInfomations.Phase.Jumping;
                 }
-                else if(MovingPhase(IController.WHITE))
+                else if (MovingPhase(IController.WHITE))
                 {
                     wphase = ScoreInfomations.Phase.Moving;
                 }
@@ -591,11 +593,11 @@ namespace MillGame.Models.Core
 
                 var wScore = infos.CalculateScores(IController.WHITE, wphase);
                 var bScore = infos.CalculateScores(IController.BLACK, bphase);
-                
+
                 //Num of Mills
                 wScore[0] = wScore[0] - bScore[0];
                 //Num of blocked
-                wScore[1] = bScore[1] - wScore[1];
+                wScore[1] = wScore[1] - bScore[1];
                 //Num of stones
                 wScore[2] = wScore[2] - bScore[2];
                 //Num 2 combis
@@ -604,6 +606,8 @@ namespace MillGame.Models.Core
                 wScore[4] = wScore[4] - bScore[4];
                 //Num of open mills
                 wScore[5] = wScore[5] - bScore[5];
+                //Opponent Potental Mill
+                wScore[5] = wScore[6] - bScore[6];
 
                 return wScore.Aggregate((a, b) => a + b);
             }
@@ -623,10 +627,12 @@ namespace MillGame.Models.Core
 
         private void GetMillInformations(ref ScoreInfomations infos)
         {
-            byte[] cornerStones = {0, 3, 6, 17, 20, 2};
-            byte[] middleStones = {01, 16, 09, 12};
+            byte[] cornerStones = { 0, 3, 6, 17, 20, 23 };
+            byte[] middleStones = { 01, 16, 09, 12 };
+
             var mills = new byte[2];
             var potentialOpenings = new byte[2];
+            var opponentPotentialMills = new byte[2];
 
             for (int i = 0; i < cornerStones.Length; i++)
             {
@@ -635,16 +641,19 @@ namespace MillGame.Models.Core
                 if (color == IController.NONE) continue;
                 var direction = (cornerStones[i] <= 6) ? 1 : -1;
                 byte openings;
-                if (CheckForHorizontalMill(k, color, direction, out openings))
+                byte potPotmills;
+                if (CheckForHorizontalMill(k, color, direction, out openings, out potPotmills))
                 {
                     mills[color]++;
                     potentialOpenings[color] += openings;
                 }
-                if (CheckForVerticalMill(k, color, direction, out openings))
+                opponentPotentialMills[State.OppositeColor(color)] += potPotmills;
+                if (CheckForVerticalMill(k, color, direction, out openings, out potPotmills))
                 {
                     mills[color]++;
                     potentialOpenings[color] += openings;
                 }
+                opponentPotentialMills[State.OppositeColor(color)] += potPotmills;
             }
 
             for (int i = 0; i < 2; i++)
@@ -653,11 +662,13 @@ namespace MillGame.Models.Core
                 var color = m_board[k];
                 if (color == IController.NONE) continue;
                 byte openings;
-                if (CheckForVerticalMill(k, color, 1, out openings))
+                byte potPotmills;
+                if (CheckForVerticalMill(k, color, 1, out openings, out potPotmills))
                 {
                     mills[color]++;
                     potentialOpenings[color] += openings;
                 }
+                opponentPotentialMills[State.OppositeColor(color)] += potPotmills;
             }
 
             for (int i = 2; i < 4; i++)
@@ -666,20 +677,24 @@ namespace MillGame.Models.Core
                 var color = m_board[k];
                 if (color == IController.NONE) continue;
                 byte openings;
-                if (CheckForHorizontalMill(k, color, 1, out openings))
+                byte potPotmills;
+                if (CheckForHorizontalMill(k, color, 1, out openings, out potPotmills))
                 {
                     mills[color]++;
                     potentialOpenings[color] += openings;
                 }
+                opponentPotentialMills[State.OppositeColor(color)] += potPotmills;
             }
 
             infos.numOfMills = mills;
             infos.numOfPosibileOpenMills = potentialOpenings;
+            infos.opponentPotentailMills = opponentPotentialMills;
         }
 
         private void GetStoneInformations(ref ScoreInfomations infos)
         {
             var blocks = new byte[2];
+            var movePossibilits = new byte[2];
             var twoCombis = new byte[2];
             var threeCombis = new byte[2];
             var checkedStones = new bool[m_board.Length];
@@ -688,7 +703,7 @@ namespace MillGame.Models.Core
             for (int i = 0; i < m_board.Length; i++)
             {
                 var color = m_board[i];
-                if(color == IController.NONE) continue;
+                if (color == IController.NONE) continue;
                 var isBlocked = true;
                 var combi = 0;
                 checkedStones[i] = true;
@@ -698,6 +713,7 @@ namespace MillGame.Models.Core
                     //Check if stone can move in this position
                     if (m_board[k] == IController.NONE)
                     {
+                        movePossibilits[color]++;
                         isBlocked = false;
                     }
                     //Check if this position is the same color and we not already have checked it
@@ -714,7 +730,7 @@ namespace MillGame.Models.Core
 
             infos.numOf2Combis = twoCombis;
             infos.numOf3Combis = threeCombis;
-            infos.numOfBlockedStones = blocks;
+            infos.numOfMovePosibilities = movePossibilits;
         }
 
         /// <summary>
@@ -725,9 +741,10 @@ namespace MillGame.Models.Core
         /// <param name="direction">1 for checking to the right -1 to checking to the left</param>
         /// <param name="freePositions">Returns a number which represents the diffrent options to open the mill. Only returns a valid output when this method returns ture</param>
         /// <returns>True if there is a Mill</returns>
-        private bool CheckForHorizontalMill(int k, sbyte color, int direction, out byte freePositions)
+        private bool CheckForHorizontalMill(int k, sbyte color, int direction, out byte freePositions, out byte potMills)
         {
             freePositions = 0;
+            potMills = 0;
 
             //check if there is a open position at k
             for (int j = 0; j < MOVES[k].Length; j++)
@@ -738,10 +755,11 @@ namespace MillGame.Models.Core
             for (int i = 1; i < 3; i++)
             {
                 //calculate new postion t
-                var t = k + i*direction;
+                var t = k + i * direction;
                 //check the color
                 if (m_board[t] != color)
                 {
+                    if (i == 2 && m_board[k + i * direction] == IController.NONE) potMills++;
                     return false;
                 }
                 //check if there is a open position at t
@@ -761,14 +779,16 @@ namespace MillGame.Models.Core
         /// <param name="direction">1 for checking to the bottim -1 to checking to the top</param>
         /// <param name="freePositions">Returns a number which represents the diffrent options to open the mill. Only returns a valid output when this method returns ture</param>
         /// <returns>True if there is a Mill</returns>
-        private bool CheckForVerticalMill(int k, sbyte color, int direction, out byte freePositions)
+        private bool CheckForVerticalMill(int k, sbyte color, int direction, out byte freePositions, out byte potMills)
         {
             freePositions = 0;
+            potMills = 0;
             for (int i = 1; i < 3; i++)
             {
-                var t = TRANSPOSED[k + i*direction];
+                var t = TRANSPOSED[k + i * direction];
                 if (m_board[t] != color)
                 {
+                    if (i == 2 && m_board[TRANSPOSED[k + i * direction]] == IController.NONE) potMills++;
                     return false;
                 }
                 for (int j = 0; j < MOVES[t].Length; j++)

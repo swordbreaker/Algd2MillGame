@@ -87,14 +87,6 @@ namespace MillGame.Views
             stone.Tag = to;
         }
 
-        //<Storyboard x:Key="StoneFadeOut">
-        //    <ColorAnimationUsingKeyFrames x:Name="ColorFade" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)" Storyboard.TargetName="White1">
-        //        <EasingColorKeyFrame KeyTime = "0" Value="Red"/>
-        //        <EasingColorKeyFrame KeyTime = "0:0:0.5" Value="Red"/>
-        //        <EasingColorKeyFrame KeyTime = "0:0:1.7" Value="#00FF0000"/>
-        //    </ColorAnimationUsingKeyFrames>
-        //</Storyboard>
-
         public void TakeStone(int pos)
         {
             var stone = BoardStones[pos];
