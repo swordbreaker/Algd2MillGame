@@ -536,7 +536,7 @@ namespace MillGame.Models.Core
         }
 
         // numOfMills, numOfMovePosibilities, numOfStones, numOf2Combis, numOf3Combis, numOfPosibileOpenMills, opponentPotentailMills
-        private static readonly int[] _placingFactors = { 15, 10, 9, 10, 7, 0, 10 };
+        private static readonly int[] _placingFactors = { 15, 10, 9, 10, 7, 0, 35};
         private static readonly int[] _movingFactors = { 43, 10, 11, 0, 0, 20, 5 };
         private static readonly int[] _jumpingFactors = { 0, 0, 0, 10, 1, 0, 10 };
 
@@ -607,7 +607,7 @@ namespace MillGame.Models.Core
                 //Num of open mills
                 wScore[5] = wScore[5] - bScore[5];
                 //Opponent Potental Mill
-                wScore[5] = wScore[6] - bScore[6];
+                wScore[5] = bScore[6] - wScore[6];
 
                 return wScore.Aggregate((a, b) => a + b);
             }
@@ -627,63 +627,33 @@ namespace MillGame.Models.Core
 
         private void GetMillInformations(ref ScoreInfomations infos)
         {
-            byte[] cornerStones = { 0, 3, 6, 17, 20, 23 };
-            byte[] middleStones = { 01, 16, 09, 12 };
+            byte[] horizontalStones = { 0, 3, 6, 9, 12, 15, 18, 21};
+            byte[] verticalStones = { 0, 3, 6, 1, 16, 8, 5, 2 };
 
             var mills = new byte[2];
             var potentialOpenings = new byte[2];
             var opponentPotentialMills = new byte[2];
 
-            for (int i = 0; i < cornerStones.Length; i++)
+            foreach (var k in horizontalStones)
             {
-                var k = cornerStones[i];
-                var color = m_board[k];
-                if (color == IController.NONE) continue;
-                var direction = (cornerStones[i] <= 6) ? 1 : -1;
-                byte openings;
-                byte potPotmills;
-                if (CheckForHorizontalMill(k, color, direction, out openings, out potPotmills))
+                MillInfomation millInfo;
+                if (CheckForMill(k, out millInfo, true))
                 {
-                    mills[color]++;
-                    potentialOpenings[color] += openings;
+                    mills[millInfo.Color]++;
+                    potentialOpenings[millInfo.Color] += millInfo.FreePositions;
                 }
-                opponentPotentialMills[State.OppositeColor(color)] += potPotmills;
-                if (CheckForVerticalMill(k, color, direction, out openings, out potPotmills))
-                {
-                    mills[color]++;
-                    potentialOpenings[color] += openings;
-                }
-                opponentPotentialMills[State.OppositeColor(color)] += potPotmills;
+                if (millInfo.PotMills) opponentPotentialMills[State.OppositeColor(millInfo.Color)]++;
             }
 
-            for (int i = 0; i < 2; i++)
+            foreach (var k in verticalStones)
             {
-                var k = middleStones[i];
-                var color = m_board[k];
-                if (color == IController.NONE) continue;
-                byte openings;
-                byte potPotmills;
-                if (CheckForVerticalMill(k, color, 1, out openings, out potPotmills))
+                MillInfomation millInfo;
+                if (CheckForMill(k, out millInfo, false))
                 {
-                    mills[color]++;
-                    potentialOpenings[color] += openings;
+                    mills[millInfo.Color]++;
+                    potentialOpenings[millInfo.Color] += millInfo.FreePositions;
                 }
-                opponentPotentialMills[State.OppositeColor(color)] += potPotmills;
-            }
-
-            for (int i = 2; i < 4; i++)
-            {
-                var k = middleStones[i];
-                var color = m_board[k];
-                if (color == IController.NONE) continue;
-                byte openings;
-                byte potPotmills;
-                if (CheckForHorizontalMill(k, color, 1, out openings, out potPotmills))
-                {
-                    mills[color]++;
-                    potentialOpenings[color] += openings;
-                }
-                opponentPotentialMills[State.OppositeColor(color)] += potPotmills;
+                if (millInfo.PotMills) opponentPotentialMills[State.OppositeColor(millInfo.Color)]++;
             }
 
             infos.numOfMills = mills;
@@ -698,7 +668,6 @@ namespace MillGame.Models.Core
             var twoCombis = new byte[2];
             var threeCombis = new byte[2];
             var checkedStones = new bool[m_board.Length];
-
 
             for (int i = 0; i < m_board.Length; i++)
             {
@@ -733,70 +702,104 @@ namespace MillGame.Models.Core
             infos.numOfMovePosibilities = movePossibilits;
         }
 
+        struct MillInfomation
+        {
+            public sbyte Color;
+            public byte FreePositions;
+            public bool PotMills;
+        }
+
         /// <summary>
         /// Check if there is a Mill in the Horizontal line
         /// </summary>
         /// <param name="k">Start position need to be a corner position</param>
-        /// <param name="color">The color of the stone in the  start postion</param>
-        /// <param name="direction">1 for checking to the right -1 to checking to the left</param>
-        /// <param name="freePositions">Returns a number which represents the diffrent options to open the mill. Only returns a valid output when this method returns ture</param>
+        /// <param name="millInfo"></param>
         /// <returns>True if there is a Mill</returns>
-        private bool CheckForHorizontalMill(int k, sbyte color, int direction, out byte freePositions, out byte potMills)
+        private bool CheckForMill(int k, out MillInfomation millInfo, bool horizontal)
         {
-            freePositions = 0;
-            potMills = 0;
+            millInfo = new MillInfomation { Color = -2 };
+            var sameColorCount = 0;
 
-            //check if there is a open position at k
-            for (int j = 0; j < MOVES[k].Length; j++)
+            int index = 0;
+            if (!horizontal)
             {
-                if (m_board[MOVES[k][j]] == IController.NONE) freePositions++;
+                index = Array.FindIndex(TRANSPOSED, i => i == k);
             }
-
-            for (int i = 1; i < 3; i++)
+            
+            for (int i = 0; i < 3; i++)
             {
                 //calculate new postion t
-                var t = k + i * direction;
-                //check the color
-                if (m_board[t] != color)
+                var t = 0;
+                if (horizontal)
                 {
-                    if (i == 2 && m_board[k + i * direction] == IController.NONE) potMills++;
+                    t = k + i;
+                }
+                else
+                {
+                    t = TRANSPOSED[index + i];
+                }
+                var currentPos = m_board[t];
+                //check the color
+                if (currentPos != IController.NONE && millInfo.Color == -2)
+                {
+                    millInfo.Color = m_board[t];
+                }
+                if (currentPos != IController.NONE && currentPos == OppositeColor(millInfo.Color))
+                {
+                    millInfo.FreePositions = 0;
                     return false;
+                }
+                if (currentPos == millInfo.Color)
+                {
+                    sameColorCount++;
                 }
                 //check if there is a open position at t
                 for (int j = 0; j < MOVES[t].Length; j++)
                 {
-                    if (m_board[MOVES[t][j]] == IController.NONE) freePositions++;
+                    if (m_board[MOVES[t][j]] == IController.NONE) millInfo.FreePositions++;
                 }
             }
-            return true;
+
+            millInfo.PotMills = sameColorCount == 2;
+            return sameColorCount == 3;
         }
 
-        /// <summary>
-        /// Check if there is a Mill in the Vertica line
-        /// </summary>
-        /// <param name="k">Start position need to be a corner position</param>
-        /// <param name="color">The color of the stone in the  start postion</param>
-        /// <param name="direction">1 for checking to the bottim -1 to checking to the top</param>
-        /// <param name="freePositions">Returns a number which represents the diffrent options to open the mill. Only returns a valid output when this method returns ture</param>
-        /// <returns>True if there is a Mill</returns>
-        private bool CheckForVerticalMill(int k, sbyte color, int direction, out byte freePositions, out byte potMills)
-        {
-            freePositions = 0;
-            potMills = 0;
-            for (int i = 1; i < 3; i++)
-            {
-                var t = TRANSPOSED[k + i * direction];
-                if (m_board[t] != color)
-                {
-                    if (i == 2 && m_board[TRANSPOSED[k + i * direction]] == IController.NONE) potMills++;
-                    return false;
-                }
-                for (int j = 0; j < MOVES[t].Length; j++)
-                {
-                    if (m_board[MOVES[t][j]] == IController.NONE) freePositions++;
-                }
-            }
-            return true;
-        }
+        ///// <summary>
+        ///// Check if there is a Mill in the Vertica line
+        ///// </summary>
+        ///// <param name="k">Start position need to be a corner position</param>
+        ///// <param name="color">The color of the stone in the  start postion</param>
+        ///// <param name="direction">1 for checking to the bottim -1 to checking to the top</param>
+        ///// <param name="freePositions">Returns a number which represents the diffrent options to open the mill. Only returns a valid output when this method returns ture</param>
+        ///// <returns>True if there is a Mill</returns>
+        //private bool CheckForVerticalMill(int k, out MillInfomation millInfo)
+        //{
+        //    millInfo = new MillInfomation { Color = -2 };
+        //    var sameColorCount = 0;
+
+        //    for (int i = 0; i < 3; i++)
+        //    {
+        //        var t = TRANSPOSED[k + i];
+        //        var currentPos = m_board[t];
+        //        if (currentPos != IController.NONE && millInfo.Color == -2)
+        //        {
+        //            millInfo.Color = m_board[t];
+        //        }
+        //        if (currentPos == OppositeColor(millInfo.Color))
+        //        {
+        //            millInfo.FreePositions = 0;
+        //            return false;
+        //        }
+        //        if (currentPos == millInfo.Color)
+        //        {
+        //            sameColorCount++;
+        //        }
+        //        for (int j = 0; j < MOVES[t].Length; j++)
+        //        {
+        //            if (m_board[MOVES[t][j]] == IController.NONE) millInfo.FreePositions++;
+        //        }
+        //    }
+        //    return true;
+        //}
     }
 }

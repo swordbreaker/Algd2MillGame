@@ -123,7 +123,10 @@ namespace MillGame.Models
                 m_currentNode = m_currentNode.RemoveUnusedChilds(bestAction);
                 m_currentState = m_currentNode.ComputeState(m_currentState, m_currentNode);
                 Debug.WriteLine("Score is: " + m_currentNode.Score());
+                Debug.WriteLine("COMPUTER");
                 Debug.WriteLine(m_currentState.Infomations.ToString((byte)m_currentNode.Data().Color()));
+                Debug.WriteLine("PLAYER");
+                Debug.WriteLine(m_currentState.Infomations.ToString((byte)State.OppositeColor(m_currentNode.Data().Color())));
                 //m_currentState = m_currentNode.ComputeState(m_currentState, oldNode);
                 var oppColor = State.OppositeColor(bestAction.Color());
                 m_currentNode.Create(0, m_height, oppColor, m_currentNode, m_currentState);
