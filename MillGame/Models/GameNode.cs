@@ -43,6 +43,11 @@ namespace MillGame.Models
             m_beta = beta;
         }
 
+        public int Create(int curHeight, int height, sbyte color, GameNode root, State rootState)
+        {
+            return Create(curHeight, height, color, root, rootState, int.MinValue, int.MaxValue);
+        }
+
         public int Create(int curHeight, int height, sbyte color, GameNode root, State rootState, int alpha = int.MinValue, int beta = int.MaxValue)
         {
             int numberOfCreatedNodes = 0;

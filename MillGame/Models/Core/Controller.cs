@@ -26,7 +26,7 @@ namespace MillGame.Models
     public class Controller : IController
     {
         // constants
-        public static int TREEDEPTH = 15;        // relative game tree height measured in full-moves
+        public static int TREEDEPTH = 4;        // relative game tree height measured in full-moves
         public static bool VERBOSE = false;  // print additional output
                                              // testing
         public static int[] s_scores = new int[State.NPOS];
