@@ -89,12 +89,12 @@ namespace MillGame.Models
                 _firstTurn = false;
                 return m_currentNode.Data();
             }
-
+            if (m_currentNode.m_children.IsEmpty) return null;
             Action bestAction = null;
 
             if (m_currentNode.Data().Color() == IController.BLACK)
             {
-                bestAction = m_currentNode?.m_children.Max().Data();
+                bestAction = m_currentNode.m_children.Max().Data();
             }
             else
             {
