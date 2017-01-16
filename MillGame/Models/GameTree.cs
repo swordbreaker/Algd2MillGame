@@ -72,7 +72,6 @@ namespace MillGame.Models
             m_currentNode = m_currentNode.RemoveUnusedChilds(a);
             m_currentState = m_currentNode.ComputeState(m_currentState, m_currentNode);
             //m_currentState = m_currentNode.ComputeState(m_currentState, oldNode);
-
         }
 
         /**
@@ -82,11 +81,6 @@ namespace MillGame.Models
          */
         public Action ComputerPlayer()
         {
-            if (!inMovingPhase && m_currentState.MovingPhase(IController.WHITE) && m_currentState.MovingPhase(IController.BLACK))
-            {
-                inMovingPhase = true;
-                m_height = m_height*2;
-            }
             var opColor = State.OppositeColor(m_currentNode.Data().Color());
             m_currentNode.Create(0, m_height, opColor, m_currentNode, m_currentState);
 
@@ -100,28 +94,11 @@ namespace MillGame.Models
 
             if (m_currentNode.Data().Color() == IController.BLACK)
             {
-                int maxScore = int.MinValue;
-                
-                foreach (GameNode child in m_currentNode.m_children)
-                {
-                    if (maxScore < child.Score())
-                    {
-                        maxScore = child.Score();
-                        bestAction = child.Data();
-                    }
-                }
+                bestAction = m_currentNode?.m_children.Max().Data();
             }
             else
             {
-                int minScore = int.MaxValue;
-                foreach (GameNode child in m_currentNode.m_children)
-                {
-                    if (minScore > child.Score())
-                    {
-                        minScore = child.Score();
-                        bestAction = child.Data();
-                    }
-                }
+                bestAction = m_currentNode?.m_children.Min().Data();
             }
 
             if (bestAction != null)
