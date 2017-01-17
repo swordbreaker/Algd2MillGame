@@ -252,20 +252,11 @@ namespace MillGame.ViewModels
             if (!ComputerIsPlaying) Message = "Your turn";
         }
 
-        public void PrepareBoard()
-        {
-            // throw new NotImplementedException();
-        }
+        public void PrepareBoard() { }
 
-        public void SetComputerName(string name)
-        {
-            // throw new NotImplementedException();
-        }
+        public void SetComputerName(string name) { }
 
-        public void SetHumanName(string name)
-        {
-            // throw new NotImplementedException();
-        }
+        public void SetHumanName(string name) { }
 
         public event PropertyChangedEventHandler PropertyChanged;
 

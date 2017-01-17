@@ -38,12 +38,6 @@ namespace UnitTestProject
                 var act = ComputerPlace(IController.BLACK);
                 i++;
             } while (_controller.GameTree.CurrentState().PlacingPhase(IController.BLACK));
-
-            //var status = _controller.Play(new Placing(IController.WHITE, 1));
-            //var action = _controller.Compute();
-            //var status2 = _controller.Play(new Placing(IController.WHITE, 1));
-            //controller.Compute();
-
         }
 
         public void PlayerPlace(sbyte color, int i)

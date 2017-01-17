@@ -29,8 +29,6 @@ namespace MillGame.Models.Core.Actions
         {
             if (!(action != null && (action is Placing || action is Moving))) throw new Exception("wrong action");
             if (!(pos >= 0 && pos < State.NPOS)) throw new Exception("wrong board position");
-            //Contract.Requires<ArgumentException>(action != null && (action is Placing || action is Moving), "wrong action");
-            //Contract.Requires<ArgumentException>(pos >= 0 && pos < State.NPOS, "wrong board position");
 
             Action = action; // the action resulting in a take
             TakePosition = (byte)pos;
@@ -52,12 +50,10 @@ namespace MillGame.Models.Core.Actions
             if (Action is Moving)
             {
                 return $"TAKING MOVING {((Moving) Action).StartPosition,2}-{Action.EndPosition,2}:{TakePosition,2}";
-                //return String.Format("%02d-%02d:%02d", ((Moving)Action).StartPosition, Action.EndPosition, TakePosition);
             }
             else
             {
                 return $"TAKING __-{Action.EndPosition,2}:{TakePosition,2}";
-                //return String.Format("__-%02d:%02d", Action.EndPosition, TakePosition);
             }
             //return "PSST nothing to see here";
         }
@@ -77,14 +73,12 @@ namespace MillGame.Models.Core.Actions
         public override bool IsValid(State s)
         {
             if (s == null) throw new Exception("s is null");
-            //Contract.Requires<ArgumentException>(s != null, "s is null");
             return s.IsValidTake(TakePosition, State.OppositeColor(m_color));
         }
 
         public override void Update(State s)
         {
             if (s == null) throw new Exception("s is null");
-            //Contract.Requires<ArgumentException>(s != null, "s is null");
             var moving = Action as Moving;
             if (moving != null)
             {

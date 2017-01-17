@@ -32,34 +32,21 @@ namespace MillGame.Models.Core.Actions
             return false;
         }
 
-        //public static bool operator ==(Placing p1, Placing p2)
-        //{
-        //    return p1 != null && p1.Equals(p2);
-        //}
-
-        //public static bool operator !=(Placing p1, Placing p2)
-        //{
-        //    return !(p1 == p2);
-        //}
-
         public override string ToString()
         {
             //TODO Fix
             return $"PLACING __-{m_to,2}:__";
-            //return String.format("__-%02d:__", m_to);
         }
 
         public override bool IsValid(State s)
         {
             if (s == null) throw new Exception("s is null");
-            //Contract.Requires<ArgumentException>(s != null, "s is null");
             return s.IsValidPlace(m_to, m_color);
         }
 
         public override void Update(State s)
         {
             if (s == null) throw new Exception("s is null");
-            //Contract.Requires<ArgumentException>(s != null, "s is null");
             s.Update(this);
         }
 
@@ -69,8 +56,6 @@ namespace MillGame.Models.Core.Actions
             {
                 writer.WriteLine("PLACE " + m_color + " " + m_to);
             }
-
-            //os.writeBytes("PLACE " + m_color + " " + m_to + '\n');
         }
     }
 }

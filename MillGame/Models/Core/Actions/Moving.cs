@@ -26,8 +26,6 @@ namespace MillGame.Models.Core.Actions
         {
             if (!(from >= 0 && from < State.NPOS)) throw new Exception("wrong board position");
             if (!(from >= 0 && from < State.NPOS)) throw new Exception("wrong board position");
-            //Contract.Requires<ArgumentException>(from >= 0 && from < State.NPOS, "wrong board position");
-            //Contract.Requires<ArgumentException>(from >= 0 && from < State.NPOS, "wrong board position");
             m_from = (byte)from;
         }
 
@@ -46,8 +44,6 @@ namespace MillGame.Models.Core.Actions
         public override string ToString()
         {
             return $"MOVING _{m_from,2}-{m_to,2:__} ";
-            //return string.Format("%02d-%02d:__", m_from, m_to);
-            //return String.format("%02d-%02d:__", m_from, m_to);
         }
 
         /**
@@ -58,14 +54,12 @@ namespace MillGame.Models.Core.Actions
         public override bool IsValid(State s)
         {
             if (s == null) throw new Exception("s is null");
-            //Contract.Requires<ArgumentException>(s != null, "s is null");
             return s.IsValidMove(m_from, m_to, m_color);
         }
 
         public override void Update(State s)
         {
             if (s == null) throw new Exception("s is null");
-            //Contract.Requires<ArgumentException>(s != null, "s is null");
             s.Update(this);
         }
 
@@ -75,8 +69,6 @@ namespace MillGame.Models.Core.Actions
             {
                 writer.WriteLine("MOVE " + m_color + " " + m_from + " " + m_to);
             }
-
-            //os.writeBytes("MOVE " + m_color + " " + m_from + " " + m_to + '\n');
         }
     }
 }

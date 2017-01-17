@@ -38,8 +38,6 @@ namespace MillGame.Models.Core
         {
             int score2 = ((GameNode)v).Score();
             return m_score.CompareTo(score2);
-            //if (m_score == score2) return 0;
-            //else return (m_score < score2) ? -1 : 1;
         }
 
         /**

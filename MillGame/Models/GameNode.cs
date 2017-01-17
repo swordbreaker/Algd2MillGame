@@ -91,7 +91,6 @@ namespace MillGame.Models
                                     }
 
                                     UpdateScore(takingNode, v);
-                                    //UpdateScore(takingNode, takeState.Score());
 
                                     root.m_children.Enqueue(takingNode);
                                     if (beta <= alpha) break;
@@ -117,7 +116,6 @@ namespace MillGame.Models
                             beta = Math.Min(beta, v);
                         }
 
-                        //UpdateScore(childNode, newState.Score());
                         UpdateScore(childNode, v);
                         root.m_children.Enqueue(childNode);
                         if (beta <= alpha) break;
@@ -163,7 +161,6 @@ namespace MillGame.Models
                                         beta = Math.Min(beta, v);
                                     }
 
-                                    //UpdateScore(takingNode, takeState.Score());
                                     UpdateScore(takingNode, v);
                                     root.m_children.Enqueue(takingNode);
                                     if (beta <= alpha) break;
@@ -188,7 +185,6 @@ namespace MillGame.Models
                                 beta = Math.Min(beta, v);
                             }
 
-                            //UpdateScore(childNode, newState.Score());
                             UpdateScore(childNode, v);
                             root.m_children.Enqueue(childNode);
                             if (beta <= alpha) break;
@@ -326,10 +322,6 @@ namespace MillGame.Models
             {
                 return ((MaxNode) this).CompareTo(other);
             }
-            //this.CompareTo(other);
-
-            //var gameNodeOther = (GameNode)other;
-            //return m_score - gameNodeOther.m_score;
         }
     }
 }

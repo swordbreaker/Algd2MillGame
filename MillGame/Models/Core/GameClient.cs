@@ -54,7 +54,6 @@ namespace MillGame.Models
                 {
                     // read server address and player name
                     var reader = new StreamReader(new FileStream("config.txt", FileMode.CreateNew));
-                    //StreamReader reader = new BufferedReader(new InputStreamReader(new FileInputStream("config.txt")));
                     hostName = reader.ReadLine();
                     m_playerName = reader.ReadLine();
                     reader.Close();
@@ -69,9 +68,6 @@ namespace MillGame.Models
                 var ipe = new IPEndPoint(IPAddress.Parse(hostName), s_port);
                 Socket = new Socket(ipe.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
-                //m_outToServer = new DataOutputStream(m_clientSocket.getOutputStream());
-                //m_inFromServer = new BufferedReader(new InputStreamReader(m_clientSocket.getInputStream()));
-
                 // removes blanks in player's name
                 StringBuilder sb = new StringBuilder(m_playerName);
                 for (int i = 0; i < sb.Length; i++)
@@ -81,10 +77,8 @@ namespace MillGame.Models
 
                 // send registration message
                 Socket.Send(Encoding.ASCII.GetBytes("REGISTER " + sb.ToString() + '\n'));
-                //m_outToServer.writeBytes("REGISTER " + sb.ToString() + '\n');
 
                 // read answer from server
-
                 byte[] buffer = new byte[1024];
                 int iRx = Socket.Receive(buffer);
                 char[] chars = new char[iRx];
@@ -114,10 +108,8 @@ namespace MillGame.Models
         public void StartGame()
         {
             if (!(Socket != null && Socket.Connected && Socket.IsBound)) throw new Exception();
-            //Contract.Requires<ArgumentException>(Socket != null && Socket.Connected && Socket.IsBound);
             Controller.SetPlayerName(m_playerName);
             m_game = new Game(this);
-            //m_game.Start();
             m_game.Run();
         }
 
@@ -130,7 +122,6 @@ namespace MillGame.Models
         public void StopGame(int winner)
         {
             if (!(Socket != null && Socket.Connected && Socket.IsBound)) throw new Exception();
-            //Contract.Requires<ArgumentException>(Socket != null && Socket.Connected && Socket.IsBound);
 
             switch (winner)
             {
@@ -198,8 +189,6 @@ namespace MillGame.Models
         private IController.Status ReadAndWait()
         {
             if (m_client.Socket == null) throw new Exception();
-            //Contract.Requires<ArgumentException>(m_client.Socket != null);
-
 
             var buffer = new byte[1024];
             int iRx = m_client.Socket.Receive(buffer);
@@ -210,8 +199,6 @@ namespace MillGame.Models
 
             var s = new string(chars);
 
-            //String s = m_.readLine();
-            //Debug.WriteLine("Protocol: " + s);
             String[]
                 token = s.Split(' ');
 

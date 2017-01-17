@@ -32,8 +32,6 @@ namespace MillGame.Models.Core
             Debug.WriteLine("FINISH COMPUTER PLAYER");
             m_status = IController.Status.FINISHED;
             m_signal = true;
-            //_mutex.Release();
-            //notify();
         }
 
         public void Play()
@@ -43,31 +41,6 @@ namespace MillGame.Models.Core
                 m_controller.Compute();
                 m_status = m_controller.GetStatus();
             });
-            //Debug.WriteLine("PLAY COMPUTER PLAYER");
-            //m_controller.Compute();
-            //m_status = m_controller.GetStatus();
-            //m_signal = true;
-            //_mutex.Release();
-            //notify();
         }
-
-        //public async void Run()
-        //{
-        //    lock (_lock)
-        //    {
-        //        do
-        //        {
-        //            while (!m_signal) _mutex.WaitOne();
-        //            m_signal = false;
-        //            if (m_status != IController.Status.FINISHED)
-        //            {
-        //                Debug.WriteLine("RUN COMPUTER PLAYER");
-        //                Thread.Sleep(500);
-        //                m_controller.Compute();
-        //                m_status = m_controller.GetStatus();
-        //            }
-        //        } while (m_status == IController.Status.OK || m_status == IController.Status.CLOSEDMILL);
-        //    }
-        //}
     }
 }

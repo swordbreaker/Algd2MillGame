@@ -53,7 +53,6 @@ namespace MillGame.Models
          */
         public void Remove()
         {
-            //TODO create Remove Methode in Priority Queue
             if (m_parent != null) m_parent.m_children.Remove(this);
         }
 

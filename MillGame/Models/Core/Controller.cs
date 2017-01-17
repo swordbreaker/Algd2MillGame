@@ -78,9 +78,6 @@ namespace MillGame.Models
             }
 
             SetStarter(b);
-            //Task.Run(() => m_compi.Run());
-
-            //m_compi.Start();
 
             if (b)
             {
@@ -202,7 +199,6 @@ namespace MillGame.Models
                 // computer will open the game
                 m_gameTree.Create(TREEDEPTH, null);
                 if (VERBOSE) Debug.WriteLine("\tgame tree created; tree size: " + m_gameTree.Size());
-                //m_gameTree.print();
             }
         }
 
@@ -248,7 +244,6 @@ namespace MillGame.Models
         public override Status Play(Core.Actions.Action a)
         {
             if (a == null) throw new Exception();
-            //Contract.Requires<ArgumentException>(a != null);
             
             Status status;
 
@@ -264,8 +259,6 @@ namespace MillGame.Models
             else
             {
                 throw new Exception();
-                //Contract.Requires<ArgumentException>(false);
-                //assert false;
                 status = Status.INVALIDACTION;
             }
             return status;
@@ -286,12 +279,9 @@ namespace MillGame.Models
                 if (a is Placing)
                 {
                     if (m_humanColor != IController.WHITE) throw new Exception("wrong human player color");
-                    //Contract.Requires<ArgumentException>(m_humanColor == IController.WHITE, "wrong human player color");
                     m_gameTree.Create(TREEDEPTH, (Placing)a);
                     s = m_gameTree.CurrentState();
                     if (VERBOSE) Debug.WriteLine("Human has played\n\ttree size: " + m_gameTree.Size());
-                    //m_gameTree.print();
-
                 }
                 else
                 {
@@ -323,7 +313,6 @@ namespace MillGame.Models
                         // play human player action a
                         m_gameTree.HumanPlayer(a);
                         if (VERBOSE) Debug.WriteLine("Human has played\n\ttree size: " + m_gameTree.Size());
-                        //m_gameTree.print();
                     }
                 }
                 else
@@ -359,7 +348,6 @@ namespace MillGame.Models
             // human take action
             if (s == null)
             {
-                //m_view.UpdateBoard(m_gameTree.CurrentState(), a, false);
                 return Status.INVALIDACTION;
             }
             else
@@ -373,7 +361,6 @@ namespace MillGame.Models
                         // play human player action a
                         m_gameTree.HumanPlayer(a);
                         if (VERBOSE) Debug.WriteLine("Human has played\n\ttree size: " + m_gameTree.Size());
-                        //m_gameTree.print();
 
                         m_view.UpdateBoard(m_gameTree.CurrentState(), a, false);
                         if (s.Finished())
@@ -395,7 +382,6 @@ namespace MillGame.Models
                         a.Action.Update(sCopy);
 
                         // redraw game board
-                        //m_view.UpdateBoard(sCopy, a.Action, false);
                         return Status.INVALIDACTION;
                     }
                 }
@@ -413,7 +399,6 @@ namespace MillGame.Models
         public override void ComputeAsync()
         {
             if (!(!m_serverGame && m_compi != null)) throw new Exception();
-            //Contract.Requires<ArgumentException>(!m_serverGame && m_compi != null);
             m_compi.Play();
         }
 
@@ -425,8 +410,7 @@ namespace MillGame.Models
         {
             // compute computer player action
             Core.Actions.Action a = m_gameTree.ComputerPlayer();
-            if (VERBOSE) Debug.WriteLine("Computer has played\n\ttree size: " + m_gameTree.Size());
-            //m_gameTree.print();	
+            if (VERBOSE) Debug.WriteLine("Computer has played\n\ttree size: " + m_gameTree.Size());	
 
             // redraw game board: current game tree state is the state after computer played
             Application.Current.Dispatcher.Invoke(() =>

@@ -148,7 +148,6 @@ namespace MillGame.Models.Core
         public int UnplacedStones(byte color)
         {
             if (!(color == IController.WHITE || color == IController.BLACK)) throw new Exception();
-            //Contract.Requires<ArgumentException>(color == IController.WHITE || color == IController.BLACK);
             return m_unplacedStones[color];
         }
 
@@ -160,7 +159,6 @@ namespace MillGame.Models.Core
         public bool PlacingPhase(sbyte color)
         {
             if (!(color == IController.WHITE || color == IController.BLACK)) throw new Exception();
-            //Contract.Requires<ArgumentException>(color == IController.WHITE || color == IController.BLACK);
             return m_unplacedStones[color] > 0;
         }
 
@@ -172,7 +170,6 @@ namespace MillGame.Models.Core
         public bool MovingPhase(sbyte color)
         {
             if (!(color == IController.WHITE || color == IController.BLACK)) throw new Exception();
-            //Contract.Requires<ArgumentException>(color == IController.WHITE || color == IController.BLACK);
 
             return m_unplacedStones[color] == 0;
         }
@@ -185,7 +182,6 @@ namespace MillGame.Models.Core
         public bool JumpingPhase(sbyte color)
         {
             if (!(color == IController.WHITE || color == IController.BLACK)) throw new Exception();
-            //Contract.Requires<ArgumentException>(color == IController.WHITE || color == IController.BLACK);
             return MovingPhase(color) && m_stonesOnBoard[color] == 3;
         }
 
@@ -196,7 +192,6 @@ namespace MillGame.Models.Core
         public void SetWinner(sbyte color)
         {
             if (!(color == IController.WHITE || color == IController.BLACK)) throw new Exception();
-            //Contract.Requires<ArgumentException>(color == IController.WHITE || color == IController.BLACK);
             m_winner = color;
         }
 
@@ -223,8 +218,6 @@ namespace MillGame.Models.Core
         public sbyte Color(sbyte pos)
         {
             if (!(pos >= 0 && pos < State.NPOS)) throw new Exception();
-            //Contract.Requires<ArgumentException>(pos >= 0 && pos < State.NPOS);
-            //assert pos >= 0 && pos < State.NPOS : "wrong board position";
 
             return m_board[pos];
         }
@@ -239,11 +232,6 @@ namespace MillGame.Models.Core
         {
             if (!(pos >= 0 && pos < State.NPOS)) throw new Exception("wrong board position");
             if (!(color == IController.WHITE || color == IController.BLACK || color == IController.NONE)) throw new Exception("wrong color");
-
-            //Contract.Requires<ArgumentException>(pos >= 0 && pos < State.NPOS, "wrong board position");
-            //Contract.Requires<ArgumentException>(color == IController.WHITE || color == IController.BLACK || color == IController.NONE, "wrong color");
-            //assert pos >= 0 && pos < State.NPOS : "wrong board position";
-            //assert color == IController.WHITE || color == IController.BLACK || color == IController.NONE : "wrong color";
 
             if (color == IController.NONE) return false;
 
@@ -386,9 +374,6 @@ namespace MillGame.Models.Core
         {
             if (!(pos < State.NPOS)) throw new Exception("wrong board position");
             if (!(color == IController.WHITE || color == IController.BLACK)) throw new Exception("wrong color");
-            //Contract.Requires<ArgumentException>(pos >= 0 && pos < State.NPOS, "wrong board position");
-            //Contract.Requires<ArgumentException>(color == IController.WHITE || color == IController.BLACK, "wrong color");
-
 
             bool valid = false;
 
@@ -552,10 +537,6 @@ namespace MillGame.Models.Core
         private static readonly int[] _placingFactors = { 6, 13, 3, 2, 2, 12, 12 };
         private static readonly int[] _movingFactors = { 10, 5, 10, 4, 5, 8, 8 };
         private static readonly int[] _jumpingFactors = { 0, 0, 0, 15, 0, 15, 20 };
-
-        //private static readonly int[] _placingFactors = { 4, 9, 4, 2, 2, 14, 15 };
-        //private static readonly int[] _movingFactors = { 8, 4, 9, 4, 6, 9, 10 };
-        //private static readonly int[] _jumpingFactors = { 0, 0, 0, 14, 0, 16, 20 };
 
         /**
          * Compute score of this game state: Black is a minimizer, White a maximizer.
@@ -777,43 +758,5 @@ namespace MillGame.Models.Core
             millInfo.PotMills = sameColorCount == 2;
             return sameColorCount == 3;
         }
-
-        ///// <summary>
-        ///// Check if there is a Mill in the Vertica line
-        ///// </summary>
-        ///// <param name="k">Start position need to be a corner position</param>
-        ///// <param name="color">The color of the stone in the  start postion</param>
-        ///// <param name="direction">1 for checking to the bottim -1 to checking to the top</param>
-        ///// <param name="freePositions">Returns a number which represents the diffrent options to open the mill. Only returns a valid output when this method returns ture</param>
-        ///// <returns>True if there is a Mill</returns>
-        //private bool CheckForVerticalMill(int k, out MillInfomation millInfo)
-        //{
-        //    millInfo = new MillInfomation { Color = -2 };
-        //    var sameColorCount = 0;
-
-        //    for (int i = 0; i < 3; i++)
-        //    {
-        //        var t = TRANSPOSED[k + i];
-        //        var currentPos = m_board[t];
-        //        if (currentPos != IController.NONE && millInfo.Color == -2)
-        //        {
-        //            millInfo.Color = m_board[t];
-        //        }
-        //        if (currentPos == OppositeColor(millInfo.Color))
-        //        {
-        //            millInfo.FreePositions = 0;
-        //            return false;
-        //        }
-        //        if (currentPos == millInfo.Color)
-        //        {
-        //            sameColorCount++;
-        //        }
-        //        for (int j = 0; j < MOVES[t].Length; j++)
-        //        {
-        //            if (m_board[MOVES[t][j]] == IController.NONE) millInfo.FreePositions++;
-        //        }
-        //    }
-        //    return true;
-        //}
     }
 }

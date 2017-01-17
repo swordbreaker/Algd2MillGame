@@ -24,7 +24,6 @@ namespace MillGame.Models.Core.Actions
         public ActionPM(sbyte color, int to) : base(color)
         {
             if (!(to >= 0 && to < State.NPOS)) throw new Exception("wrong board position");
-            //Contract.Requires<ArgumentException>(to >= 0 && to < State.NPOS, "wrong board position");
             m_to = (byte)to;
         }
 

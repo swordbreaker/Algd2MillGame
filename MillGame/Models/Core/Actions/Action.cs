@@ -31,7 +31,6 @@ namespace MillGame.Models.Core.Actions
         public Action(sbyte color)
         {
             if(!(color == IController.WHITE || color == IController.BLACK)) throw new Exception("wrong color");
-            //Contract.Assert(color == IController.WHITE || color == IController.BLACK ,"wrong color");
             m_color = color;
         }
 
@@ -46,7 +45,6 @@ namespace MillGame.Models.Core.Actions
             {
                 // my opponent placed a stone
                 if(token.Length != 3) throw new Exception();
-                //Contract.Requires<ArgumentException>(token.Length == 3);
                 var color = sbyte.Parse(token[1]);
                 int pos = int.Parse(token[2]);
                 // create place action and play it
@@ -57,7 +55,6 @@ namespace MillGame.Models.Core.Actions
             {
                 // my opponent moved a stone
                 if (token.Length != 4) throw new Exception();
-                //Contract.Requires<ArgumentException>(token.Length == 4);
                 sbyte color = sbyte.Parse(token[1]);
                 int from = int.Parse(token[2]);
                 int to = int.Parse(token[3]);
@@ -69,12 +66,10 @@ namespace MillGame.Models.Core.Actions
             {
                 // my opponent 
                 if (token.Length <= 1) throw new Exception();
-                //Contract.Requires<ArgumentException>(token.Length > 1);
                 if (token[1].Equals("PLACE"))
                 {
                     // my opponent placed a stone
                     if (token.Length != 5) throw new Exception();
-                    //Contract.Requires<ArgumentException>(token.Length == 5);
                     sbyte color = sbyte.Parse(token[2]);
                     int pos = int.Parse(token[3]);
                     // create place action
@@ -89,7 +84,6 @@ namespace MillGame.Models.Core.Actions
                 {
                     // my opponent moved a stone
                     if (token.Length != 6) throw new Exception();
-                    //Contract.Requires<ArgumentException>(token.Length == 6);
                     sbyte color = sbyte.Parse(token[2]);
                     int from = int.Parse(token[3]);
                     int to = int.Parse(token[4]);
