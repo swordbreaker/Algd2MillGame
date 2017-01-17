@@ -26,12 +26,11 @@ namespace MillGame.Views
         public event EventHandler OnBoardRectPressed;
         public event EventHandler OnStonePressed;
 
-        //public static Controller _ctrl { get; private set; }
         public List<Rectangle> BoardRectangles;
         public Dictionary<int, Ellipse> BoardStones = new Dictionary<int, Ellipse>();
         public Queue<Ellipse> WhitePlacingStones;
         public Queue<Ellipse> BlackPlacingStones;
-        //private bool _secondClick = false;
+        private bool _isAnimationRunning = false;
 
         public MillBoard()
         {
@@ -46,16 +45,6 @@ namespace MillGame.Views
         private void Stone_MouseUp(object sender, MouseButtonEventArgs e)
         {
             OnStonePressed?.Invoke(sender, e);
-
-            //if (ViewModel.IsGameRunning)
-            //{
-            //    _secondClick = ViewModel.StoneClick(sender, _secondClick, true);
-
-            //    if(!_secondClick)
-            //    {
-            //        _ctrl.Compute();
-            //    }
-            //}
         }
 
         public void HideButtons()
@@ -75,16 +64,24 @@ namespace MillGame.Views
             Canvas.SetTop(stone, Canvas.GetTop(BoardRectangles[pos]));
         }
 
-        public void MoveStone(int from, int to)
+        public async void MoveStone(int from, int to)
         {
+            while (_isAnimationRunning)
+            {
+                await Task.Delay(10);
+            }
+            _isAnimationRunning = true;
             var x = Canvas.GetLeft(BoardRectangles[to]);
             var y = Canvas.GetTop(BoardRectangles[to]);
 
             var stone = BoardStones[from];
-            stone.MoveTo(x, y);
+
+            this.Invoke(() => stone.MoveTo(x, y));
             BoardStones.Remove(from);
             BoardStones.Add(to, stone);
             stone.Tag = to;
+            await Task.Delay(TimeSpan.FromSeconds(1));
+            _isAnimationRunning = false;
         }
 
         public void TakeStone(int pos)

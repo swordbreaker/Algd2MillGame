@@ -23,19 +23,8 @@ namespace MillGame.ExtentionMethods
 
             var anim1 = new DoubleAnimation(oldP.X, newX, TimeSpan.FromSeconds(1));
             var anim2 = new DoubleAnimation(oldP.Y, newY, TimeSpan.FromSeconds(1));
-
             target.BeginAnimation(Canvas.LeftProperty, anim1);
             target.BeginAnimation(Canvas.TopProperty, anim2);
-
-
-            //var top = Canvas.GetTop(target);
-            //var left = Canvas.GetLeft(target);
-            //TranslateTransform trans = new TranslateTransform();
-            //target.RenderTransform = trans;
-            //DoubleAnimation anim1 = new DoubleAnimation(top, newY - top, TimeSpan.FromSeconds(1));
-            //DoubleAnimation anim2 = new DoubleAnimation(left, newX - left, TimeSpan.FromSeconds(1));
-            //trans.BeginAnimation(TranslateTransform.XProperty, anim1);
-            //trans.BeginAnimation(TranslateTransform.YProperty, anim2);
         }
     }
 }

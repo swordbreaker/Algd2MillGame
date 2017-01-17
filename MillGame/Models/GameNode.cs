@@ -51,7 +51,7 @@ namespace MillGame.Models
             {
                 return rootState.Score();
             }
-            var v = (color == IController.BLACK) ? int.MinValue : int.MaxValue;
+            var v = (color == IController.WHITE) ? int.MinValue : int.MaxValue;
             if (rootState.PlacingPhase(color))
             {
                 foreach (byte position in State.TRANSPOSED)
@@ -75,7 +75,7 @@ namespace MillGame.Models
                                     var takingNode = Create(takingAction, root);
 
                                     //Minimizer
-                                    if (color == IController.BLACK)
+                                    if (color == IController.WHITE)
                                     {
                                         v = Math.Max(v,
                                             Create(curHeight + 1, height, State.OppositeColor(color), takingNode,
@@ -90,7 +90,8 @@ namespace MillGame.Models
                                         beta = Math.Min(beta, v);
                                     }
 
-                                    UpdateScore(takingNode, takeState.Score());
+                                    UpdateScore(takingNode, v);
+                                    //UpdateScore(takingNode, takeState.Score());
 
                                     root.m_children.Enqueue(takingNode);
                                     if (beta <= alpha) break;
@@ -101,7 +102,7 @@ namespace MillGame.Models
                     else
                     {
                         //Minimizer
-                        if (color == IController.BLACK)
+                        if (color == IController.WHITE)
                         {
                             v = Math.Max(v,
                                 Create(curHeight + 1, height, State.OppositeColor(color), childNode,
@@ -116,7 +117,8 @@ namespace MillGame.Models
                             beta = Math.Min(beta, v);
                         }
 
-                        UpdateScore(childNode, newState.Score());
+                        //UpdateScore(childNode, newState.Score());
+                        UpdateScore(childNode, v);
                         root.m_children.Enqueue(childNode);
                         if (beta <= alpha) break;
                     }
@@ -146,7 +148,7 @@ namespace MillGame.Models
                                     takingNode.Data().Update(takeState);
 
                                     //Minimizer
-                                    if (color == IController.BLACK)
+                                    if (color == IController.WHITE)
                                     {
                                         v = Math.Max(v,
                                             Create(curHeight + 1, height, State.OppositeColor(color), takingNode,
@@ -161,8 +163,8 @@ namespace MillGame.Models
                                         beta = Math.Min(beta, v);
                                     }
 
-                                    UpdateScore(takingNode, takeState.Score());
-                                    //UpdateScore(takingNode, v);
+                                    //UpdateScore(takingNode, takeState.Score());
+                                    UpdateScore(takingNode, v);
                                     root.m_children.Enqueue(takingNode);
                                     if (beta <= alpha) break;
                                 }
@@ -171,7 +173,7 @@ namespace MillGame.Models
                         else
                         {
                             //Minimizer
-                            if (color == IController.BLACK)
+                            if (color == IController.WHITE)
                             {
                                 v = Math.Max(v,
                                     Create(curHeight + 1, height, State.OppositeColor(color), childNode,
@@ -186,8 +188,8 @@ namespace MillGame.Models
                                 beta = Math.Min(beta, v);
                             }
 
-                            UpdateScore(childNode, newState.Score());
                             //UpdateScore(childNode, newState.Score());
+                            UpdateScore(childNode, v);
                             root.m_children.Enqueue(childNode);
                             if (beta <= alpha) break;
                         }
