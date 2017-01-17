@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MillGame.Models.Core;
 using MillGame.Models.Core.Actions;
 using Action = MillGame.Models.Core.Actions.Action;
-using System.Diagnostics;
 
 namespace MillGame.Models
 {
@@ -65,7 +60,7 @@ namespace MillGame.Models
                     var nextAction = new Placing(color, position);
                     var newState = rootState.Clone();
                     nextAction.Update(newState);
-                    var childNode = Create(nextAction);
+                    var childNode = Create(nextAction, root);
                     if (newState.InMill(position, color))
                     {
                         if (newState.TakingIsPossible(State.OppositeColor(color)))
@@ -77,7 +72,7 @@ namespace MillGame.Models
                                     var takeState = rootState.Clone();
                                     var takingAction = new Taking(nextAction, takingPosition);
                                     takingAction.Update(takeState);
-                                    var takingNode = Create(takingAction);
+                                    var takingNode = Create(takingAction, root);
 
                                     //Minimizer
                                     if (color == IController.BLACK)
@@ -94,8 +89,9 @@ namespace MillGame.Models
                                             takeState, alpha, beta));
                                         beta = Math.Min(beta, v);
                                     }
-                                           
+
                                     UpdateScore(takingNode, takeState.Score());
+
                                     root.m_children.Enqueue(takingNode);
                                     if (beta <= alpha) break;
                                 }
@@ -135,7 +131,7 @@ namespace MillGame.Models
                     {
                         if (!rootState.IsValidMove(i, to, color)) continue;
                         var nextAction = new Moving(color, i, to);
-                        var childNode = Create(nextAction);
+                        var childNode = Create(nextAction, root);
                         var newState = rootState.Clone();
                         childNode.Data().Update(newState);
                         if (newState.InMill(to, color))
@@ -145,7 +141,7 @@ namespace MillGame.Models
                                 foreach (byte takingPosition in State.TRANSPOSED)
                                 {
                                     if (!newState.IsValidTake(takingPosition, State.OppositeColor(color))) continue;
-                                    var takingNode = Create(new Taking(nextAction, takingPosition));
+                                    var takingNode = Create(new Taking(nextAction, takingPosition), root);
                                     var takeState = rootState.Clone();
                                     takingNode.Data().Update(takeState);
 
@@ -166,6 +162,7 @@ namespace MillGame.Models
                                     }
 
                                     UpdateScore(takingNode, takeState.Score());
+                                    //UpdateScore(takingNode, v);
                                     root.m_children.Enqueue(takingNode);
                                     if (beta <= alpha) break;
                                 }
@@ -190,6 +187,7 @@ namespace MillGame.Models
                             }
 
                             UpdateScore(childNode, newState.Score());
+                            //UpdateScore(childNode, newState.Score());
                             root.m_children.Enqueue(childNode);
                             if (beta <= alpha) break;
                         }
@@ -218,7 +216,7 @@ namespace MillGame.Models
         {
             if (!node.m_children.IsEmpty)
             {
-                var maxNode = (GameNode) node.m_children.Peek();
+                var maxNode = (GameNode)node.m_children.Peek();
                 if (maxNode.m_score < score)
                 {
                     node.m_score = maxNode.m_score;
@@ -231,7 +229,7 @@ namespace MillGame.Models
         {
             if (!node.m_children.IsEmpty)
             {
-                var minNode = (GameNode) node.m_children.Peek();
+                var minNode = (GameNode)node.m_children.Peek();
                 if (minNode.m_score > score)
                 {
                     node.m_score = minNode.m_score;
@@ -266,11 +264,11 @@ namespace MillGame.Models
         /// Create a new Node as MinNode or MaxNode
         /// </summary>
         /// <param name="a">Action in Node</param>
+        /// <param name="root">To determine if it should be MaxNode or MinNode</param>
         /// <returns>The new GameNode</returns>
-        public GameNode Create(Action a)
+        public GameNode Create(Action a, GameNode root)
         {
-            var isMinimizer = this is MinNode;
-            var node = (isMinimizer) ? (GameNode)new MinNode(a) : new MaxNode(a);
+            var node = (root is MinNode) ? (GameNode)new MaxNode(a) : new MinNode(a);
             node.m_parent = this;
             return node;
         }
@@ -281,7 +279,7 @@ namespace MillGame.Models
          */
         public GameNode RemoveUnusedChilds(Action a)
         {
-            var node = Create(a);
+            var node = Create(a, this);
             m_children.Clear();
             m_children.Enqueue(node);
             return node;
@@ -318,8 +316,18 @@ namespace MillGame.Models
          */
         public override int CompareTo(Node<Action> other)
         {
-            var gameNodeOther = (GameNode)other;
-            return m_score - gameNodeOther.m_score;
+            if (this is MinNode)
+            {
+                return ((MinNode) this).CompareTo(other);
+            }
+            else
+            {
+                return ((MaxNode) this).CompareTo(other);
+            }
+            //this.CompareTo(other);
+
+            //var gameNodeOther = (GameNode)other;
+            //return m_score - gameNodeOther.m_score;
         }
     }
 }

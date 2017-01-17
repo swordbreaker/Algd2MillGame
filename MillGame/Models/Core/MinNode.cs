@@ -16,39 +16,44 @@ namespace MillGame.Models.Core
      */
     public class MinNode : GameNode
     {
-    /**
-	 * Create node with action
-	 * @param a Action
-	 */
-    public MinNode(Actions.Action a) : base(a)
-    {
+        /**
+         * Create node with action
+         * @param a Action
+         */
+        public MinNode(Actions.Action a) : base(a)
+        {
+        }
+
+        /**
+         * Create node with action and score
+         * @param a Action
+         * @param score Score
+         */
+        public MinNode(Actions.Action a, int score) : base(a, score) { }
+
+        /**
+         * The children of a MaxNode will be ordered in increasing score order
+         */
+        public int CompareTo(INode<Actions.Action> v)
+        {
+            int score2 = ((GameNode)v).Score();
+            return m_score.CompareTo(score2);
+            //if (m_score == score2) return 0;
+            //else return (m_score < score2) ? -1 : 1;
+        }
+
+        /**
+         * Get winner score
+         */
+        public int GetWinnerScore()
+        {
+            return State.BLACKWINS;
+        }
+
+        public override string ToString()
+        {
+            return $"MinNode {m_score} childs: {m_children.Count}";
+        }
     }
-
-    /**
-	 * Create node with action and score
-	 * @param a Action
-	 * @param score Score
-	 */
-    public MinNode(Actions.Action a, int score) : base(a, score) { }
-
-    /**
-	 * The children of a MaxNode will be ordered in increasing score order
-	 */
-    public int CompareTo(INode<Actions.Action> v)
-    {
-        int score2 = ((GameNode)v).Score();
-
-        if (m_score == score2) return 0;
-        else return (m_score < score2) ? -1 : 1;
-    }
-
-    /**
-	 * Get winner score
-	 */
-    public int GetWinnerScore()
-    {
-        return State.BLACKWINS;
-    }
-}
 
 }
