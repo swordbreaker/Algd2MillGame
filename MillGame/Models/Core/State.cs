@@ -112,7 +112,8 @@ namespace MillGame.Models.Core
         private sbyte[] m_board = new sbyte[NPOS];   // valid positions 0..23
         private byte[] m_stonesOnBoard = { 0, 0 };  // number of stones on board
         private sbyte[] m_unplacedStones = { 9, 9 }; // number of unplaced stones
-        private sbyte m_winner = IController.NONE;   // IController.NONE, IController.WHITE, IController.BLACK	
+        private sbyte m_winner = IController.NONE;   // IController.NONE, IController.WHITE, IController.BLACK
+        private sbyte _currentColor = IController.WHITE;
 
         public State()
         {
@@ -319,6 +320,14 @@ namespace MillGame.Models.Core
             var color = a.Color();
 
             if (!IsValidPlace(pos, color)) throw new Exception("invalid action");
+            if (a is Taking)
+            {
+                _currentColor = color;
+            }
+            else
+            {
+                _currentColor = OppositeColor(color);
+            }
 
             m_board[pos] = color;
             m_unplacedStones[color]--;
@@ -520,42 +529,75 @@ namespace MillGame.Models.Core
                 };
             }
 
+            public byte[][] GetValues()
+            {
+                return new byte[][]
+                {
+                    numOfMills,
+                    numOfMovePosibilities,
+                    numOfStones,
+                    numOf2Combis,
+                    numOf3Combis,
+                    numOfPosibileOpenMills,
+                    opponentPotentailMills
+                };
+            }
+
             public string ToString(byte color)
             {
                 return $" Number of Mills : {numOfMills?[color]} \n Number of Move Posibilities: {numOfMovePosibilities?[color]} \n Number of Stones : {numOfStones?[color]} \n Number of 2 stone combinations {numOf2Combis?[color]} \n Number of 3 stone combinations {numOf3Combis?[color]} \n Number of possible moves to open a Mill {numOfPosibileOpenMills?[color]} \n Opponent Potentianal Mills: {opponentPotentailMills?[color]}";
             }
 
-            public int[] CalculateScores(sbyte color, Phase phase)
+            public int[] GetFactors(Phase phase)
             {
-                var vals = GetValues(color);
-                int[] factors;
                 switch (phase)
                 {
                     case Phase.Placing:
-                        factors = _placingFactors;
-                        break;
+                        return _placingFactors;
                     case Phase.Moving:
-                        factors = _movingFactors;
-                        break;
+                        return _movingFactors;
                     case Phase.Jumping:
-                        factors = _jumpingFactors;
-                        break;
+                        return _jumpingFactors;
                     default:
                         throw new ArgumentOutOfRangeException(nameof(phase), phase, null);
                 }
-
-                return factors.Zip(vals, (a, b) => a * b).ToArray();
             }
+
+            //public int[] CalculateScores(sbyte color, Phase phase)
+            //{
+            //    var vals = GetValues(color);
+            //    int[] factors;
+            //    switch (phase)
+            //    {
+            //        case Phase.Placing:
+            //            factors = _placingFactors;
+            //            break;
+            //        case Phase.Moving:
+            //            factors = _movingFactors;
+            //            break;
+            //        case Phase.Jumping:
+            //            factors = _jumpingFactors;
+            //            break;
+            //        default:
+            //            throw new ArgumentOutOfRangeException(nameof(phase), phase, null);
+            //    }
+
+            //    return factors.Zip(vals, (a, b) => a * b).ToArray();
+            //}
         }
 
         // numOfMills, numOfMovePosibilities, numOfStones, numOf2Combis, numOf3Combis, numOfPosibileOpenMills, opponentPotentailMills
-        //private static readonly int[] _placingFactors = { 6, 13, 3, 2, 2, 12, 12};
-        //private static readonly int[] _movingFactors = { 10, 5, 10, 4, 5, 8, 8};
-        //private static readonly int[] _jumpingFactors = { 0, 0, 0, 15, 0, 15, 20 };
+        private static readonly int[] _placingFactors = { 2, 10, 2, 2, 1, 8, -10 };
+        private static readonly int[] _movingFactors = { 15, 5, 5, 4, 5, 7, -8 };
+        //private static readonly int[] _jumpingFactors = { 15, 0, 0, 10, 0, 15, -15 };
 
-        private static readonly int[] _placingFactors = { 4, 10, 4, 2, 2, 14, 14 };
-        private static readonly int[] _movingFactors = { 8, 4, 10, 4, 6, 9, 9 };
-        private static readonly int[] _jumpingFactors = { 0, 0, 0, 15, 0, 15, 20 };
+        //private static readonly int[] _placingFactors = { 26, 1, 9, 10, 7, 0, -10 };
+        //private static readonly int[] _movingFactors = { 43, 10, 11, 0, 0, 20, -30 };
+        private static readonly int[] _jumpingFactors = { 10, 0, 0, 10, 1, 0, -12 };
+
+        //private static readonly int[] _placingFactors = { 4, 10, 4, 2, 2, 14, -14 };
+        //private static readonly int[] _movingFactors = { 8, 4, 10, 4, 6, 9, -9 };
+        //private static readonly int[] _jumpingFactors = { 0, 0, 0, 15, 0, 15, -20 };
 
         /**
          * Compute score of this game state: Black is a minimizer, White a maximizer.
@@ -563,6 +605,8 @@ namespace MillGame.Models.Core
          * WHITEWINS should be returned.
          * @return Score of this game state
          */
+
+        Random rand = new Random();
 
         public int Score()
         {
@@ -577,53 +621,74 @@ namespace MillGame.Models.Core
             {
                 var infos = Infomations;
 
-                var wphase = ScoreInfomations.Phase.Placing;
-                var bphase = ScoreInfomations.Phase.Placing;
-                if (PlacingPhase(IController.WHITE))
+                var phase = ScoreInfomations.Phase.Placing;
+                if (PlacingPhase(_currentColor))
                 {
-                    wphase = ScoreInfomations.Phase.Placing;
+                    phase = ScoreInfomations.Phase.Placing;
                 }
-                else if (JumpingPhase(IController.WHITE))
+                else if (JumpingPhase(_currentColor))
                 {
-                    wphase = ScoreInfomations.Phase.Jumping;
+                    phase = ScoreInfomations.Phase.Jumping;
                 }
-                else if (MovingPhase(IController.WHITE))
+                else if (MovingPhase(_currentColor))
                 {
-                    wphase = ScoreInfomations.Phase.Moving;
-                }
-
-                if (PlacingPhase(IController.WHITE))
-                {
-                    bphase = ScoreInfomations.Phase.Placing;
-                }
-                else if (JumpingPhase(IController.WHITE))
-                {
-                    bphase = ScoreInfomations.Phase.Jumping;
-                }
-                else if (MovingPhase(IController.WHITE))
-                {
-                    bphase = ScoreInfomations.Phase.Moving;
+                    phase = ScoreInfomations.Phase.Moving;
                 }
 
-                var wScore = infos.CalculateScores(IController.WHITE, wphase);
-                var bScore = infos.CalculateScores(IController.BLACK, bphase);
+                //var bphase = ScoreInfomations.Phase.Placing;
+                //if (PlacingPhase(IController.WHITE))
+                //{
+                //    wphase = ScoreInfomations.Phase.Placing;
+                //}
+                //else if (JumpingPhase(IController.WHITE))
+                //{
+                //    wphase = ScoreInfomations.Phase.Jumping;
+                //}
+                //else if (MovingPhase(IController.WHITE))
+                //{
+                //    wphase = ScoreInfomations.Phase.Moving;
+                //}
 
-                //Num of Mills
-                wScore[0] = wScore[0] - bScore[0];
-                //Num of blocked
-                wScore[1] = wScore[1] - bScore[1];
-                //Num of stones
-                wScore[2] = wScore[2] - bScore[2];
-                //Num 2 combis
-                wScore[3] = wScore[3] - bScore[3];
-                //Num 3 combis
-                wScore[4] = wScore[4] - bScore[4];
-                //Num of open mills
-                wScore[5] = wScore[5] - bScore[5];
-                //Opponent Potental Mill
-                wScore[5] = bScore[6] - wScore[6];
+                //if (PlacingPhase(IController.WHITE))
+                //{
+                //    bphase = ScoreInfomations.Phase.Placing;
+                //}
+                //else if (JumpingPhase(IController.WHITE))
+                //{
+                //    bphase = ScoreInfomations.Phase.Jumping;
+                //}
+                //else if (MovingPhase(IController.WHITE))
+                //{
+                //    bphase = ScoreInfomations.Phase.Moving;
+                //}
 
-                return wScore.Aggregate((a, b) => a + b);
+                //var wScore = infos.CalculateScores(IController.WHITE, phase);
+                //var bScore = infos.CalculateScores(IController.BLACK, phase);
+
+                var values = infos.GetValues();
+                var score = new int[values.Length];
+                var factors = infos.GetFactors(phase);
+                for (int i = 0; i < values.Length; i++)
+                {
+                    score[i] = (values[i][1] - values[i][0]) * factors[i];
+                }
+
+                ////Num of Mills
+                //wScore[0] = wScore[0] - bScore[0];
+                ////Num of blocked
+                //wScore[1] = wScore[1] - bScore[1];
+                ////Num of stones
+                //wScore[2] = wScore[2] - bScore[2];
+                ////Num 2 combis
+                //wScore[3] = wScore[3] - bScore[3];
+                ////Num 3 combis
+                //wScore[4] = wScore[4] - bScore[4];
+                ////Num of open mills
+                //wScore[5] = wScore[5] - bScore[5];
+                ////Opponent Potental Mill
+                //wScore[5] = bScore[6] - wScore[6];
+
+                return score.Sum();
             }
         }
 

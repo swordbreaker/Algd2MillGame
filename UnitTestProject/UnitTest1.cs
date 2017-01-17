@@ -16,7 +16,7 @@ namespace UnitTestProject
             state.Update(new Placing(IController.WHITE, 10));
             state.Update(new Placing(IController.WHITE, 11));
             state.Update(new Placing(IController.WHITE, 3));
-            state.Update(new Placing(IController.WHITE, 4));
+            //state.Update(new Placing(IController.WHITE, 4));
 
             state.Update(new Placing(IController.BLACK, 13));
             state.Update(new Placing(IController.BLACK, 12));

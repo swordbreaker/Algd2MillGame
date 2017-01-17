@@ -73,8 +73,13 @@ namespace MillGame.Models
          */
         public Action ComputerPlayer()
         {
+            var height = m_height;
+            if (m_currentState.JumpingPhase(IController.BLACK) || m_currentState.JumpingPhase(IController.WHITE))
+            {
+                height = 4;
+            }
             var opColor = State.OppositeColor(m_currentNode.Data().Color());
-            m_currentNode.Create(0, m_height, opColor, m_currentNode, m_currentState);
+            m_currentNode.Create(0, height, opColor, m_currentNode, m_currentState);
 
             if (_firstTurn)
             {
@@ -84,19 +89,18 @@ namespace MillGame.Models
             if (m_currentNode.m_children.IsEmpty) return null;
             Action bestAction = null;
 
-            bestAction = m_currentNode.Data().Color() == IController.BLACK ? 
-                m_currentNode.m_children.Max().Data() : 
-                m_currentNode?.m_children.Min().Data();
+            bestAction = m_currentNode.m_children.Peek().Data();
 
             if (bestAction != null)
             {
-                m_currentNode = m_currentNode.RemoveUnusedChilds(bestAction);
-                m_currentState = m_currentNode.ComputeState(m_currentState, m_currentNode);
-                Debug.WriteLine("Score is: " + m_currentNode.Score());
+                Debug.WriteLine("Score is: " + ((GameNode)m_currentNode.m_children.Peek()).Score());
                 Debug.WriteLine("COMPUTER");
                 Debug.WriteLine(m_currentState.Infomations.ToString((byte)m_currentNode.Data().Color()));
                 Debug.WriteLine("PLAYER");
                 Debug.WriteLine(m_currentState.Infomations.ToString((byte)State.OppositeColor(m_currentNode.Data().Color())));
+
+                m_currentNode = m_currentNode.RemoveUnusedChilds(bestAction);
+                m_currentState = m_currentNode.ComputeState(m_currentState, m_currentNode);
                 var oppColor = State.OppositeColor(bestAction.Color());
                 m_currentNode.Create(0, 1, oppColor, m_currentNode, m_currentState);
             }
